@@ -18,6 +18,7 @@ WK.url = (() => {
     if (p.get('l')) z.labels = p.get('l') === '1';
     if (p.get('n')) z.kontext = p.get('n');
     if (p.get('pins')) z.pins = p.get('pins').split(',').map(Number).filter(n => !Number.isNaN(n));
+    if (p.get('w')) z.breite = +p.get('w');
     return z;
   }
   function bauen(opts) {
@@ -36,6 +37,7 @@ WK.url = (() => {
     if (K.labels) p.set('l', '1');
     if (K.kontext && K.kontext !== 'aktiv' && !(K.preset && K.preset.id)) p.set('n', K.kontext);
     if (WK.vergleich && WK.vergleich.ids.length) p.set('pins', WK.vergleich.ids.join(','));
+    if (WK.stil.breitenFaktor !== 1) p.set('w', WK.stil.breitenFaktor);
     return p.toString();
   }
   function stilDiff() {
@@ -53,8 +55,9 @@ WK.url = (() => {
     try {
       if (z && z.schema && WK.stil.schemata[z.schema] && z.schema !== WK.stil.schemaId) WK.stil.setSchema(z.schema);
       if (z && z.stil) WK.stil.importieren(Object.assign({ id: z.schema || 'permalink' }, z.stil));
-      if (ausHash) { if (z.preset) WK.karte.setPreset(z.preset); else if (z.variable) WK.karte.setVariable(z.variable, { modus: z.modus }); if (z.basemap) WK.basemaps.setzen(WK.karte.map, z.basemap, 'kontext_netz'); }
+      if (ausHash) { if (z.preset) WK.karte.setPreset(z.preset, { ohneAnsicht: true }); else if (z.variable) WK.karte.setVariable(z.variable, { modus: z.modus }); if (z.basemap) WK.basemaps.setzen(WK.karte.map, z.basemap, 'kontext_netz'); }
       if (z && z.kontext) WK.karte.setKontext(z.kontext);
+      if (z && z.breite && z.breite !== WK.stil.breitenFaktor) WK.stil.setBreitenFaktor(z.breite);
       if (z && z.labels) { WK.karte.setLabels(true); const cb = document.getElementById('cb-labels'); if (cb) cb.checked = true; }
       if (z && z.ebenen && WK.layers) for (const e of z.ebenen) WK.layers.setzen(e, true);
       if (z && z.filter && WK.filter) WK.filter.setZustand(z.filter);

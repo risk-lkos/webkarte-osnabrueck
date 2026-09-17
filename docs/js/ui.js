@@ -27,6 +27,9 @@ WK.ui = (() => {
       S.presetKnoepfe.set(p.id, b); liste.appendChild(b);
     }
     a1.inhalt.appendChild(liste);
+    const aaCb = U.el('input', { type: 'checkbox', checked: WK.karte.arbeitsansicht });
+    aaCb.addEventListener('change', () => WK.karte.setArbeitsansicht(aaCb.checked));
+    a1.inhalt.appendChild(U.el('div', { class: 'zeile klein', title: 'Beim Klick auf eine Karte der Arbeit: weißer Hintergrund, Landkreis-Ausschnitt, Farbschema „Arbeit", Filter und Labels aus' }, U.el('label', {}, aaCb, ' Preset stellt die Ansicht der Arbeit her (Hintergrund, Ausschnitt, Farben, Filter)')));
     S.seite.appendChild(a1.d);
 
     // Variablen nach Gruppen
@@ -34,7 +37,9 @@ WK.ui = (() => {
     for (const g of meta.gruppen) {
       const vars = meta.variablen.filter(v => v.gruppe === g.id);
       if (!vars.length) continue;
-      a2.inhalt.appendChild(U.el('div', { class: 'gruppe-kopf', title: g.text }, U.el('span', {}, g.label), U.el('span', { class: 'kurz' }, g.kurz)));
+      const topVar = WK.config.topVariable[g.id];
+      a2.inhalt.appendChild(U.el('div', { class: 'gruppe-kopf', title: g.text }, U.el('span', {}, g.label),
+        topVar && WK.daten.variable(topVar) ? U.el('button', { style: { padding: '1px 7px', fontSize: '11px' }, title: `Die 25 Kanten mit den höchsten Werten von ${WK.daten.variable(topVar).label} (Top-25-Liste dieser Gefahr)`, onclick: () => { WK.karte.setVariable(topVar); if (WK.filter) WK.filter.setTopN(25); melden(`Top 25 ${g.label}: ${WK.daten.variable(topVar).label}`); } }, 'Top 25') : U.el('span', { class: 'kurz' }, g.kurz)));
       const l = U.el('div', { class: 'liste' });
       for (const v of vars) {
         const b = U.el('button', { title: v.beschreibung || v.label, onclick: () => WK.karte.setVariable(v.id) },
@@ -65,6 +70,12 @@ WK.ui = (() => {
     gamma.addEventListener('change', () => { const r = (WK.karte.skala || {}).rolle || (WK.karte.meta || {}).rolle; if (r) WK.stil.aendern(['rollen', r, 'gamma'], +gamma.value); });
     a3.inhalt.appendChild(U.el('div', { class: 'zeile', title: 'Gamma < 1 spreizt niedrige Werte, > 1 hohe Werte (wirkt auf die Farbrolle der aktuellen Variable)' }, U.el('label', { for: 'inp-gamma' }, 'Gamma (Spreizung)'), gammaWert));
     a3.inhalt.appendChild(gamma);
+    const breiteF = U.el('input', { type: 'range', id: 'inp-breite', min: 0.5, max: 4, step: 0.25, value: WK.stil.breitenFaktor });
+    const breiteFWert = U.el('span', { class: 'klein mono', id: 'breite-wert' }, '× ' + U.formatZahl(WK.stil.breitenFaktor, 2));
+    const breiteFSetzen = U.debounce(() => WK.stil.setBreitenFaktor(+breiteF.value), 120);
+    breiteF.addEventListener('input', () => { breiteFWert.textContent = '× ' + U.formatZahl(+breiteF.value, 2); breiteFSetzen(); });
+    a3.inhalt.appendChild(U.el('div', { class: 'zeile', title: 'Alle Kanten dicker oder dünner zeichnen (wirkt auch auf Detailkarte und Exporte)' }, U.el('label', { for: 'inp-breite' }, 'Linienstärke'), breiteFWert));
+    a3.inhalt.appendChild(breiteF);
     const breiteCb = U.el('input', { type: 'checkbox', id: 'cb-breite' });
     breiteCb.addEventListener('change', () => WK.karte.setModus(WK.karte.modus, { breiteNachWert: breiteCb.checked }));
     const labelsCb = U.el('input', { type: 'checkbox', id: 'cb-labels' });
@@ -161,6 +172,7 @@ WK.ui = (() => {
       statusNeu();
     });
     WK.bus.on('stil', () => {
+      if (+breiteF.value !== WK.stil.breitenFaktor) { breiteF.value = WK.stil.breitenFaktor; breiteFWert.textContent = '× ' + U.formatZahl(WK.stil.breitenFaktor, 2); }
       const id = WK.stil.geaendert ? '__eigen' : WK.stil.schemaId;
       schemaSel.value = [...schemaSel.options].some(o => o.value === id) ? id : '__eigen';
       for (const [vid, b] of S.varKnoepfe) { const v = WK.daten.variable(vid); const bal = b.querySelector('.balken'); if (bal && v.typ !== 'kategorial') bal.style.background = WK.stil.rampe(v.rolle).css(); }
@@ -235,6 +247,7 @@ WK.ui = (() => {
         case 'd': case 'D': document.getElementById('app').classList.toggle('ohne-panel'); setTimeout(() => K.map && K.map.resize(), 50); break;
         case 'l': case 'L': document.getElementById('cb-labels').click(); break;
         case 'p': case 'P': if (WK.vergleich && K.auswahl !== null) WK.vergleich.anpinnen(K.auswahl); break;
+        case 's': case 'S': if (WK.favoriten && K.auswahl !== null) { WK.favoriten.toggle(K.auswahl); WK.panel.zeigen(K.auswahl, true); } break;
         case '0': K.fitLK(); break;
         case '?': if (WK.hilfe) WK.hilfe.hilfe(); break;
         case 'ArrowRight': case 'ArrowLeft': {

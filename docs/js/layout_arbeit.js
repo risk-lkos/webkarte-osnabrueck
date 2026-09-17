@@ -69,7 +69,7 @@ WK.layoutArbeit = (() => {
     // Kontextnetz
     const kontextModus = o.kontext === false ? 'keiner' : K.kontext;
     if (kontextModus !== 'keiner') {
-      const lwK = WK.stil.schema.breiten[K.S.kontextLw] || WK.stil.schema.breiten.kontext || 0.3;
+      const lwK = (WK.stil.schema.breiten[K.S.kontextLw] || WK.stil.schema.breiten.kontext || 0.3) * (o.faktorAnwenden === false ? 1 : WK.stil.breitenFaktor);
       const farbe = kontextModus === 'aktiv_dunkel' ? WK.stil.kontext('netz_dunkel') : WK.stil.kontext('grau');
       const teile = [];
       for (const fe of WK.daten.features) { if (kontextModus === 'gesamt' || fe.properties.aktiv) teile.push(linienPfad(fe.geometry.coordinates, P, 25, 0)); }
@@ -79,8 +79,9 @@ WK.layoutArbeit = (() => {
       const gw = await WK.daten.kontext('gewaesser'), r = WK.stil.rampe('coverage');
       for (const f of gw.features) { const cf = f.properties.cover_frac; t.push(`<path d="${linienPfad(f.geometry.coordinates, P, 10, 1)}" fill="none" stroke="${r.farbe(typeof cf === 'number' ? cf : 0.8)}" stroke-width="1.8" stroke-linecap="round"/>`); }
     }
-    // Datenlayer
+    // Datenlayer (Linienstaerke-Faktor nur, wenn im Export-Dialog gewuenscht)
     let nDaten = 0;
+    const ohneFaktor = o.faktorAnwenden === false;
     if (K.variable) {
       const praed = K.praedikat();
       t.push('<g id="daten" fill="none" stroke-linecap="round" stroke-linejoin="round">');
@@ -90,7 +91,7 @@ WK.layoutArbeit = (() => {
         const werte = (K.meta.werte || []).map(String);
         for (const w of [...werte, ...[...gruppen.keys()].filter(k => !werte.includes(k))]) {
           const fs = gruppen.get(w); if (!fs) continue;
-          const farbe = WK.stil.farbe(K.variable, w, K.skala, K.meta), lw = WK.stil.breiteFuer(K.variable, w, K.skala, K.meta, K.lwVorgabe);
+          const farbe = WK.stil.farbe(K.variable, w, K.skala, K.meta), lw = WK.stil.breiteFuer(K.variable, w, K.skala, K.meta, K.lwVorgabe, ohneFaktor);
           t.push(`<path id="klasse_${U.esc(w).replace(/[^A-Za-z0-9_-]/g, '_')}" d="${fs.map(fe => linienPfad(fe.geometry.coordinates, P, 15, 1)).join('')}" stroke="${farbe}" stroke-width="${lw}"/>`);
           nDaten += fs.length;
         }
@@ -98,7 +99,7 @@ WK.layoutArbeit = (() => {
         for (const fe of WK.daten.features) {
           if (!praed(fe)) continue;
           const wert = fe.properties[K.variable], farbe = WK.stil.farbe(K.variable, wert, K.skala, K.meta); if (!farbe) continue;
-          const lw = WK.stil.breiteFuer(K.variable, wert, K.skala, K.meta, K.lwVorgabe);
+          const lw = WK.stil.breiteFuer(K.variable, wert, K.skala, K.meta, K.lwVorgabe, ohneFaktor);
           t.push(`<path id="k${fe.id}" d="${linienPfad(fe.geometry.coordinates, P, 15, 1)}" stroke="${farbe}" stroke-width="${lw}"/>`);
           nDaten++;
         }

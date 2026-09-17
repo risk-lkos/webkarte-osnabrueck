@@ -4,7 +4,7 @@
    kontext, kein_wert, stufen_bereich. Fehlende Eintraege werden aus 'arbeit' ergaenzt. */
 WK.stil = (() => {
   const U = WK.util;
-  const S = { basis: null, schema: null, schemaId: 'arbeit', paletten: null, rampenCache: new Map(), geaendert: false };
+  const S = { basis: null, schema: null, schemaId: 'arbeit', paletten: null, rampenCache: new Map(), geaendert: false, breitenFaktor: 1 };
 
   function tief(obj) { return JSON.parse(JSON.stringify(obj)); }
   function mischen(basis, teil) {
@@ -39,6 +39,7 @@ WK.stil = (() => {
     S.schemata = schemata;
     S.basis = schemata.arbeit;
     if (!S.basis) throw new Error('Farbschema arbeit.json fehlt');
+    S.breitenFaktor = Math.max(0.25, Math.min(6, +(U.ls('wk.breitenfaktor') || 1) || 1));
     const gespeichert = U.ls(WK.config.speicher.schema);
     if (gespeichert && gespeichert.schema) {
       S.schema = mischen(S.basis, gespeichert.schema); S.schemaId = gespeichert.id || 'eigen'; S.geaendert = !!gespeichert.geaendert;
@@ -218,10 +219,18 @@ WK.stil = (() => {
     if (skala.breiteNachWert && skala.modus !== 'einfarbig') return ['interpolate', ['linear'], normAusdruck(variable, skala.vmin, skala.vmax), 0, w * 0.5, 1, w * 2.2];
     return w;
   }
+  // globaler Linienstaerke-Faktor (Regler "Linienstaerke"), wirkt auf Daten, Kontext, Auswahl und Exporte
+  function setBreitenFaktor(f) {
+    S.breitenFaktor = Math.max(0.25, Math.min(6, +f || 1));
+    U.ls('wk.breitenfaktor', S.breitenFaktor);
+    WK.bus.emit('stil');
+  }
   function mitZoom(W, hover) {
+    // Der Linienstaerke-Faktor wird in die Zahlen der Zoomstufen gefaltet: ein zusaetzlich
+    // verschachteltes ['*', faktor, W] liess MapLibre die Linienlayer nicht mehr zeichnen.
     const Wh = hover ? ['case', ['boolean', ['feature-state', 'hover'], false], ['*', 2, W], W] : W;
     const aus = ['interpolate', ['exponential', 1.6], ['zoom']];
-    for (const [z, f] of WK.config.breitenZoom) aus.push(z, f === 1 ? Wh : ['*', f, Wh]);
+    for (const [z, f] of WK.config.breitenZoom) { const ff = +(f * S.breitenFaktor).toFixed(4); aus.push(z, ff === 1 ? Wh : ['*', ff, Wh]); }
     return aus;
   }
   function ausdruckBreite(variable, skala, meta, vorgabe) { return mitZoom(ausdruckBreiteBasis(variable, skala, meta, vorgabe), true); }
@@ -239,12 +248,13 @@ WK.stil = (() => {
     const t = Math.max(0, Math.min(1, (wert - skala.vmin) / ((skala.vmax - skala.vmin) || 1e-9)));
     return rampe(rolle).farbe(t);
   }
-  function breiteFuer(variable, wert, skala, meta, vorgabe) {
-    if (skala.modus === 'kategorial') return kategorieBreiten(variable, (meta && meta.werte) || [], vorgabe)[String(wert)] || 0.8;
-    if (skala.modus === 'quintil') { const q = quintile(); return q[Math.min(4, Math.max(0, Math.floor(wert / 20)))].lw; }
+  function breiteFuer(variable, wert, skala, meta, vorgabe, ohneFaktor) {
+    const f = ohneFaktor ? 1 : S.breitenFaktor;
+    if (skala.modus === 'kategorial') return (kategorieBreiten(variable, (meta && meta.werte) || [], vorgabe)[String(wert)] || 0.8) * f;
+    if (skala.modus === 'quintil') { const q = quintile(); return q[Math.min(4, Math.max(0, Math.floor(wert / 20)))].lw * f; }
     const w = breite(variable, vorgabe);
-    if (skala.breiteNachWert && typeof wert === 'number') { const t = Math.max(0, Math.min(1, (wert - skala.vmin) / ((skala.vmax - skala.vmin) || 1e-9))); return w * (0.5 + 1.7 * t); }
-    return w;
+    if (skala.breiteNachWert && typeof wert === 'number') { const t = Math.max(0, Math.min(1, (wert - skala.vmin) / ((skala.vmax - skala.vmin) || 1e-9))); return w * (0.5 + 1.7 * t) * f; }
+    return w * f;
   }
   // Legendenspezifikation (DOM, Canvas und SVG zeichnen alle daraus)
   function legendeSpec(variable, skala, meta, opts) {
@@ -267,7 +277,8 @@ WK.stil = (() => {
   return {
     S, init, setSchema, aendern, importieren, exportieren, zuruecksetzen, pruefen, rampe, rolleFarbe, paletteFarbe,
     kategorieFarben, kategorieBreiten, breite, breiteFuer, kontext, quintile, ausdruckFarbe, ausdruckBreite, ausdruckBreiteBasis,
-    kontextBreite, mitZoom, farbe, legendeSpec, normAusdruck,
+    kontextBreite, mitZoom, farbe, legendeSpec, normAusdruck, setBreitenFaktor,
+    get breitenFaktor() { return S.breitenFaktor; },
     get schema() { return S.schema; }, get schemaId() { return S.schemaId; }, get geaendert() { return S.geaendert; },
     get paletten() { return S.paletten; }, get schemata() { return S.schemata; },
   };

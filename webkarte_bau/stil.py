@@ -102,7 +102,8 @@ KONTEXT = {
     "auswahl": H.WARM, "halo": "#ffffff", "hintergrund": "#ffffff",
     "gitter": "#c4c4c4", "netz_dunkel": "#222222", "gemeinden": "#8a8a8a",
     "gewaesser": "#1f78b4", "inset_land": "#ececec", "inset_rand": "#8a8a8a",
-    "pin": ["#1b9e77", "#7570b3", "#e7298a"],
+    "pin": ["#1b9e77", "#7570b3", "#e7298a", "#e6ab02", "#66a61e", "#a6761d", "#1f78b4", "#fb9a99", "#6a3d9a", "#666666"],
+    "favorit": "#f2b701",
     "risiko": dict(H.RISIKO),
 }
 

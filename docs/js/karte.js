@@ -6,6 +6,7 @@ WK.karte = (() => {
     kontext: 'aktiv', kontextLw: 'kontext', kontextLabel: 'Straßennetz (aktiv)', filter: null, ausgeblendet: new Set(),
     auswahl: null, hover: null, labels: false, sichtbar: null, tooltip: null, modus: 'p2_p100', modusOpts: {},
     mess: { an: false, punkte: [] },
+    arbeitsansicht: (() => { const v = U.ls('wk.arbeitsansicht'); return v === null || v === undefined ? true : !!v; })(),
   };
   const LAYER_DATEN = ['daten', 'kontext_netz'];
 
@@ -142,9 +143,19 @@ WK.karte = (() => {
   }
 
   // --- Preset ----------------------------------------------------------------------
-  function setPreset(id) {
+  function setArbeitsansicht(an) { S.arbeitsansicht = !!an; U.ls('wk.arbeitsansicht', S.arbeitsansicht); }
+  function setPreset(id, opts) {
+    opts = opts || {};
     const p = WK.daten.preset(id);
     if (!p) return;
+    const ansicht = S.arbeitsansicht && !opts.ohneAnsicht;
+    if (ansicht) {
+      // Einstellungen der Abbildung uebernehmen: kein Hintergrund, Farbschema der Arbeit, Filter und Labels aus, Landkreis-Ausschnitt
+      if (WK.filter && WK.filter.aktiv()) WK.filter.setZustand({});
+      if (S.labels) { setLabels(false); const cb = document.getElementById('cb-labels'); if (cb) cb.checked = false; }
+      if (WK.stil.schemaId !== 'arbeit' || WK.stil.geaendert) WK.stil.setSchema('arbeit');
+      if (S.bereit && WK.basemaps.aktuell !== 'keiner') WK.basemaps.setzen(S.map, 'keiner', 'kontext_netz');
+    }
     const sk = p.skala || {};
     let modus = sk.modus || 'p2_p100', modusOpts = {};
     if (modus === 'fest') modusOpts = { vmin: sk.vmin, vmax: sk.vmax };
@@ -162,6 +173,7 @@ WK.karte = (() => {
       WK.layers.presetOverlays(p);
       WK.bus.emit('variable', { variable: null, meta: null, skala: S.skala, preset: p });
     }
+    if (ansicht && S.bereit) fitLK();
     WK.bus.emit('preset', p);
   }
 
@@ -296,6 +308,7 @@ WK.karte = (() => {
     S, erzeugen, setVariable, setModus, setFilter, setKategorieAus, kategorieAus, setLabels, setKontext, setPreset, waehlen,
     nachbarnZeigen, pinsSetzen, fokus, fitLK, zustand, ansicht, bboxAnsicht, praedikat, sichtbareIndizes, skalaNeu, anwenden, basisFilter,
     messen, messLeeren, get messAn() { return S.mess.an; },
+    setArbeitsansicht, get arbeitsansicht() { return S.arbeitsansicht; },
     get map() { return S.map; }, get variable() { return S.variable; }, get meta() { return S.meta; }, get skala() { return S.skala; },
     get preset() { return S.preset; }, get auswahl() { return S.auswahl; }, get modus() { return S.modus; }, get kontext() { return S.kontext; },
     get kontextLabel() { return S.kontextLabel; }, get lwVorgabe() { return S.lwVorgabe; }, get bereit() { return S.bereit; }, get labels() { return S.labels; },

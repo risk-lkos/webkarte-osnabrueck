@@ -2,15 +2,20 @@
 WK.vergleich = (() => {
   const U = WK.util;
   const S = { ids: [] };
-  function farben() { const f = WK.stil.kontext('pin'); return Array.isArray(f) ? f : ['#1b9e77', '#7570b3', '#e7298a']; }
+  const MAX = 10;
+  function farben() {
+    const f = WK.stil.kontext('pin'), basis = Array.isArray(f) ? f.slice() : ['#1b9e77', '#7570b3', '#e7298a'];
+    for (const c of WK.config.qualitativ) { if (basis.length >= MAX) break; if (!basis.includes(c)) basis.push(c); }
+    return basis;
+  }
   function anpinnen(id, still) {
     if (id === null || id === undefined || !WK.daten.feature(id)) return;
     const i = S.ids.indexOf(id);
     if (i >= 0) S.ids.splice(i, 1);
-    else { if (S.ids.length >= 3) S.ids.shift(); S.ids.push(id); }
+    else { if (S.ids.length >= MAX) S.ids.shift(); S.ids.push(id); }
     WK.karte.pinsSetzen(S.ids, farben());
     if (!still) WK.bus.emit('pins', S.ids.slice());
-    if (!still) WK.ui.melden(i >= 0 ? 'Pin entfernt' : `Kante ${id} angepinnt (${S.ids.length}/3)`);
+    if (!still) WK.ui.melden(i >= 0 ? 'Pin entfernt' : `Kante ${id} angepinnt (${S.ids.length}/${MAX})`);
   }
   function leeren() { S.ids = []; WK.karte.pinsSetzen([], []); WK.bus.emit('pins', []); }
   function pinsDom() {
@@ -27,7 +32,7 @@ WK.vergleich = (() => {
     return d;
   }
   function oeffnen() {
-    if (!S.ids.length) { WK.ui.melden('Keine Kanten angepinnt (P)'); return; }
+    if (!S.ids.length) { WK.ui.melden(`Keine Kanten angepinnt (P, bis zu ${MAX})`); return; }
     const meta = WK.daten.meta, box = U.el('div'), f = farben();
     const fs = S.ids.map(id => WK.daten.feature(id));
     const t = U.el('table');
@@ -51,5 +56,5 @@ WK.vergleich = (() => {
     box.appendChild(t);
     WK.ui.dialog('Vergleich angepinnter Kanten', box, { breit: true });
   }
-  return { anpinnen, leeren, pinsDom, oeffnen, get ids() { return S.ids; } };
+  return { anpinnen, leeren, pinsDom, oeffnen, MAX, get ids() { return S.ids; } };
 })();

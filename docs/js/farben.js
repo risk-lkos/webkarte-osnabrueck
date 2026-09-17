@@ -134,7 +134,7 @@ WK.farben = (() => {
     // --- Kontext ---
     const fs4 = U.el('fieldset', {}, U.el('legend', {}, 'Kontextfarben'));
     const kl = U.el('div', { class: 'katliste' });
-    for (const [k, label] of [['grau', 'Kontextnetz'], ['umriss', 'Landkreisgrenze'], ['auswahl', 'Auswahl'], ['halo', 'Halo der Auswahl'], ['hintergrund', 'Hintergrund (ohne Basemap)'], ['gitter', 'Gitter (Arbeitslayout)'], ['netz_dunkel', 'Netz dunkel (LST-Karte)'], ['gemeinden', 'Gemeindegrenzen'], ['gewaesser', 'Gewässer']]) {
+    for (const [k, label] of [['grau', 'Kontextnetz'], ['umriss', 'Landkreisgrenze'], ['auswahl', 'Auswahl'], ['halo', 'Halo der Auswahl'], ['hintergrund', 'Hintergrund (ohne Basemap)'], ['gitter', 'Gitter (Arbeitslayout)'], ['netz_dunkel', 'Netz dunkel (LST-Karte)'], ['gemeinden', 'Gemeindegrenzen'], ['gewaesser', 'Gewässer'], ['favorit', 'Favoriten']]) {
       const col = U.el('input', { type: 'color', value: WK.stil.kontext(k) || '#000000' });
       col.addEventListener('input', () => WK.stil.aendern(['kontext', k], col.value));
       kl.appendChild(U.el('label', {}, col, U.el('span', {}, label)));

@@ -1,7 +1,7 @@
 /* Rangliste der aktuellen Variable (Top-N, sortierbar, Klick = Zoom) und Datenexport (CSV/GeoJSON) */
 WK.rangliste = (() => {
   const U = WK.util;
-  const S = { n: 50, nurAusschnitt: false, sort: null, richtung: -1 };
+  const S = { n: 25, nurAusschnitt: false, sort: null, richtung: -1 };
   const ZUSATZ = ['importance_s', 'hazard_klasse', 'vi_pct', 'vi_pct_fluvial', 'vi_pct_heat', 'mhn_bf'];
 
   function zeilen() {

@@ -3,13 +3,13 @@ WK.hilfe = (() => {
   const U = WK.util;
   const KUERZEL = [
     ['F', 'Suche fokussieren'], ['E', 'Export-Dialog'], ['C', 'Farbeditor'], ['R', 'Rangliste'], ['D', 'Detailpanel ein-/ausblenden'],
-    ['L', 'Wert-Labels ein/aus'], ['P', 'gewählte Kante anpinnen (Vergleich)'], ['0', 'Ausschnitt Landkreis'], ['1–7', 'Gruppe wählen (erste Variable)'],
+    ['L', 'Wert-Labels ein/aus'], ['P', 'gewählte Kante anpinnen (Vergleich, bis zu 10)'], ['S', 'gewählte Kante als Favorit merken'], ['0', 'Ausschnitt Landkreis'], ['1–7', 'Gruppe wählen (erste Variable)'],
     ['← →', 'vorherige / nächste Variable'], ['Esc', 'Auswahl aufheben, Dialog schließen'], ['?', 'diese Hilfe'],
   ];
   function hilfe() {
     const box = U.el('div');
     box.appendChild(U.el('p', {}, 'Klicke auf eine Kante, um alle Kennwerte zu sehen. Beim Überfahren erscheinen Wert und Rang der aktuellen Variablen; der Marker auf der Legende zeigt die Position in der Skala. Ziehe einen Bereich auf dem Farbbalken der Legende, um nur Kanten in diesem Wertebereich zu zeigen (Brushing). Klicke in einer Klassenlegende auf eine Klasse, um sie aus- oder einzublenden.'));
-    box.appendChild(U.el('p', {}, 'Die Presets „Karten der Arbeit" stellen die Abbildungen des Ergebniskapitels nach (Variable, Skala, Kontextnetz, Linienbreiten). „Skala: an Kartenausschnitt anpassen" spreizt die Farben auf die sichtbaren Kanten, „Gamma" spreizt niedrige oder hohe Werte. Farbschemata und der Farbeditor (C) ändern Paletten, Klassenfarben, Breiten und Kontextfarben; das Schema „Arbeit" reproduziert die Abbildungen exakt.'));
+    box.appendChild(U.el('p', {}, 'Die Presets „Karten der Arbeit" stellen die Abbildungen des Ergebniskapitels nach (Variable, Skala, Kontextnetz, Linienbreiten; mit gesetztem Häkchen auch weißer Hintergrund, Landkreis-Ausschnitt und Farbschema „Arbeit"). Der Regler „Linienstärke" zeichnet alle Kanten dicker, „Top 25" je Gefahr zeigt die 25 Kanten mit den höchsten Indexwerten, Favoriten (☆, Taste S) merken Kanten dauerhaft im Browser. „Skala: an Kartenausschnitt anpassen" spreizt die Farben auf die sichtbaren Kanten, „Gamma" spreizt niedrige oder hohe Werte. Farbschemata und der Farbeditor (C) ändern Paletten, Klassenfarben, Breiten und Kontextfarben; das Schema „Arbeit" reproduziert die Abbildungen exakt.'));
     box.appendChild(U.el('p', {}, 'Export (E): PNG/JPEG mit Hintergrundkarte und Legende, SVG der aktuellen Ansicht ohne Hintergrund oder SVG im Arbeitslayout (UTM 32N, wie die Abbildungen der Arbeit). Rangliste (R): Top-Kanten der Variable, CSV/GeoJSON-Export. Link: der URL-Hash enthält Variable, Skala, Filter, Auswahl und Ansicht; „Link" im Panel kopiert einen Permalink zur Kante.'));
     const t = U.el('table', {}, U.el('tr', {}, U.el('th', {}, 'Taste'), U.el('th', {}, 'Wirkung')));
     for (const [k, w] of KUERZEL) t.appendChild(U.el('tr', {}, U.el('td', {}, U.el('kbd', {}, k)), U.el('td', {}, w)));

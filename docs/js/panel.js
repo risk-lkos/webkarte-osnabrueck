@@ -58,6 +58,7 @@ WK.panel = (() => {
       el.appendChild(badges);
     }
     const aktionen = U.el('div', { class: 'aktionen' },
+      WK.favoriten ? U.el('button', { class: WK.favoriten.ist(id) ? 'aktiv' : '', title: 'Favorit merken / entfernen (S)', onclick: () => { WK.favoriten.toggle(id); zeigen(id, true); } }, WK.favoriten.ist(id) ? '★ Favorit' : '☆ Favorit') : null,
       U.el('button', { onclick: () => WK.karte.fokus(id) }, 'Zoom'),
       U.el('button', { onclick: () => { const n = WK.daten.nachbarn(id); WK.karte.nachbarnZeigen(n); WK.ui.melden(`${n.length} Nachbarkanten markiert`); } }, 'Nachbarn'),
       p.ref ? U.el('button', { onclick: () => { if (WK.suche) WK.suche.strassenzug(p.ref); } }, `Straßenzug ${p.ref}`) : null,

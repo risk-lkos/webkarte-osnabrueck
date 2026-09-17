@@ -1,7 +1,7 @@
 /* Export-Dialog und Rasterexport (PNG/JPEG mit Hintergrund): Offscreen-Map mit pixelRatio, Komposition */
 WK.exportPng = (() => {
   const U = WK.util;
-  const S = { o: { format: 'png', faktor: 2, titel: '', buchstabe: '', legende: true, massstab: true, nordpfeil: true, kontext: true, schemaBeilegen: false, hintergrund: false, groesse: 'ansicht' } };
+  const S = { o: { format: 'png', faktor: 2, titel: '', buchstabe: '', legende: true, massstab: true, nordpfeil: true, kontext: true, schemaBeilegen: false, hintergrund: false, groesse: 'ansicht', faktorAnwenden: true } };
 
   function zoomFaktor(z) {
     const st = WK.config.breitenZoom;
@@ -124,7 +124,7 @@ WK.exportPng = (() => {
     const cb = (key, label) => { const c = U.el('input', { type: 'checkbox', checked: !!o[key] }); cbs[key] = c; return U.el('label', {}, c, ' ' + label); };
     const zeilen = U.el('div', { class: 'spalten' },
       U.el('div', {}, U.el('div', { class: 'zeile' }, U.el('label', {}, 'Format'), fmt), U.el('div', { class: 'zeile', id: 'ex-raster' }, U.el('label', {}, 'Auflösung'), faktor, U.el('label', {}, 'Größe'), groesse), U.el('div', { class: 'zeile' }, U.el('label', {}, 'Titel'), titel), U.el('div', { class: 'zeile' }, U.el('label', {}, 'Panel-Buchstabe'), buchstabe)),
-      U.el('div', {}, U.el('div', { class: 'zeile' }, cb('legende', 'Legende')), U.el('div', { class: 'zeile' }, cb('massstab', 'Maßstab')), U.el('div', { class: 'zeile' }, cb('nordpfeil', 'Nordpfeil')), U.el('div', { class: 'zeile' }, cb('kontext', 'Kontextnetz')), U.el('div', { class: 'zeile' }, cb('hintergrund', 'weißer Hintergrund im SVG')), U.el('div', { class: 'zeile' }, cb('schemaBeilegen', 'Farbschema als JSON beilegen'))));
+      U.el('div', {}, U.el('div', { class: 'zeile' }, cb('legende', 'Legende')), U.el('div', { class: 'zeile' }, cb('massstab', 'Maßstab')), U.el('div', { class: 'zeile' }, cb('nordpfeil', 'Nordpfeil')), U.el('div', { class: 'zeile' }, cb('kontext', 'Kontextnetz')), U.el('div', { class: 'zeile' }, cb('hintergrund', 'weißer Hintergrund im SVG')), U.el('div', { class: 'zeile' }, cb('faktorAnwenden', `Linienstärke-Regler (× ${U.formatZahl(WK.stil.breitenFaktor, 2)}) im Arbeitslayout anwenden`)), U.el('div', { class: 'zeile' }, cb('schemaBeilegen', 'Farbschema als JSON beilegen'))));
     box.appendChild(zeilen);
     const hinweis = U.el('p', { class: 'klein' });
     const hinweisNeu = () => { const f = fmt.value; document.getElementById('ex-raster').hidden = !(f === 'png' || f === 'jpeg'); hinweis.textContent = f === 'arbeitslayout' ? 'Ausschnitt Landkreis ± 2 km, km-Gitter, Maßstab, Nordpfeil, Inset, Colorbar/Legende und Impressum wie abb_helfer.karte(); alle gefilterten Kanten der Variable (nicht nur der Ausschnitt). Raster-Overlays werden nicht ausgegeben.' : f === 'svg' ? 'Vektorgrafik des aktuellen Ausschnitts: Kanten als Pfade mit id="k<Kanten-id>", Legende, Maßstab, Nordpfeil; ohne Hintergrundkarte.' : `Rendert die Karte offscreen mit ${faktor.value}-facher Auflösung inklusive Hintergrundkarte, Legende, Maßstab, Nordpfeil und Attribution.`; };

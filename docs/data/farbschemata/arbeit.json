@@ -213,6 +213,7 @@
  "kein_wert": "rgba(0,0,0,0)",
  "kontext": {
   "auswahl": "#d95f02",
+  "favorit": "#f2b701",
   "gemeinden": "#8a8a8a",
   "gewaesser": "#1f78b4",
   "gitter": "#c4c4c4",
@@ -225,7 +226,14 @@
   "pin": [
    "#1b9e77",
    "#7570b3",
-   "#e7298a"
+   "#e7298a",
+   "#e6ab02",
+   "#66a61e",
+   "#a6761d",
+   "#1f78b4",
+   "#fb9a99",
+   "#6a3d9a",
+   "#666666"
   ],
   "risiko": {
    "blau": "#1f78b4",
