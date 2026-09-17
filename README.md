@@ -39,6 +39,15 @@ zeigt sie keinen Kartenhintergrund („weiß"), alles andere funktioniert.
 3. Settings → Pages → „Deploy from a branch", Branch `main`, Ordner `/docs`.
 4. `docs/robots.txt` und `<meta name="robots" content="noindex">` halten die Seite aus Suchmaschinen.
 
+## Bedienung in Kürze
+
+Presets „Karten der Arbeit" stellen die Abbildungen nach; mit gesetztem Häkchen auch weißer
+Hintergrund, Landkreis-Ausschnitt und Farbschema „Arbeit". Regler „Linienstärke" zeichnet alle
+Kanten dicker (wirkt auch in Detailkarte und Exporten). „Top 25" neben jeder Gefahrengruppe zeigt
+die 25 Kanten mit den höchsten Indexwerten (Filter „nur Top N"). Favoriten (☆ im Panel, Taste S)
+und bis zu zehn Pins für den Vergleich (Taste P) bleiben im Browser gespeichert. Export (E),
+Rangliste (R), Farben (C), Hilfe (?).
+
 ## Farbschemata (austauschbare Farben)
 
 Farben liegen nicht im Code, sondern in `docs/data/farbschemata/*.json`; `paletten.json` enthält
