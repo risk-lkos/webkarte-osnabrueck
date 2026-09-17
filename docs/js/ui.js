@@ -113,6 +113,24 @@ WK.ui = (() => {
       U.el('button', { onclick: () => WK.karte.fitLK(), title: 'Ausschnitt Landkreis ± 2 km (Taste 0)' }, 'Landkreis'),
       U.el('button', { onclick: () => WK.karte.waehlen(null) }, 'Auswahl aufheben'),
       U.el('button', { id: 'btn-theme', onclick: () => themeWechseln() }, 'Dunkel/Hell')));
+    // Messwerkzeug
+    const messBtn = U.el('button', { title: 'Punkte in der Karte anklicken; Distanz erscheint hier', onclick: () => WK.karte.messen() }, 'Messen');
+    const messInfo = U.el('span', { class: 'klein mono' }, '');
+    const messWeg = U.el('button', { onclick: () => WK.karte.messLeeren() }, '✕');
+    WK.bus.on('mess', m => { messBtn.classList.toggle('aktiv', m.an); messInfo.textContent = m.laenge ? (m.laenge >= 1000 ? U.formatZahl(m.laenge / 1000, 2) + ' km' : U.formatZahl(m.laenge, 0) + ' m') : (m.an ? 'Punkte klicken …' : ''); });
+    a8.inhalt.appendChild(U.el('div', { class: 'zeile' }, messBtn, messInfo, messWeg));
+    // Lesezeichen (benannte Ansichten im Browser)
+    const lzName = U.el('input', { type: 'text', placeholder: 'Lesezeichen-Name', style: { width: '150px' } });
+    const lzListe = U.el('div', { class: 'liste' });
+    const lzNeu = () => {
+      lzListe.innerHTML = '';
+      const lz = U.ls(WK.config.speicher.lesezeichen) || [];
+      for (const [i, e] of lz.entries()) lzListe.appendChild(U.el('button', { onclick: () => { location.hash = e.hash; }, title: 'Ansicht laden' }, U.el('span', {}, e.name), U.el('span', { class: 'n', onclick: ev => { ev.stopPropagation(); lz.splice(i, 1); U.ls(WK.config.speicher.lesezeichen, lz); lzNeu(); } }, '✕')));
+    };
+    const lzBtn = U.el('button', { onclick: () => { const n = lzName.value.trim() || `Ansicht ${new Date().toLocaleTimeString('de-DE')}`; const lz = U.ls(WK.config.speicher.lesezeichen) || []; lz.push({ name: n, hash: WK.url ? WK.url.bauen() : location.hash.slice(1) }); U.ls(WK.config.speicher.lesezeichen, lz); lzName.value = ''; lzNeu(); melden(`Lesezeichen „${n}" gespeichert`); } }, 'Lesezeichen setzen');
+    a8.inhalt.appendChild(U.el('div', { class: 'zeile' }, lzName, lzBtn));
+    a8.inhalt.appendChild(lzListe); lzNeu();
+    a8.inhalt.appendChild(U.el('div', { class: 'zeile' }, U.el('button', { onclick: async () => { if (WK.url) { const ok = await U.kopieren(WK.url.permalink()); melden(ok ? 'Permalink kopiert' : 'Kopieren fehlgeschlagen'); } } }, 'Permalink kopieren'), U.el('button', { onclick: () => { if (WK.url) dialog('QR-Code zum Permalink', U.el('div', {}, WK.url.qrDom(WK.url.permalink()), U.el('p', { class: 'klein mono', style: { wordBreak: 'break-all' } }, WK.url.permalink()))); } }, 'QR-Code')));
     S.seite.appendChild(a8.d);
 
     // Kopfknoepfe

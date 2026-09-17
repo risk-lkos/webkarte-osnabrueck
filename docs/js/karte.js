@@ -5,6 +5,7 @@ WK.karte = (() => {
     map: null, bereit: false, variable: null, meta: null, skala: null, preset: null, lwVorgabe: null,
     kontext: 'aktiv', kontextLw: 'kontext', kontextLabel: 'Straßennetz (aktiv)', filter: null, ausgeblendet: new Set(),
     auswahl: null, hover: null, labels: false, sichtbar: null, tooltip: null, modus: 'p2_p100', modusOpts: {},
+    mess: { an: false, punkte: [] },
   };
   const LAYER_DATEN = ['daten', 'kontext_netz'];
 
@@ -219,6 +220,7 @@ WK.karte = (() => {
     });
     map.on('mouseout', () => { hoverSetzen(null); tooltipWeg(); });
     map.on('click', e => {
+      if (S.mess.an) { messPunkt([e.lngLat.lng, e.lngLat.lat]); return; }
       const f = treffer(e.point, 6);
       waehlen(f ? f.id : null, { quelle: 'klick' });
     });
@@ -251,6 +253,27 @@ WK.karte = (() => {
     S.map.fitBounds(bb, { padding: opts.padding || 120, maxZoom: opts.maxZoom || 16, duration: opts.duration === undefined ? 600 : opts.duration });
   }
   function fitLK() { S.map.fitBounds(WK.daten.meta.raum.start_bounds_4326, { padding: 10, duration: 500 }); }
+  // --- Messwerkzeug (Haversine-Distanz entlang geklickter Punkte) -------------------------
+  function messen(an) {
+    S.mess.an = an === undefined ? !S.mess.an : !!an;
+    if (!S.map.getSource('mess')) {
+      S.map.addSource('mess', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
+      S.map.addLayer({ id: 'mess_linie', type: 'line', source: 'mess', filter: ['==', ['geometry-type'], 'LineString'], paint: { 'line-color': '#e7298a', 'line-width': 2.5, 'line-dasharray': [2, 1.5] } });
+      S.map.addLayer({ id: 'mess_punkte', type: 'circle', source: 'mess', filter: ['==', ['geometry-type'], 'Point'], paint: { 'circle-radius': 4.5, 'circle-color': '#e7298a', 'circle-stroke-color': '#fff', 'circle-stroke-width': 1.5 } });
+    }
+    if (!S.mess.an) S.map.getCanvas().style.cursor = '';
+    else S.map.getCanvas().style.cursor = 'crosshair';
+    WK.bus.emit('mess', { an: S.mess.an, laenge: messLaenge() });
+  }
+  function messLaenge() { let l = 0; for (let i = 1; i < S.mess.punkte.length; i++) l += U.haversine(S.mess.punkte[i - 1], S.mess.punkte[i]); return l; }
+  function messPunkt(ll) {
+    S.mess.punkte.push(ll);
+    const fs = S.mess.punkte.map(p => ({ type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: p } }));
+    if (S.mess.punkte.length > 1) fs.push({ type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates: S.mess.punkte } });
+    S.map.getSource('mess').setData({ type: 'FeatureCollection', features: fs });
+    WK.bus.emit('mess', { an: true, laenge: messLaenge(), n: S.mess.punkte.length });
+  }
+  function messLeeren() { S.mess.punkte = []; if (S.map.getSource('mess')) S.map.getSource('mess').setData({ type: 'FeatureCollection', features: [] }); WK.bus.emit('mess', { an: S.mess.an, laenge: 0, n: 0 }); }
   function zustand() { const c = S.map.getCenter(); return { lng: +c.lng.toFixed(5), lat: +c.lat.toFixed(5), zoom: +S.map.getZoom().toFixed(2), bearing: +S.map.getBearing().toFixed(1), pitch: +S.map.getPitch().toFixed(1) }; }
   function ansicht(z) { if (!z) return; S.map.jumpTo({ center: [z.lng, z.lat], zoom: z.zoom, bearing: z.bearing || 0, pitch: z.pitch || 0 }); }
   function bboxAnsicht() { const b = S.map.getBounds(); return [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()]; }
@@ -272,6 +295,7 @@ WK.karte = (() => {
   return {
     S, erzeugen, setVariable, setModus, setFilter, setKategorieAus, kategorieAus, setLabels, setKontext, setPreset, waehlen,
     nachbarnZeigen, pinsSetzen, fokus, fitLK, zustand, ansicht, bboxAnsicht, praedikat, sichtbareIndizes, skalaNeu, anwenden, basisFilter,
+    messen, messLeeren, get messAn() { return S.mess.an; },
     get map() { return S.map; }, get variable() { return S.variable; }, get meta() { return S.meta; }, get skala() { return S.skala; },
     get preset() { return S.preset; }, get auswahl() { return S.auswahl; }, get modus() { return S.modus; }, get kontext() { return S.kontext; },
     get kontextLabel() { return S.kontextLabel; }, get lwVorgabe() { return S.lwVorgabe; }, get bereit() { return S.bereit; }, get labels() { return S.labels; },
