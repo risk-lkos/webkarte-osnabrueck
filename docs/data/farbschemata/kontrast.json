@@ -1,0 +1,51 @@
+{
+ "basis": "arbeit",
+ "beschreibung": "Paletten der Arbeit, staerker abgeschnitten und mit Gamma 0,7, damit niedrige Werte weiter auseinanderliegen.",
+ "id": "kontrast",
+ "name": "Kontrast (gespreizt)",
+ "rollen": {
+  "compound": {
+   "gamma": 0.7,
+   "hi": 1.0,
+   "lo": 0.35,
+   "palette": "Purples",
+   "umkehren": false
+  },
+  "coverage": {
+   "gamma": 0.7,
+   "hi": 1.0,
+   "lo": 0.35,
+   "palette": "YlGn",
+   "umkehren": false
+  },
+  "fluvial": {
+   "gamma": 0.7,
+   "hi": 1.0,
+   "lo": 0.35,
+   "palette": "GnBu",
+   "umkehren": false
+  },
+  "heat": {
+   "gamma": 0.7,
+   "hi": 1.0,
+   "lo": 0.35,
+   "palette": "YlOrRd",
+   "umkehren": false
+  },
+  "importance": {
+   "gamma": 0.7,
+   "hi": 0.95,
+   "lo": 0.35,
+   "palette": "Greys",
+   "umkehren": false
+  },
+  "pluvial": {
+   "gamma": 0.7,
+   "hi": 1.0,
+   "lo": 0.35,
+   "palette": "Blues",
+   "umkehren": false
+  }
+ },
+ "version": 1
+}

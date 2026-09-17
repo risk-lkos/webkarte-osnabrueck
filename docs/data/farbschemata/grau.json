@@ -1,0 +1,51 @@
+{
+ "basis": "arbeit",
+ "beschreibung": "Alle Rollen als Grauskala fuer Schwarz-Weiss-Druck.",
+ "id": "grau",
+ "name": "Graustufen (Druck)",
+ "rollen": {
+  "compound": {
+   "gamma": 1.0,
+   "hi": 1.0,
+   "lo": 0.2,
+   "palette": "Greys",
+   "umkehren": false
+  },
+  "coverage": {
+   "gamma": 1.0,
+   "hi": 1.0,
+   "lo": 0.2,
+   "palette": "Greys",
+   "umkehren": false
+  },
+  "fluvial": {
+   "gamma": 1.0,
+   "hi": 1.0,
+   "lo": 0.2,
+   "palette": "Greys",
+   "umkehren": false
+  },
+  "heat": {
+   "gamma": 1.0,
+   "hi": 1.0,
+   "lo": 0.2,
+   "palette": "Greys",
+   "umkehren": false
+  },
+  "importance": {
+   "gamma": 1.0,
+   "hi": 1.0,
+   "lo": 0.2,
+   "palette": "Greys",
+   "umkehren": false
+  },
+  "pluvial": {
+   "gamma": 1.0,
+   "hi": 1.0,
+   "lo": 0.2,
+   "palette": "Greys",
+   "umkehren": false
+  }
+ },
+ "version": 1
+}

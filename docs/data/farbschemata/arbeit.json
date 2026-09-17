@@ -1,0 +1,342 @@
+{
+ "beschreibung": "Farben und Linienbreiten der Abbildungen der Arbeit, aus abb_helfer.py abgeleitet.",
+ "breiten": {
+  "betroffen_fl": 1.0,
+  "cover_frac": 1.8,
+  "dv_max": 1.6,
+  "flut_anteil": 1.6,
+  "hazard_klasse": {
+   "H1": 0.5,
+   "H2": 0.62,
+   "H3": 0.74,
+   "H4": 0.86,
+   "H5": 0.98,
+   "H6": 1.1,
+   "querbauwerk": 0.8
+  },
+  "heat_pct": 1.4,
+  "hitze_pct": 2.0,
+  "imp_pct": 1.1,
+  "imp_pct100": 1.1,
+  "importance_s": 1.1,
+  "klasse": {
+   "gering": 0.6,
+   "hoch": 1.3,
+   "inaktiv": 0.3,
+   "kritisch": 2.4,
+   "moderat": 0.9,
+   "sehr hoch": 1.8
+  },
+  "kontext": 0.3,
+  "kontext_importance": 0.4,
+  "lst_p90_mean": 1.4,
+  "mhn_bf": {
+   "1": 1.5,
+   "2": 2.2,
+   "3": 2.9
+  },
+  "multi_hazard_n": {
+   "0": 0.3,
+   "1": 1.5,
+   "2": 2.2,
+   "3": 2.9
+  },
+  "netz_dunkel": 0.5,
+  "standard": 1.4,
+  "stark_pct": 2.0,
+  "stark_pct_h": 2.0,
+  "tiefe_max_m": 1.6,
+  "tiefe_repr_fl": 1.8,
+  "ufl_m": 1.8,
+  "vi_pct": 1.6,
+  "vi_pct_compound": 2.0,
+  "vi_pct_compound_heat": 2.0,
+  "vi_pct_fluvial": 1.8,
+  "vi_pct_fluvial_voll": 1.8,
+  "vi_pct_heat": 1.4,
+  "vi_pct_heat_v2": 1.4,
+  "vi_pct_heat_v3": 1.4,
+  "vi_pct_heat_v4": 1.4,
+  "vi_roh": 1.6,
+  "vi_roh_compound": 2.0,
+  "vi_roh_fluvial_nb": 1.8
+ },
+ "id": "arbeit",
+ "kategorien": {
+  "baulast": {
+   "farben": {
+    "autobahn": "#1f78b4",
+    "bundesstrasse": "#e31a1c",
+    "gemeindestrasse": "#9e9e9e",
+    "kreisstrasse": "#e8c000",
+    "landesstrasse": "#ff7f00"
+   }
+  },
+  "beschattung": {
+   "abgeleitet": "coverage",
+   "werte": [
+    "unbeschattet",
+    "gering",
+    "mittel",
+    "hoch"
+   ]
+  },
+  "betroffen_fl": {
+   "farben": {
+    "1": "#08589e"
+   }
+  },
+  "fluvial_status": {
+   "farben": {
+    "Tiefe HQextrem": "#08589e",
+    "nur Ausdehnung": "#7bccc4"
+   }
+  },
+  "h_klasse": {
+   "abgeleitet": "fluvial",
+   "werte": [
+    "H2",
+    "H3",
+    "H4",
+    "H5",
+    "H6"
+   ]
+  },
+  "h_klasse_fl": {
+   "abgeleitet": "fluvial",
+   "werte": [
+    "H2",
+    "H3",
+    "H4",
+    "H5",
+    "H6"
+   ]
+  },
+  "hazard_klasse": {
+   "abgeleitet": "pluvial",
+   "extra": {
+    "querbauwerk": "#c8c8c8"
+   },
+   "werte": [
+    "H1",
+    "H2",
+    "H3",
+    "H4",
+    "H5",
+    "H6"
+   ]
+  },
+  "highway": {
+   "farben": {
+    "living_street": "#cab2d6",
+    "motorway": "#1f78b4",
+    "motorway_link": "#a6cee3",
+    "primary": "#ff7f00",
+    "primary_link": "#fdbf6f",
+    "residential": "#9e9e9e",
+    "road": "#000000",
+    "secondary": "#e8c000",
+    "secondary_link": "#fff3b0",
+    "tertiary": "#33a02c",
+    "tertiary_link": "#b2df8a",
+    "trunk": "#e31a1c",
+    "trunk_link": "#fb9a99",
+    "unclassified": "#6a3d9a"
+   }
+  },
+  "klasse": {
+   "farben": {
+    "gering": "#238b45",
+    "hoch": "#e6550d",
+    "inaktiv": "#c8c8c8",
+    "kritisch": "#6a51a3",
+    "moderat": "#e8c000",
+    "sehr hoch": "#cb181d"
+   }
+  },
+  "mhn_bf": {
+   "farben": {
+    "1": "#fdbf6f",
+    "2": "#ff7f00",
+    "3": "#e31a1c"
+   }
+  },
+  "multi_hazard_n": {
+   "farben": {
+    "0": "#c8c8c8",
+    "1": "#fdbf6f",
+    "2": "#ff7f00",
+    "3": "#e31a1c"
+   }
+  },
+  "robust_n": {
+   "abgeleitet": "heat",
+   "werte": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4"
+   ]
+  },
+  "robustheit": {
+   "abgeleitet": "pluvial",
+   "werte": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4"
+   ]
+  },
+  "surface_class": {
+   "farben": {
+    "asphalt": "#555555",
+    "befestigt_unspez": "#bdbdbd",
+    "concrete": "#9ecae1",
+    "pflaster": "#d95f02",
+    "sonstig": "#e7298a",
+    "ungebunden": "#a6761d"
+   }
+  },
+  "vi_band": {
+   "abgeleitet": "fluvial",
+   "werte": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4"
+   ]
+  }
+ },
+ "kein_wert": "rgba(0,0,0,0)",
+ "kontext": {
+  "auswahl": "#d95f02",
+  "gemeinden": "#8a8a8a",
+  "gewaesser": "#1f78b4",
+  "gitter": "#c4c4c4",
+  "grau": "#cccccc",
+  "halo": "#ffffff",
+  "hintergrund": "#ffffff",
+  "inset_land": "#ececec",
+  "inset_rand": "#8a8a8a",
+  "netz_dunkel": "#222222",
+  "pin": [
+   "#1b9e77",
+   "#7570b3",
+   "#e7298a"
+  ],
+  "risiko": {
+   "blau": "#1f78b4",
+   "hellorange": "#fdbf6f",
+   "neutral": "#c8c8c8",
+   "orange": "#ff7f00",
+   "rot": "#e31a1c"
+  },
+  "umriss": "#333333",
+  "warm": "#d95f02"
+ },
+ "name": "Arbeit (abb_helfer.py)",
+ "quintile": [
+  {
+   "farben": [
+    "#e5f5e0",
+    "#238b45"
+   ],
+   "kz": "Q1",
+   "lw": 0.6,
+   "semantik": "gering",
+   "spanne": "0–20 %"
+  },
+  {
+   "farben": [
+    "#fff3b0",
+    "#e8c000"
+   ],
+   "kz": "Q2",
+   "lw": 0.9,
+   "semantik": "mäßig",
+   "spanne": "20–40 %"
+  },
+  {
+   "farben": [
+    "#fdd0a2",
+    "#e6550d"
+   ],
+   "kz": "Q3",
+   "lw": 1.3,
+   "semantik": "mittel",
+   "spanne": "40–60 %"
+  },
+  {
+   "farben": [
+    "#fcbba1",
+    "#cb181d"
+   ],
+   "kz": "Q4",
+   "lw": 1.8,
+   "semantik": "hoch",
+   "spanne": "60–80 %"
+  },
+  {
+   "farben": [
+    "#dadaeb",
+    "#6a51a3"
+   ],
+   "kz": "Q5",
+   "lw": 2.4,
+   "semantik": "sehr hoch",
+   "spanne": "80–100 %"
+  }
+ ],
+ "rollen": {
+  "compound": {
+   "gamma": 1.0,
+   "hi": 1.0,
+   "lo": 0.15,
+   "palette": "Purples",
+   "umkehren": false
+  },
+  "coverage": {
+   "gamma": 1.0,
+   "hi": 1.0,
+   "lo": 0.15,
+   "palette": "YlGn",
+   "umkehren": false
+  },
+  "fluvial": {
+   "gamma": 1.0,
+   "hi": 1.0,
+   "lo": 0.15,
+   "palette": "GnBu",
+   "umkehren": false
+  },
+  "heat": {
+   "gamma": 1.0,
+   "hi": 1.0,
+   "lo": 0.12,
+   "palette": "YlOrRd",
+   "umkehren": false
+  },
+  "importance": {
+   "gamma": 1.0,
+   "hi": 0.95,
+   "lo": 0.25,
+   "palette": "Greys",
+   "umkehren": false
+  },
+  "pluvial": {
+   "gamma": 1.0,
+   "hi": 1.0,
+   "lo": 0.15,
+   "palette": "Blues",
+   "umkehren": false
+  }
+ },
+ "stufen_bereich": [
+  0.2,
+  1.0
+ ],
+ "version": 1
+}

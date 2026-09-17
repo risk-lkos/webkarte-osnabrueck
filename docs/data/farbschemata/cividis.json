@@ -1,0 +1,51 @@
+{
+ "basis": "arbeit",
+ "beschreibung": "Cividis ist fuer Deuteranopie/Protanopie optimiert; alle Gefahren nutzen dieselbe Skala.",
+ "id": "cividis",
+ "name": "Cividis (Farbfehlsichtigkeit)",
+ "rollen": {
+  "compound": {
+   "gamma": 1.0,
+   "hi": 1.0,
+   "lo": 0.0,
+   "palette": "cividis",
+   "umkehren": false
+  },
+  "coverage": {
+   "gamma": 1.0,
+   "hi": 1.0,
+   "lo": 0.0,
+   "palette": "cividis",
+   "umkehren": false
+  },
+  "fluvial": {
+   "gamma": 1.0,
+   "hi": 1.0,
+   "lo": 0.0,
+   "palette": "cividis",
+   "umkehren": false
+  },
+  "heat": {
+   "gamma": 1.0,
+   "hi": 1.0,
+   "lo": 0.0,
+   "palette": "cividis",
+   "umkehren": false
+  },
+  "importance": {
+   "gamma": 1.0,
+   "hi": 0.95,
+   "lo": 0.25,
+   "palette": "Greys",
+   "umkehren": false
+  },
+  "pluvial": {
+   "gamma": 1.0,
+   "hi": 1.0,
+   "lo": 0.0,
+   "palette": "cividis",
+   "umkehren": false
+  }
+ },
+ "version": 1
+}

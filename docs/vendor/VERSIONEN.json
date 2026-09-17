@@ -1,0 +1,51 @@
+{
+ "zeitpunkt": "2026-09-17 20:25",
+ "versionen": {
+  "maplibre-gl": "5.24.0",
+  "proj4": "2.22.0",
+  "qrcodejs": "1.0.0",
+  "glyphs": "fonts.openmaptiles.org (Open Sans, OFL)"
+ },
+ "dateien": {
+  "maplibre-gl.js": {
+   "quelle": "https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.0/dist/maplibre-gl.js",
+   "bytes": 1056837,
+   "sha256": "45a9b07a9189ce56054c620a947ccf41e291e58c95e9b61533b740aaa65ee5cb"
+  },
+  "maplibre-gl.css": {
+   "quelle": "https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.0/dist/maplibre-gl.css",
+   "bytes": 70024,
+   "sha256": "ab1e70d59ec40465bae7e7030da2f3ccf28133fd502e62bd598eefbadfd7a732"
+  },
+  "proj4.js": {
+   "quelle": "https://cdn.jsdelivr.net/npm/proj4@2.22.0/dist/proj4.js",
+   "bytes": 129733,
+   "sha256": "af7df653d91ea591f33d26fb958990bbd3071b2db644a4edaba441cc9861a474"
+  },
+  "qrcode.min.js": {
+   "quelle": "https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js",
+   "bytes": 19927,
+   "sha256": "c541ef06327885a8415bca8df6071e14189b4855336def4f36db54bde8484f36"
+  },
+  "glyphs/Open Sans Regular/0-255.pbf": {
+   "quelle": "https://fonts.openmaptiles.org/Open%20Sans%20Regular/0-255.pbf",
+   "bytes": 74696,
+   "sha256": "0c8bdb284f2ad6f69bbb434a0208393f3a517bc8bf7ed1eccc4ac4791ebbcbfe"
+  },
+  "glyphs/Open Sans Regular/256-511.pbf": {
+   "quelle": "https://fonts.openmaptiles.org/Open%20Sans%20Regular/256-511.pbf",
+   "bytes": 66481,
+   "sha256": "9962ad38d064edbeb226a6c7dcf1d58e7678508a805f980d2fe81bb3178ba68a"
+  },
+  "glyphs/Open Sans Bold/0-255.pbf": {
+   "quelle": "https://fonts.openmaptiles.org/Open%20Sans%20Bold/0-255.pbf",
+   "bytes": 80025,
+   "sha256": "b3a5c066b416d69012009e3446ddd9544607ceb7355734922635521b6834c4d8"
+  },
+  "glyphs/Open Sans Bold/256-511.pbf": {
+   "quelle": "https://fonts.openmaptiles.org/Open%20Sans%20Bold/256-511.pbf",
+   "bytes": 70900,
+   "sha256": "910a9d831040b8accfc9d70cf235dd4822e59a24e0d5e1736cee5d501c3d17a7"
+  }
+ }
+}

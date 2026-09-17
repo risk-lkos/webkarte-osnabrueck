@@ -1,0 +1,37 @@
+{
+ "attribution": "Heiße Tage (Tmax ≥ 30 °C) 2016–2025, DWD-Rasterdaten; eigene Aggregation.",
+ "aufloesung_m": 250.0,
+ "breite_px": 478,
+ "coordinates": [
+  [
+   7.509127,
+   52.761223
+  ],
+  [
+   8.582614,
+   52.761223
+  ],
+  [
+   8.582614,
+   51.987979
+  ],
+  [
+   7.509127,
+   51.987979
+  ]
+ ],
+ "datei": "hot_days_3857.png",
+ "einheit": "Tage",
+ "hoehe_px": 564,
+ "label": "Heiße Tage pro Jahr (2016–2025)",
+ "name": "hot_days",
+ "perzentile": [
+  2,
+  98
+ ],
+ "perzentile_bezug": "Ausschnitt",
+ "quelle": "hot_days_2016_2025_25832.tif",
+ "rolle": "heat",
+ "vmax": 11.8,
+ "vmin": 9.2
+}

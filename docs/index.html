@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="Interaktive Karte der Multi-Hazard-Vulnerabilität des Straßennetzes im Landkreis Osnabrück (Masterarbeit): Kanten anklicken, Kennwerte lesen, Karten exportieren.">
+<title>Straßennetz Landkreis Osnabrück – interaktive Karte</title>
+<link rel="stylesheet" href="./vendor/maplibre-gl.css">
+<link rel="stylesheet" href="./css/app.css">
+</head>
+<body>
+<div id="app" class="app">
+  <header id="kopf" class="kopf">
+    <button id="btn-seite" class="icon" title="Seitenleiste ein-/ausblenden" aria-label="Seitenleiste">☰</button>
+    <div class="titel">
+      <strong>Straßennetz Landkreis Osnabrück</strong>
+      <span>Multi-Hazard-Vulnerabilität · interaktive Karte zur Masterarbeit</span>
+    </div>
+    <div class="suche">
+      <input id="suche" type="search" placeholder="Straße, Nummer (B 68), Gemeinde … (F)" autocomplete="off" spellcheck="false">
+      <div id="suche-treffer" class="treffer" hidden></div>
+    </div>
+    <nav class="knoepfe">
+      <button id="btn-farben" title="Farbschema und Farbeditor (C)">Farben</button>
+      <button id="btn-export" title="Karte exportieren (E)">Export</button>
+      <button id="btn-rangliste" title="Rangliste und Datenexport (R)">Rangliste</button>
+      <button id="btn-hilfe" title="Hilfe und Tastaturkürzel (?)">Hilfe</button>
+      <button id="btn-ueber" title="Über diese Karte, Datenquellen, Lizenzen">Über</button>
+    </nav>
+  </header>
+
+  <aside id="seite" class="seite" aria-label="Steuerung"></aside>
+
+  <main id="mitte" class="mitte">
+    <div id="karte" class="karte"></div>
+    <div id="legende" class="legende" aria-live="polite"></div>
+    <div id="tooltip" class="tooltip" hidden></div>
+    <div id="status" class="status"></div>
+    <div id="laden" class="laden">
+      <div class="laden-box">
+        <div class="laden-text" id="laden-text">Lade Daten …</div>
+        <progress id="laden-progress" max="100" value="0"></progress>
+      </div>
+    </div>
+  </main>
+
+  <aside id="panel" class="panel" aria-label="Kantendetails">
+    <div class="panel-kopf">
+      <strong id="panel-titel">Keine Kante gewählt</strong>
+      <div class="panel-knoepfe">
+        <button id="btn-detail-pin" title="Kante für den Vergleich anpinnen (P)">Pin</button>
+        <button id="btn-detail-kopieren" title="Werte als Markdown-Tabelle kopieren">Kopieren</button>
+        <button id="btn-detail-link" title="Link zu dieser Kante kopieren">Link</button>
+        <button id="btn-detail-popout" title="Detailkarte in eigenem Fenster öffnen">⧉</button>
+        <button id="btn-detail-schliessen" title="Panel schließen (Esc)">✕</button>
+      </div>
+    </div>
+    <div id="detailkarte-wrap" class="detailkarte-wrap">
+      <div id="detailkarte" class="detailkarte"></div>
+      <div class="detailkarte-leiste">
+        <label>Hintergrund <select id="detail-basemap"></select></label>
+        <label><input type="checkbox" id="detail-folgen" checked> folgt der Auswahl</label>
+        <button id="btn-detail-zoom" title="Hauptkarte auf die Kante zoomen">Zoom</button>
+      </div>
+    </div>
+    <div id="kante-info" class="kante-info">
+      <p class="hinweis">Klicke auf eine Kante in der Karte, um ihre Kennwerte zu sehen. Mit gedrückter Maus über Kanten fahren zeigt den Wert der aktuellen Variablen.</p>
+    </div>
+  </aside>
+</div>
+
+<div id="dialog" class="dialog" hidden>
+  <div class="dialog-box" role="dialog" aria-modal="true">
+    <div class="dialog-kopf"><strong id="dialog-titel"></strong><button id="dialog-schliessen" class="icon" title="Schließen (Esc)">✕</button></div>
+    <div id="dialog-inhalt" class="dialog-inhalt"></div>
+  </div>
+</div>
+
+<noscript><p class="noscript">Diese Karte benötigt JavaScript.</p></noscript>
+
+<script src="./vendor/maplibre-gl.js"></script>
+<script src="./vendor/proj4.js"></script>
+<script src="./vendor/qrcode.min.js"></script>
+<script src="./js/config.js"></script>
+<script src="./js/bus.js"></script>
+<script src="./js/util.js"></script>
+<script src="./js/daten.js"></script>
+<script src="./js/stil.js"></script>
+<script src="./js/klassifikation.js"></script>
+<script src="./js/basemaps.js"></script>
+<script src="./js/karte.js"></script>
+<script src="./js/legende.js"></script>
+<script src="./js/panel.js"></script>
+<script src="./js/detailkarte.js"></script>
+<script src="./js/layers.js"></script>
+<script src="./js/filter.js"></script>
+<script src="./js/suche.js"></script>
+<script src="./js/histogramm.js"></script>
+<script src="./js/rangliste.js"></script>
+<script src="./js/vergleich.js"></script>
+<script src="./js/farben.js"></script>
+<script src="./js/export_png.js"></script>
+<script src="./js/export_svg.js"></script>
+<script src="./js/layout_arbeit.js"></script>
+<script src="./js/urlstate.js"></script>
+<script src="./js/hilfe.js"></script>
+<script src="./js/ui.js"></script>
+<script src="./js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+# Web-Karte: Straßennetz Landkreis Osnabrück (Multi-Hazard-Vulnerabilität)
+
+Interaktive Karte zur Masterarbeit. Sie zeigt dieselben Kennwerte wie die Abbildungen des
+Ergebniskapitels, aber je Kante abrufbar: 72.238 Kanten des Analysenetzes mit Link Importance,
+Starkregen (H-Stufen, Verschneidungsindex), Flusshochwasser (HQextrem), Hitze (LST, thermischer
+Index), Compound-Indizes und Belastungsprofil. Alle Werte stammen unverändert aus den
+Ergebnisdateien der Arbeitspakete; der Build liest nur.
+
+## Ordner
+
+| Pfad | Inhalt |
+|---|---|
+| `build_webkarte.py` + `webkarte_bau/` | Build: GeoPackages/TIFs → `docs/data/*` (Kanten kompakt, Attributtabellen, Kontextlayer, Raster-PNGs, `meta.json`, Farbschemata), Prüfsummen, Protokoll E20 |
+| `fetch_vendor.py` | lädt MapLibre GL JS 5.24.0, proj4js 2.22.0, qrcodejs und Open-Sans-Glyphen nach `docs/vendor/` (gepinnt, SHA-256 in `VERSIONEN.json`) |
+| `bundle_offline.py` | baut `dist/webkarte_offline.html` (eine Datei, läuft per Doppelklick ohne Server) |
+| `docs/` | die Website (GitHub-Pages-Wurzel): `index.html`, `css/`, `js/` (klassische Skripte unter dem Namensraum `WK`), `data/`, `vendor/` |
+
+## Build und Vorschau
+
+```powershell
+& "C:\Users\slidd\miniforge3\envs\ox\python.exe" webkarte\fetch_vendor.py          # einmalig
+& "C:\Users\slidd\miniforge3\envs\ox\python.exe" webkarte\build_webkarte.py        # Daten erzeugen
+& "C:\Users\slidd\miniforge3\envs\ox\python.exe" -m http.server 8765 --directory webkarte\docs --bind 127.0.0.1
+```
+
+Dann `http://127.0.0.1:8765/` öffnen. Optionen des Builds: `--protokoll` (schreibt
+`ergaenzungen/protokolle/E20_webkarte_<datum>_v<N>.md` und eine Laufregister-Zeile; nur für den
+Abgabestand), `--ohne-raster`, `--nur-farben` (nur Paletten und `farbschemata/arbeit.json` neu,
+z. B. nach Änderungen an `abb_helfer.py`). Eigene Farbschemata werden nie überschrieben.
+
+Offline-Datei: `bundle_offline.py` → `dist/webkarte_offline.html` (ca. 16 MB). Ohne Internet
+zeigt sie keinen Kartenhintergrund („weiß"), alles andere funktioniert.
+
+## Deployment (GitHub Pages)
+
+1. `git init` in diesem Ordner (nur dieser Ordner wird versioniert), Identität lokal setzen,
+   `.gitignore` ist vorhanden (`dist/`, `__pycache__/`).
+2. Auf github.com ein öffentliches Repository anlegen, `git remote add origin …`, `git push -u origin main`.
+3. Settings → Pages → „Deploy from a branch", Branch `main`, Ordner `/docs`.
+4. `docs/robots.txt` und `<meta name="robots" content="noindex">` halten die Seite aus Suchmaschinen.
+
+## Farbschemata (austauschbare Farben)
+
+Farben liegen nicht im Code, sondern in `docs/data/farbschemata/*.json`; `paletten.json` enthält
+matplotlib-Colormaps als 33 Stops. `arbeit.json` wird bei jedem Build aus `abb_helfer.py`
+abgeleitet und reproduziert die Abbildungen der Arbeit. Ein Schema hat:
+
+- `rollen`: je Farbrolle (`pluvial`, `fluvial`, `heat`, `compound`, `importance`, `coverage`)
+  entweder `{"palette": "Blues", "lo": 0.15, "hi": 1.0, "umkehren": false, "gamma": 1.0}`
+  (wie `abb_helfer._trunc`) oder freie Stops `{"stops": [[0, "#…"], [1, "#…"]]}`;
+- `kategorien`: je kategorialer Spalte explizite Farben `{"farben": {"H1": "#…"}}` oder
+  `{"abgeleitet": "pluvial", "werte": ["H1", …], "extra": {"querbauwerk": "#c8c8c8"}}`
+  (Stufen wie `stufenfarben`, linspace 0,20–1,0);
+- `quintile` (Zweifarb-Rampen Q1–Q5 mit Linienbreiten), `breiten` (je Variable oder Kategorie),
+  `kontext` (Kontextnetz, Kreisgrenze, Auswahl, Halo, Hintergrund, Gitter, Pins), `kein_wert`.
+
+Fehlende Einträge werden aus `arbeit` ergänzt, fehlerhafte Dateien fallen auf `arbeit` zurück.
+Der Farbeditor in der App (Taste `C`) schreibt dasselbe Format (Export/Import als JSON,
+Speichern im Browser). Karte, Legende, Detailkarte und alle Exporte lesen ausschließlich aus
+dem aktiven Schema (`WK.stil`).
+
+## Datenformat
+
+`kanten.json` (Format `kanten-kompakt-1`): Feature-id = `edge_id` aus Layer 04, Koordinaten als
+Ganzzahlen (Grad × 10^5), erster Punkt absolut, weitere als Differenz; Attribute spaltenweise,
+dünn besetzte Spalten als `{"i": [Indizes], "w": [Werte]}`, Textspalten mit ≤ 64 Werten als Codes.
+`attr_<gruppe>.json` (Format `tabelle-kompakt-1`) ergänzen die Kennwerte je Gefahr; der Browser
+verknüpft sie über die id (`WK.daten`). `kanten_keys.csv` verbindet id und Schlüssel `u|v|osmid`.
+
+## Lizenzen
+
+Straßennetz © OpenStreetMap-Mitwirkende (ODbL). Hintergrundkarten: TopPlusOpen © BKG
+(dl-de/by-2-0), Luftbild DOP20 © LGLN (CC BY 4.0), Sentinel-2 cloudless by EOX (CC BY-NC-SA 4.0),
+OpenStreetMap (ODbL), OpenTopoMap (CC BY-SA 3.0). Gefahrendaten: BKG-Hinweiskarte Starkregen
+(© GeoBasis-DE/BKG), Hochwassergefahrenkarten HWRM-RL (© NLWKN, dl-de/by-2.0), Landsat 8/9
+(USGS/NASA), Copernicus HRL (© European Union). Bibliotheken: MapLibre GL JS (BSD-3), proj4js (MIT),
+qrcodejs (MIT), Open Sans (OFL).

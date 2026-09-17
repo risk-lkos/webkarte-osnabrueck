@@ -1,0 +1,5 @@
+dist/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+Thumbs.db
