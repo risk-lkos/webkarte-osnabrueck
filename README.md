@@ -63,6 +63,24 @@ Menü zurück; CSV und GeoJSON exportieren die gefilterten Kanten. „Straßenzu
 auf alle Kanten derselben Nummer und öffnet eine Auswertung mit Max, Min und Median der aktuellen
 Variable als Sprungziele.
 
+## Anleitung, Glossar und ?-Knöpfe
+
+„Anleitung" (A) startet eine geführte Tour durch alle Bereiche; beim ersten Besuch startet sie
+von selbst (Merker `wk.tour.gesehen` im Browser). Die ?-Knöpfe an Abschnitten, Gruppen, Variablen,
+Bedienelementen, in der Legende und an jeder Zeile der Kantendetails öffnen eine Kurzerklärung mit
+verwandten Begriffen; das ganze Glossar steht unter „Hilfe". Alle Texte liegen als Daten in
+`docs/data/glossar.json`:
+
+- `begriffe`: `kurz` (Erklärtext, von Hand gepflegt), `glossar` (fett gesetzter Begriff in
+  `Glossar.md` der Arbeit), `lang` (dessen Wortlaut), `siehe` (verwandte Begriffe);
+- `gruppen`, `variablen` (Variablen und Panel-Spalten; ohne eigenes `kurz` gilt die Beschreibung
+  aus `meta.json`), `bedienung` (Abschnitte und Bedienelemente; auch die Texte der Tour).
+
+`build_webkarte.py --glossar` liest den Wortlaut neu aus `Glossar.md` ein (Pfad in
+`webkarte_bau/glossar.py`, Querverweise wie `[@tbl:…]` werden entfernt) und lässt alles andere
+unangetastet; jeder volle Build tut dasselbe. Ist `Glossar.md` nicht erreichbar, bleibt der
+zuletzt eingelesene Wortlaut stehen.
+
 ## Meldungen (GitHub-Issues)
 
 „Melden" (M, auch im Panel je Kante) öffnet ein Formular für Fehler, Datenauffälligkeiten, Wünsche

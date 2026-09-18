@@ -10,6 +10,8 @@ Aufruf (immer als Skriptdatei, nie als -c-Argument):
 --ohne-raster  ueberspringt die Raster-Overlays (schneller Entwicklungslauf).
 --nur-farben   erzeugt nur paletten.json und farbschemata/arbeit.json neu (z. B. nach
                Aenderungen an abb_helfer.py); eigene Schemata bleiben unangetastet.
+--glossar      liest nur den Wortlaut der Begriffe aus Glossar.md der Arbeit nach
+               docs/data/glossar.json ein (Feld lang); die Kurztexte bleiben unangetastet.
 
 Gelesen wird ausschliesslich; die Ergebnisdateien der Arbeitspakete werden nicht veraendert.
 """
@@ -27,7 +29,7 @@ if str(HIER) not in sys.path:
     sys.path.insert(0, str(HIER))
 
 from webkarte_bau import quellen as Q          # noqa: E402  (setzt Umgebung, laedt abb_helfer)
-from webkarte_bau import kanten, kontext, raster, stil, meta, schreiben, pruefen  # noqa: E402
+from webkarte_bau import kanten, kontext, raster, stil, meta, schreiben, pruefen, glossar  # noqa: E402
 
 KANTEN_MAX_MB = 8.0
 GESAMT_MAX_MB = 16.0
@@ -110,9 +112,18 @@ def main(argv=None) -> int:
     ap.add_argument("--nur-farben", action="store_true")
     ap.add_argument("--ohne-raster", action="store_true")
     ap.add_argument("--protokoll", action="store_true")
+    ap.add_argument("--glossar", action="store_true",
+                    help="nur den Wortlaut aus Glossar.md der Arbeit nach docs/data/glossar.json einlesen")
     args = ap.parse_args(argv)
     t0 = time.time()
     Q.ordner_anlegen()
+
+    g_info = glossar.einlesen()
+    _log(t0, f"Glossar: {g_info['uebernommen']} Begriffe aus Glossar.md uebernommen"
+             + (f", nicht gefunden: {g_info['fehlend']}" if g_info["fehlend"] else "")
+             + ("" if g_info["vorhanden"] else " (Glossar.md nicht erreichbar, Wortlaut bleibt wie er ist)"))
+    if args.glossar:
+        return 0
 
     stil_info = stil.schreiben_alle()
     _log(t0, f"Farben: Paletten {len(stil_info['paletten'])}, Schemata {stil_info['schemata']}, "

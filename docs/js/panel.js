@@ -113,10 +113,10 @@ WK.panel = (() => {
     for (const g of meta.gruppen) {
       const zeilen = Object.entries(meta.spalten).filter(([sp, def]) => def.gruppe === g.id && p[sp] !== undefined && sp !== 'name' && sp !== 'ref');
       if (!zeilen.length) continue;
-      el.appendChild(U.el('h4', {}, U.el('span', { class: 'farbe-punkt', style: { background: WK.stil.rampe(g.rolle || 'pluvial').farbe(0.8) } }), g.label));
+      el.appendChild(U.el('h4', {}, U.el('span', { class: 'farbe-punkt', style: { background: WK.stil.rampe(g.rolle || 'pluvial').farbe(0.8) } }), g.label, WK.glossar ? WK.glossar.knopf({ gruppe: g.id }) : null));
       const tab = U.el('table');
       for (const [sp, def] of zeilen) {
-        const tr = U.el('tr', { class: sp === v ? 'hervor' : '' }, U.el('td', { title: sp }, def.label), U.el('td', { class: 'wert' }, wertText(sp, p[sp])));
+        const tr = U.el('tr', { class: sp === v ? 'hervor' : '' }, U.el('td', { title: sp }, def.label, WK.glossar ? WK.glossar.knopf({ variable: sp }, { klasse: 'dezent' }) : null), U.el('td', { class: 'wert' }, wertText(sp, p[sp])));
         tab.appendChild(tr);
       }
       el.appendChild(tab);

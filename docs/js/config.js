@@ -7,6 +7,7 @@ WK.config = {
     meta: './data/meta.json',
     kanten: './data/kanten.json',
     paletten: './data/paletten.json',
+    glossar: './data/glossar.json',
     schemata: './data/farbschemata/',
     kontext: './data/kontext/',
     raster: './data/raster/',

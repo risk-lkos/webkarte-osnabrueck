@@ -71,9 +71,10 @@ WK.filter = (() => {
     const weg = U.el('button', { onclick: () => setBereich(null) }, '✕');
     S.ui.lo = lo; S.ui.hi = hi;
     wrap.appendChild(U.el('div', { class: 'klein' }, 'Wertebereich der aktuellen Variable (oder Bereich in der Legende ziehen):'));
-    wrap.appendChild(U.el('div', { class: 'zeile' }, lo, U.el('span', { class: 'klein' }, 'bis'), hi, setzen, weg));
+    wrap.appendChild(U.el('div', { class: 'zeile' }, lo, U.el('span', { class: 'klein' }, 'bis'), hi, setzen, weg, WK.glossar ? WK.glossar.knopf({ bedienung: 'filter_bereich' }) : null));
     // Flags
-    const flag = (key, label, title) => { const cb = U.el('input', { type: 'checkbox' }); cb.addEventListener('change', () => { S[key] = cb.checked; anwenden(); }); S.ui[key] = cb; return U.el('div', { class: 'zeile' }, U.el('label', { title: title || '' }, cb, ' ' + label)); };
+    const hk = key => (WK.glossar ? WK.glossar.knopf({ bedienung: key }) : null);
+    const flag = (key, label, title, hilfe) => { const cb = U.el('input', { type: 'checkbox' }); cb.addEventListener('change', () => { S[key] = cb.checked; anwenden(); }); S.ui[key] = cb; return U.el('div', { class: 'zeile' }, U.el('label', { title: title || '' }, cb, ' ' + label), hilfe ? hk(hilfe) : null); };
     // Top N (gesamt oder innerhalb einer Baulastebene)
     const topCb = U.el('input', { type: 'checkbox' }), topInp = U.el('input', { type: 'number', min: 1, max: 5000, value: 25, style: { width: '70px' } });
     const topKl = U.el('select', { title: 'Rang über das ganze Netz oder nur unter den Straßen einer Baulastebene' },
@@ -83,12 +84,12 @@ WK.filter = (() => {
     topKl.addEventListener('change', () => { if (topKl.value) topCb.checked = true; if (topCb.checked) topAnwenden(); });
     S.ui.topCb = topCb; S.ui.topInp = topInp; S.ui.topKl = topKl;
     wrap.appendChild(U.el('div', { class: 'zeile' }, U.el('label', { title: 'Nur die N Kanten mit den höchsten Werten der aktuellen Variable (wie die Top-25-Listen der Arbeit)' }, topCb, ' nur Top'), topInp, U.el('span', { class: 'klein' }, 'der Variable')));
-    wrap.appendChild(U.el('div', { class: 'zeile' }, U.el('span', { class: 'klein' }, 'Rang'), topKl));
+    wrap.appendChild(U.el('div', { class: 'zeile' }, U.el('span', { class: 'klein' }, 'Rang'), topKl, hk('filter_topn')));
     const markerCb = U.el('input', { type: 'checkbox', checked: S.topMarker });
     markerCb.addEventListener('change', () => { S.topMarker = markerCb.checked; U.ls('wk.topmarker', S.topMarker); markerNeu(); });
     wrap.appendChild(U.el('div', { class: 'zeile' }, U.el('label', { title: 'Kurze Kanten sind in der Übersicht kleiner als ein Pixel und würden verschwinden. Der Punkt am Kantenmittelpunkt trägt die Farbe der Kante und blendet ab Zoom 12 bis 14 aus.' }, markerCb, ' Top-Kanten in der Übersicht mit Punkt markieren')));
-    wrap.appendChild(flag('topDezil', 'nur oberstes Dezil (≥ P90 der Variable)', 'Spitzengruppe wie in der Arbeit'));
-    wrap.appendChild(flag('mhn2', 'nur Mehrfachbelastung (mhn_bf ≥ 2)', '106 Kanten mit mindestens zwei Gefahren im obersten Dezil'));
+    wrap.appendChild(flag('topDezil', 'nur oberstes Dezil (≥ P90 der Variable)', 'Spitzengruppe wie in der Arbeit', 'filter_dezil'));
+    wrap.appendChild(flag('mhn2', 'nur Mehrfachbelastung (mhn_bf ≥ 2)', '106 Kanten mit mindestens zwei Gefahren im obersten Dezil', 'filter_mhn'));
     wrap.appendChild(flag('ohneBruecken', 'Brücken und Tunnel ausblenden'));
     wrap.appendChild(flag('nurKreis', 'nur Kanten im Landkreis'));
     // Kategorien

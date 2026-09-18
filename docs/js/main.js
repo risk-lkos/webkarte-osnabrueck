@@ -29,6 +29,7 @@
       for (const ev of ['ansicht', 'variable', 'basemap']) WK.bus.on(ev, merken);
       WK.basemaps.verfuegbarkeitPruefen();
       laden.hidden = true;
+      if (WK.tour) WK.tour.autostart();       // beim ersten Besuch startet die Anleitung von selbst
       console.info(`Web-Karte bereit: ${WK.daten.anzahl} Kanten in ${((performance.now() - t0) / 1000).toFixed(1)} s`);
     });
   } catch (e) {

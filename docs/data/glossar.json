@@ -1,0 +1,909 @@
+{
+ "format": "glossar-1",
+ "hinweis": "kurz = Erklaertext der ?-Knoepfe (von Hand pflegen). glossar = fett gesetzter Begriff in Glossar.md der Arbeit; lang = dessen Wortlaut, wird mit build_webkarte.py --glossar neu eingelesen und nie von Hand geaendert. siehe = verwandte Begriffe. variablen gilt fuer Variablen und Panel-Spalten (Schluessel = Spaltenname); ohne eigenes kurz gilt die Beschreibung aus meta.json. bedienung = Bedienelemente (Schluessel = Abschnitts-id oder Name).",
+ "begriffe": {
+  "kante": {
+   "titel": "Kante",
+   "kurz": "Abschnitt des Straßennetzes zwischen zwei Knoten (Kreuzung, Einmündung oder Ende) aus OpenStreetMap. Die Kante ist die kleinste Einheit aller Kennwerte; das Analysenetz hat 72.238 Kanten.",
+   "siehe": [
+    "aktive_kante"
+   ]
+  },
+  "aktive_kante": {
+   "titel": "Aktive Kante",
+   "kurz": "Kante mit Link Importance größer als 0: Ihre Sperrung verlängert mindestens eine Verbindung zwischen den 129 Gemeindezentren. Das sind 4.212 Kanten. Nur für sie werden die Verschneidungsindizes gebildet; die übrigen erscheinen als graues Kontextnetz.",
+   "siehe": [
+    "link_importance",
+    "demand_nodes"
+   ]
+  },
+  "link_importance": {
+   "titel": "Link Importance",
+   "glossar": "Link Importance",
+   "kurz": "Maß für die Bedeutung einer Kante im Netz: Um wie viele Sekunden verlängert sich die Reisezeit im Mittel je Quelle-Ziel-Paar, wenn diese Kante gesperrt wird und alle kürzesten Wege neu berechnet werden. Hoch bei Kanten ohne gute Ausweichroute, über die viele Verbindungen laufen.",
+   "siehe": [
+    "demand_nodes",
+    "aktive_kante",
+    "cut_link",
+    "redundanz",
+    "site_exposure"
+   ],
+   "lang": "Netzwerktopologisches Vulnerabilitätsmaß nach Jenelius et al.: der mittlere Reisezeitanstieg je Quell-Ziel-Paar, der entsteht, wenn eine Kante gesperrt und die kürzesten Wege neu berechnet werden. Misst die kantenbezogene Bedeutung im Netz (fehlende Redundanz und Umwegkosten, V1; Bündelung kürzester Wege, V3) und ist von der nachfrageseitigen Site Exposure abzugrenzen (Jenelius et al. 2006)."
+  },
+  "demand_nodes": {
+   "titel": "Demand Nodes (Gemeindezentren)",
+   "glossar": "Demand Nodes",
+   "kurz": "Die 129 Gemeindezentren im Landkreis und in den Nachbarkreisen, die als Start- und Zielpunkte der Netzwerkanalyse dienen. Über alle Verbindungen zwischen ihnen wird die Link Importance gemittelt.",
+   "siehe": [
+    "link_importance"
+   ],
+   "lang": "Die geokodierten Gemeindezentren im Landkreis und den Nachbarkreisen, die als Quell- und Zielpunkte (Origin-Destination) der Netzwerkanalyse dienen. In dieser Arbeit 129 Standorte, erhoben über die Pendlerverflechtung der Bundesagentur für Arbeit; aus ihnen ergeben sich die gerichteten Quell-Ziel-Paare, über die die Link Importance gemittelt wird."
+  },
+  "cut_link": {
+   "titel": "Cut Link",
+   "glossar": "Cut Link",
+   "kurz": "Kante, deren Ausfall mindestens eine Verbindung vollständig trennt, weil es keine Ausweichroute gibt.",
+   "siehe": [
+    "link_importance",
+    "redundanz"
+   ],
+   "lang": "Kante, deren Ausfall mindestens ein Quell-Ziel-Paar vollständig trennt, sodass keine Ausweichroute mehr besteht. Wird als eigenes binäres Merkmal (V2) neben der Link Importance geführt (Jenelius et al. 2006)."
+  },
+  "redundanz": {
+   "titel": "Redundanz",
+   "glossar": "Redundanz (Redundancy)",
+   "kurz": "Verfügbarkeit von mehr als einer Route zwischen zwei Orten. Fehlt sie, steigt die Link Importance der verbleibenden Kante.",
+   "siehe": [
+    "link_importance",
+    "cut_link"
+   ],
+   "lang": "Verfügbarkeit von mehr als einer Route zwischen zwei Netzwerkknoten. Aktiv redundante Routen werden im Normalbetrieb genutzt; passiv redundante Routen werden nur im Störungsfall aktiviert (Snelder et al. 2012; Vodák et al. 2015; Rivera Royero et al. 2022)."
+  },
+  "site_exposure": {
+   "titel": "Site Exposure",
+   "glossar": "Site Exposure",
+   "kurz": "Gegenstück zur Link Importance aus Sicht eines Ortes: der ungünstigste Reisezeitanstieg für einen Standort über alle Kantensperrungen. Die Karte zeigt die kantenbezogene Link Importance, weil auch die Gefahren je Kante vorliegen.",
+   "siehe": [
+    "link_importance"
+   ],
+   "lang": "Nachfrageseitiges Gegenstück zur Link Importance nach Jenelius et al.: der für einen Standort (Demand Node) ungünstigste Reisezeitanstieg über alle Kantensperrungen. In dieser Arbeit wird die kantenbezogene Link Importance verwendet, da die Gefahr ebenfalls kantenbezogen vorliegt (Jenelius et al. 2006)."
+  },
+  "perzentilnormierung": {
+   "titel": "Perzentilrang (Perzentilnormierung)",
+   "glossar": "Perzentilnormierung",
+   "kurz": "Ein Messwert wird durch seinen Rang innerhalb einer Bezugsmenge ersetzt, ausgedrückt zwischen 0 und 1 (oder 0 bis 100). 0,9 heißt: 90 % der Kanten der Bezugsmenge haben einen kleineren Wert. So werden Gefahren mit verschiedenen Einheiten vergleichbar.",
+   "siehe": [
+    "bezugsmenge",
+    "verschneidungsindex",
+    "oberstes_dezil"
+   ],
+   "lang": "Ersetzung eines Messwerts durch seinen Rang innerhalb einer Bezugsmenge, ausgedrückt als Anteil zwischen 0 und 1. Macht Gefahren mit unterschiedlichen Einheiten vergleichbar und hängt — anders als die Min-Max-Normierung — nicht an einzelnen Extremwerten des Datensatzes. Grundlage des Verschneidungsindex."
+  },
+  "bezugsmenge": {
+   "titel": "Bezugsmenge",
+   "kurz": "Die Kanten, innerhalb derer ein Perzentilrang gebildet wird, zum Beispiel die 4.212 aktiven Kanten oder die 3.455 vom Starkregen betroffenen aktiven Kanten. Ränge aus verschiedenen Bezugsmengen sind nicht direkt vergleichbar; deshalb hat die Karte zum Beispiel zwei Importance-Perzentile.",
+   "siehe": [
+    "perzentilnormierung"
+   ]
+  },
+  "verschneidungsindex": {
+   "titel": "Verschneidungsindex",
+   "glossar": "Verschneidungsindex",
+   "kurz": "Produkt aus dem Perzentilrang der Gefahrengröße und dem Perzentilrang der Link Importance, gebildet über die betroffenen aktiven Kanten. Werte zwischen 0 und 1; hoch nur dort, wo hohe Gefährdung und hohe Netzbedeutung zusammenfallen. Es gibt ihn für Starkregen (vi_pct), Flusshochwasser (vi_pct_fluvial) und Hitze (vi_pct_heat).",
+   "siehe": [
+    "perzentilnormierung",
+    "link_importance",
+    "oberstes_dezil",
+    "rohindex"
+   ],
+   "lang": "Kantenbezogener Index aus der multiplikativen Verknüpfung der Perzentilränge von Gefahrengröße und Link Importance innerhalb der betroffenen und aktiven Kanten. Hebt Kanten hervor, die zugleich hohe Gefährdung und hohe Netzbedeutung tragen (vi_pct pluvial, vi_pct_fluvial fluvial, vi_pct_heat thermisch)."
+  },
+  "rohindex": {
+   "titel": "Rohindex",
+   "kurz": "Unnormiertes Produkt aus Link Importance in Sekunden und der Gefahrengröße. Er hängt an Einheiten und einzelnen Extremwerten und dient dem Vergleich mit dem Verschneidungsindex aus Perzentilrängen.",
+   "siehe": [
+    "verschneidungsindex"
+   ]
+  },
+  "oberstes_dezil": {
+   "titel": "Oberstes Dezil (Spitzengruppe)",
+   "kurz": "Die 10 % der Kanten mit den höchsten Werten eines Index, also alles ab dem 90. Perzentil. In der Arbeit gilt diese Gruppe je Gefahr als hoch belastet.",
+   "siehe": [
+    "belastungsprofil",
+    "top25"
+   ]
+  },
+  "top25": {
+   "titel": "Top 25",
+   "kurz": "Die 25 Kanten mit den höchsten Werten eines Index. In diesem Format führt die Arbeit ihre Ergebnislisten, für Hitze zusätzlich je Baulastebene.",
+   "siehe": [
+    "baulastebene",
+    "robustheit"
+   ]
+  },
+  "robustheit": {
+   "titel": "Robustheit der Rangfolge",
+   "kurz": "Zahl der Rechenvarianten, in denen eine Kante unter den Top 25 liegt. Beim Hitze-Index gibt es vier Varianten (Basis, Material, Schatten, kombiniert); 23 Kanten liegen in allen vier vorn und bilden den robusten Kern.",
+   "siehe": [
+    "top25"
+   ]
+  },
+  "gefaehrdungsstufe": {
+   "titel": "Gefährdungsstufe (H1 bis H6)",
+   "glossar": "Gefährdungsstufe (H-Schema)",
+   "kurz": "Sechs Stufen der Überflutungsgefahr nach dem Produkt aus Wassertiefe und Fließgeschwindigkeit. Sie beschreiben, ob Fahrzeuge und Personen eine Stelle noch passieren können; in den höchsten Stufen sind auch Gebäude gefährdet. Beim Flusshochwasser fehlen Geschwindigkeiten, dort zählen nur Tiefenschwellen.",
+   "siehe": [
+    "ortsgekoppelt",
+    "querbauwerk",
+    "hqextrem"
+   ],
+   "lang": "Sechsstufige Einordnung der Überflutungsgefahr (H1 bis H6) nach dem Produkt aus Wassertiefe und Fließgeschwindigkeit, das die Passierbarkeit für Fahrzeuge und Personen sowie die strukturelle Gebäudegefährdung abbildet (Smith et al.). Bei fehlenden Geschwindigkeitsdaten (fluvial) reduziert sich das Schema auf reine Tiefenschwellen und beginnt effektiv bei H2."
+  },
+  "ortsgekoppelt": {
+   "titel": "Ortsgekoppelt",
+   "glossar": "Ortsgekoppelt",
+   "kurz": "Wassertiefe und Fließgeschwindigkeit werden am selben Punkt der Kante verknüpft, weil die tiefste und die schnellste Stelle nicht zusammenfallen müssen.",
+   "siehe": [
+    "gefaehrdungsstufe"
+   ],
+   "lang": "Rechenweise, bei der Wassertiefe und Fließgeschwindigkeit am selben Stützpunkt verknüpft werden, da die tiefste und die schnellste Stelle einer Kante nicht zusammenfallen müssen. Grundlage der pluvialen Intensitätsberechnung."
+  },
+  "querbauwerk": {
+   "titel": "Querbauwerk (Brücke, Tunnel)",
+   "glossar": "Querbauwerk",
+   "kurz": "An Brücken und Tunneln trifft die Wasserkarte das Wasser unter oder neben dem Bauwerk, nicht die Fahrbahn. Querbauwerke sind deshalb aus der Wasserbewertung ausgenommen und erscheinen als eigene Klasse; die fluvialen Endergebnisse sind brückenfrei.",
+   "siehe": [
+    "gefaehrdungsstufe",
+    "betroffenheit"
+   ],
+   "lang": "Brücken- oder Tunnelkante, an der die Gefahrenübertragung nicht den Fahrbahnzustand, sondern das Wasser unter dem Bauwerk erfasst. Querbauwerke werden über die OpenStreetMap-Markierungen identifiziert und mangels Angaben zu lichter Höhe und Höhenlage der Zufahrten aus der Wasserbewertung ausgeschlossen."
+  },
+  "betroffenheit": {
+   "titel": "Betroffenheit",
+   "glossar": "Betroffenheit",
+   "kurz": "Eine Kante gilt als betroffen, sobald sie den Gefahrenraum berührt, unabhängig von Länge oder Fläche. Wie viel der Kante betroffen ist, zeigen überfluteter Anteil und überflutete Länge.",
+   "siehe": [
+    "exposition"
+   ],
+   "lang": "Binärer Auswahlfilter der Exposition (E1): Eine Kante gilt als betroffen, sobald sie den Gefahrenraum berührt, unabhängig von Mindestlänge oder -fläche. Der Umfang der Berührung — überfluteter Anteil oder Länge — bildet den Expositionsumfang (E2)."
+  },
+  "hqextrem": {
+   "titel": "HQextrem",
+   "glossar": "HQextrem",
+   "kurz": "Extremes Hochwasserszenario der amtlichen Hochwassergefahrenkarten (NLWKN), seltener als ein hundertjährliches Hochwasser. Grundlage der Flusshochwasser-Kennwerte, hier für Hase, Hunte und Große Aue.",
+   "siehe": [
+    "uesg",
+    "gefaehrdungsstufe"
+   ],
+   "lang": "Extremes Hochwasserszenario der Hochwassergefahrenkarten nach EG-HWRM-Richtlinie, das Ereignisse jenseits eines hundertjährlichen Hochwassers (HQ100) abbildet. Datengrundlage der fluvialen Gefahr in dieser Arbeit (NLWKN)."
+  },
+  "uesg": {
+   "titel": "Überschwemmungsgebiet (UESG)",
+   "kurz": "Überschwemmungsfläche, für die nur die Ausdehnung vorliegt, keine Wassertiefe. Kanten darin sind als betroffen markiert, erhalten aber keine Gefahrenstufe und keinen Index.",
+   "siehe": [
+    "hqextrem"
+   ]
+  },
+  "lst": {
+   "titel": "Landoberflächentemperatur (LST)",
+   "glossar": "Landoberflächentemperatur (LST)",
+   "kurz": "Vom Satelliten (Landsat 8/9) gemessene Temperatur der Oberfläche, nicht der Luft. Für die Belastung des Fahrbahnmaterials aussagekräftiger als die Lufttemperatur, weil besonnter Asphalt deutlich heißer wird. Je Kante gemittelt in einem 30-m-Puffer.",
+   "siehe": [
+    "hitzewellenlage",
+    "komposit",
+    "beschattung_tcd"
+   ],
+   "lang": "Satellitengestützt gemessene Temperatur der Erd- bzw. Fahrbahnoberfläche (hier Landsat 8/9, thermales Band). Als Indikator der Materialbeanspruchung der Lufttemperatur überlegen, da sonnenexponierter Asphalt weit höhere Temperaturen erreicht. Korreliert negativ mit dem Vegetationsanteil und positiv mit dem Versiegelungsgrad (Weng et al. 2004)."
+  },
+  "hitzewellenlage": {
+   "titel": "Hitzewellenlage (90. Perzentil)",
+   "glossar": "Hitzewellenlage",
+   "kurz": "Das 90. Perzentil der Landoberflächentemperatur je Rasterzelle über alle ausgewerteten Aufnahmen. Es bildet die heißen Spitzen ab, die das Material schädigen, nicht den durchschnittlichen Sommertag.",
+   "siehe": [
+    "lst",
+    "komposit"
+   ],
+   "lang": "Das pixelweise 90. Perzentil der Landoberflächentemperatur über die ausgewerteten Aufnahmetermine; Hauptgröße der thermischen Gefahr (G-h1). Bildet die schädigungsrelevanten Lastspitzen ab, da die Materialschädigung überproportional mit der Temperatur wächst und nicht vom durchschnittlichen Sommertag getrieben wird."
+  },
+  "komposit": {
+   "titel": "Komposit",
+   "glossar": "Komposit (Kompositbildung)",
+   "kurz": "Aus vielen einzelnen Satellitenszenen je Rasterzelle zusammengesetztes Bild, hier das 90. Perzentil der Landoberflächentemperatur.",
+   "siehe": [
+    "lst",
+    "hitzewellenlage"
+   ],
+   "lang": "Aus einer Zeitreihe einzelner Satellitenszenen pixelweise abgeleitetes, zusammengesetztes Rasterbild. Für die Hitzeanalyse werden die Tagesschichten zu zwei Kompositen verdichtet: dem 90. Perzentil (Hitzewellenlage) als Hauptgröße und dem Median als Sensitivitätsvariante."
+  },
+  "beschattung_tcd": {
+   "titel": "Baumkronendeckung und Versiegelung",
+   "kurz": "Anteil der Baumkronen (Tree Cover Density) und der versiegelten Fläche (Imperviousness) im Kantenpuffer aus den Copernicus High Resolution Layers. Wenig Schatten und viel Versiegelung bedeuten höhere Oberflächentemperaturen.",
+   "siehe": [
+    "lst"
+   ]
+  },
+  "compound_index": {
+   "titel": "Compound-Index",
+   "glossar": "Compound-Index",
+   "kurz": "Produkt der Perzentilränge zweier Gefahren auf derselben Kante. Bei Starkregen und Flusshochwasser steht dahinter ein gemeinsamer Auslöser, der Niederschlag: Zwei für sich nicht extreme Größen können zusammen eine extreme Belastung ergeben.",
+   "siehe": [
+    "compound_events",
+    "belastungsprofil"
+   ],
+   "lang": "Multiplikative Verknüpfung der Perzentilränge des pluvialen Verschneidungsindex und der fluvialen Gefährdungsstufe. Operationalisiert das über einen gemeinsamen meteorologischen Auslöser kausal gekoppelte Zusammentreffen zweier Wassergefahren auf netzbedeutsamen Kanten, aus dessen Kombination je für sich nicht extremer Größen eine extreme Belastung entstehen kann (Leonard et al. 2014; Simpson et al. 2021). Vgl. Belastungsprofil."
+  },
+  "compound_events": {
+   "titel": "Compound Events",
+   "glossar": "Compound Events",
+   "kurz": "Ereignisse, bei denen mehrere Treiber zeitlich oder räumlich zusammenwirken und dadurch überproportionale Folgen haben, etwa gesättigte Böden plus Starkregen.",
+   "siehe": [
+    "compound_index"
+   ],
+   "lang": "Ereignisse, bei denen mehrere klimatische oder geophysikalische Treiber zeitlich oder räumlich korrelieren oder sequenziell interagieren und dadurch überproportionale Auswirkungen erzeugen. Beispiel: gesättigte Böden + Starkregen → Überflutung. Im Simpson-Framework als „Weather and Climate Events\" bezeichnet (Simpson et al. 2021)."
+  },
+  "belastungsprofil": {
+   "titel": "Belastungsprofil",
+   "glossar": "Belastungsprofil",
+   "kurz": "Zählt je Kante, in wie vielen der drei Gefahren (Starkregen, Flusshochwasser, Hitze) sie zum obersten Dezil ihres Index gehört. Anders als der Compound-Index ist es kein Produkt und unterstellt keine gemeinsame Ursache. In der brückenfreien Fassung der Abbildung tragen 106 Kanten zwei oder drei Gefahren.",
+   "siehe": [
+    "oberstes_dezil",
+    "compound_index",
+    "querbauwerk"
+   ],
+   "lang": "Überlagerung der drei gefahrenspezifischen Verschneidungsindizes (pluvial, fluvial, thermisch) auf dem Netz. Bildet die zweite, nicht kausal gekoppelte Ebene der Determinanten-Interaktion — ein \"Multi-Hazard-Profil der Mehrfachbelastung\" derselben Kante. Anders als der Compound-Index bildet es kein Produkt, sondern stuft eine Kante je Gefahr als hoch belastet ein, sobald sie das oberste Dezil ihres jeweiligen Index erreicht; die Schwelle ist relativ definiert, da die Bezugsmengen der Gefahren erheblich differieren (de Angeli et al. 2022; Simpson et al. 2021). Vgl. Compound-Index."
+  },
+  "baulastebene": {
+   "titel": "Baulastebene (Baulastträger)",
+   "glossar": "Baulastebene",
+   "kurz": "Zuständigkeitsstufe für Bau und Unterhalt einer Straße: Autobahn, Bundes-, Landes-, Kreis- und Gemeindestraße. In der Karte aus Straßennummer und Straßentyp zugeordnet; sie zeigt, welche Verwaltungsebene in der Regel zuständig ist.",
+   "siehe": [
+    "top25"
+   ],
+   "lang": "Verwaltungsrechtliche Zuständigkeitsstufe für Bau und Unterhalt einer Straße (Autobahn, Bundes-, Landes-, Kreis- und Gemeindestraße). Gliedert in dieser Arbeit die Hitzeanalyse, da Querschnittsbreite und Fahrbahnanteil innerhalb einer Ebene weitgehend konstant sind."
+  },
+  "gefahr": {
+   "titel": "Gefahr (Hazard)",
+   "glossar": "Gefahr (Hazard)",
+   "kurz": "Das auslösende Ereignis oder der physikalische Zustand, hier Starkregen, Flusshochwasser und Hitze. In der Karte als Gefahrengröße je Kante: Stufe, Wassertiefe oder Temperatur.",
+   "siehe": [
+    "exposition",
+    "verwundbarkeit"
+   ],
+   "lang": "Im Simpson-Framework: Nicht ein isoliertes physikalisches Ereignis, sondern das Resultat interagierender atmosphärischer und geophysikalischer Treiber. Umfasst singuläre Extremwetterereignisse ebenso wie compound events und physische Vorbedingungen (Simpson et al. 2021). Bei Faturechi und Miller-Hooks (2015) in drei Kategorien unterteilt: natürliche Ereignisse, technologische Ausfälle und intentionale Angriffe."
+  },
+  "exposition": {
+   "titel": "Exposition",
+   "glossar": "Exposition (Exposure)",
+   "kurz": "Das Vorhandensein von Straßen an Orten, an denen die Gefahr auftreten kann. In der Karte: Betroffenheit und betroffener Anteil einer Kante.",
+   "siehe": [
+    "betroffenheit",
+    "gefahr",
+    "verwundbarkeit"
+   ],
+   "lang": "Im Simpson-Framework: Die raum-zeitliche Präsenz von menschlichen, ökologischen oder technologischen Systemen an Orten, an denen Gefahren auftreten können. Ist nicht statisch, sondern kann sich durch spezifische Treiber dynamisch akkumulieren (Simpson et al. 2021)."
+  },
+  "verwundbarkeit": {
+   "titel": "Verwundbarkeit (Vulnerabilität)",
+   "glossar": "Verwundbarkeit (Vulnerability)",
+   "kurz": "Die Anfälligkeit des Netzes, durch eine Gefahr in seiner Funktion beeinträchtigt zu werden. In der Karte über die Link Importance abgebildet: Wie stark leidet die Erreichbarkeit, wenn die Kante ausfällt.",
+   "siehe": [
+    "link_importance",
+    "gefahr",
+    "exposition"
+   ],
+   "lang": "Im Simpson-Framework: Die Prädisposition eines Systems, durch das Auftreten einer Gefahr nachteilig beeinflusst zu werden (Simpson et al. 2021). Im RNP-Kontext: Die Anfälligkeit eines Netzwerkes für Vorfälle, die zu einer erheblichen Beeinträchtigung der Funktionsfähigkeit führen können (Berdica 2002). Einziges RNP-Konzept, das eine negative Netzwerkeigenschaft misst (Rivera Royero et al. 2022). Setzt sich zusammen aus Eintrittswahrscheinlichkeit und Konsequenzen; bei seltenen Extremereignissen kann die Wahrscheinlichkeit ausgespart werden (konditionelle Vulnerabilität/Exposition nach Jenelius et al. 2006)."
+  }
+ },
+ "gruppen": {
+  "importance": {
+   "kurz": "Wie wichtig ist eine Kante für die Erreichbarkeit im Landkreis? Grundlage ist die Link Importance: der Reisezeitverlust, wenn die Kante gesperrt wird.",
+   "begriffe": [
+    "link_importance",
+    "aktive_kante",
+    "demand_nodes",
+    "perzentilnormierung"
+   ]
+  },
+  "pluvial": {
+   "kurz": "Überflutung durch Starkregen: Gefährdungsstufen H1 bis H6 aus der Starkregen-Hinweiskarte des BKG (100 mm in einer Stunde) und der Verschneidungsindex mit der Netzbedeutung.",
+   "begriffe": [
+    "gefaehrdungsstufe",
+    "verschneidungsindex",
+    "querbauwerk",
+    "ortsgekoppelt"
+   ]
+  },
+  "fluvial": {
+   "kurz": "Überflutung durch Flusshochwasser im Szenario HQextrem: welche Kanten in den Überflutungsflächen liegen, wie tief das Wasser steht und wo das auf netzbedeutsame Kanten trifft.",
+   "begriffe": [
+    "hqextrem",
+    "betroffenheit",
+    "uesg",
+    "verschneidungsindex",
+    "querbauwerk"
+   ]
+  },
+  "heat": {
+   "kurz": "Hitzebelastung der Fahrbahn: Landoberflächentemperatur aus Satellitendaten, thermischer Verschneidungsindex und die Umstände, die Aufheizung begünstigen (Belag, Schatten, Versiegelung).",
+   "begriffe": [
+    "lst",
+    "hitzewellenlage",
+    "verschneidungsindex",
+    "beschattung_tcd",
+    "robustheit"
+   ]
+  },
+  "compound": {
+   "kurz": "Zusammentreffen zweier Gefahren auf derselben Kante als Produkt ihrer Perzentilränge: Starkregen mit Flusshochwasser und Starkregen mit Hitze.",
+   "begriffe": [
+    "compound_index",
+    "compound_events",
+    "belastungsprofil"
+   ]
+  },
+  "profil": {
+   "kurz": "Gefahrenübergreifender Überblick: In wie vielen der drei Gefahren gehört eine Kante zur Spitzengruppe (oberstes Dezil)?",
+   "begriffe": [
+    "belastungsprofil",
+    "oberstes_dezil",
+    "compound_index"
+   ]
+  },
+  "kontext": {
+   "kurz": "Eigenschaften der Kante selbst, unabhängig von den Gefahren: Straßentyp, Baulastträger, Gemeinde und Länge. Nützlich zum Gruppieren und Filtern.",
+   "begriffe": [
+    "kante",
+    "baulastebene"
+   ]
+  }
+ },
+ "variablen": {
+  "imp_pct100": {
+   "kurz": "Rang der Link Importance unter den 4.212 aktiven Kanten, von 0 bis 100. 80 heißt: Diese Kante ist für die Erreichbarkeit wichtiger als 80 % der aktiven Kanten. Die Abbildung der Arbeit teilt in fünf gleich große Gruppen (Quintile).",
+   "begriffe": [
+    "link_importance",
+    "perzentilnormierung",
+    "aktive_kante"
+   ]
+  },
+  "importance_s": {
+   "kurz": "So viele Sekunden verlängert sich die Reisezeit im Mittel je betroffener Verbindung, wenn diese Kante gesperrt ist. Je höher, desto wichtiger ist die Kante für die Erreichbarkeit.",
+   "begriffe": [
+    "link_importance",
+    "demand_nodes",
+    "aktive_kante"
+   ]
+  },
+  "imp_pct": {
+   "begriffe": [
+    "link_importance",
+    "perzentilnormierung"
+   ]
+  },
+  "imp_pct_pluvial": {
+   "kurz": "Perzentilrang der Link Importance innerhalb der vom Starkregen betroffenen aktiven Kanten. Andere Bezugsmenge als beim Hitze-Index, deshalb ein eigener Wert.",
+   "begriffe": [
+    "bezugsmenge",
+    "perzentilnormierung"
+   ]
+  },
+  "imp_pct_nb": {
+   "kurz": "Perzentilrang der Link Importance innerhalb der brückenfreien fluvialen Bezugsmenge (138 Kanten).",
+   "begriffe": [
+    "bezugsmenge",
+    "querbauwerk"
+   ]
+  },
+  "klasse": {
+   "begriffe": [
+    "link_importance"
+   ]
+  },
+  "aktiv": {
+   "kurz": "Die Kante hat eine Link Importance größer als 0.",
+   "begriffe": [
+    "aktive_kante"
+   ]
+  },
+  "hazard_klasse": {
+   "kurz": "Starkregen-Gefährdungsstufe der Kante von H1 (niedrigste) bis H6 (höchste), aus Wassertiefe mal Fließgeschwindigkeit. Brücken und Tunnel bilden eine eigene Klasse; Kanten ohne Stufe liegen außerhalb des abgetasteten Gebiets.",
+   "begriffe": [
+    "gefaehrdungsstufe",
+    "querbauwerk"
+   ]
+  },
+  "vi_pct": {
+   "kurz": "Zeigt, wo hohe Starkregengefahr auf hohe Netzbedeutung trifft: Produkt der beiden Perzentilränge, 0 bis 1, gebildet über die 3.455 vom Starkregen betroffenen aktiven Kanten. Werte nahe 1 bilden die Spitzengruppe.",
+   "begriffe": [
+    "verschneidungsindex",
+    "bezugsmenge",
+    "oberstes_dezil"
+   ]
+  },
+  "vi_roh": {
+   "begriffe": [
+    "rohindex"
+   ]
+  },
+  "rang_pct": {
+   "kurz": "Rang der Kante nach dem Starkregen-Verschneidungsindex.",
+   "begriffe": [
+    "verschneidungsindex"
+   ]
+  },
+  "dv_pct": {
+   "kurz": "Perzentilrang der Gefahrenkennzahl (Tiefe × Geschwindigkeit) innerhalb der vom Starkregen betroffenen aktiven Kanten. Geht in den Starkregen-Index ein.",
+   "begriffe": [
+    "perzentilnormierung",
+    "gefaehrdungsstufe"
+   ]
+  },
+  "dv_max": {
+   "begriffe": [
+    "gefaehrdungsstufe",
+    "ortsgekoppelt"
+   ]
+  },
+  "d_at": {
+   "kurz": "Wassertiefe an der Stelle der Kante, an der das Produkt aus Tiefe und Geschwindigkeit am größten ist.",
+   "begriffe": [
+    "ortsgekoppelt"
+   ]
+  },
+  "v_at": {
+   "kurz": "Fließgeschwindigkeit an der Stelle der Kante, an der das Produkt aus Tiefe und Geschwindigkeit am größten ist.",
+   "begriffe": [
+    "ortsgekoppelt"
+   ]
+  },
+  "v_max": {
+   "kurz": "Größte Fließgeschwindigkeit entlang der Kante."
+  },
+  "tiefe_max_m": {
+   "begriffe": [
+    "gefaehrdungsstufe"
+   ]
+  },
+  "flut_anteil": {
+   "begriffe": [
+    "betroffenheit"
+   ]
+  },
+  "loch_anteil": {
+   "kurz": "Anteil der Stützpunkte der Kante, für die das Starkregen-Raster keinen Wert liefert."
+  },
+  "befund": {
+   "kurz": "Befund aus der Einzelprüfung der 128 kritischen Starkregen-Kanten."
+  },
+  "dv_stufe": {
+   "begriffe": [
+    "gefaehrdungsstufe"
+   ]
+  },
+  "mechanismus_klar": {
+   "begriffe": [
+    "gefaehrdungsstufe"
+   ]
+  },
+  "robustheit": {
+   "begriffe": [
+    "robustheit",
+    "top25"
+   ]
+  },
+  "h_klasse_fl": {
+   "begriffe": [
+    "gefaehrdungsstufe",
+    "hqextrem"
+   ]
+  },
+  "h_num_fl": {
+   "kurz": "HQextrem-Gefahrenstufe als Zahl. Geht in den fluvialen Rohindex ein.",
+   "begriffe": [
+    "gefaehrdungsstufe"
+   ]
+  },
+  "haz_pct_nb": {
+   "kurz": "Perzentilrang der fluvialen Gefahr innerhalb der brückenfreien Bezugsmenge (138 Kanten).",
+   "begriffe": [
+    "perzentilnormierung",
+    "bezugsmenge"
+   ]
+  },
+  "vi_pct_fluvial": {
+   "kurz": "Zeigt, wo hohe Hochwassergefahr (HQextrem) auf hohe Netzbedeutung trifft: Produkt der beiden Perzentilränge, 0 bis 1, ohne Brücken. 138 Kanten; für diese Gefahr das Endergebnis der Arbeit.",
+   "begriffe": [
+    "verschneidungsindex",
+    "hqextrem",
+    "querbauwerk"
+   ]
+  },
+  "vi_pct_fluvial_voll": {
+   "begriffe": [
+    "verschneidungsindex",
+    "querbauwerk"
+   ]
+  },
+  "vi_roh_fluvial_nb": {
+   "begriffe": [
+    "rohindex"
+   ]
+  },
+  "tiefe_repr_fl": {
+   "begriffe": [
+    "hqextrem"
+   ]
+  },
+  "ufl_m": {
+   "begriffe": [
+    "betroffenheit",
+    "hqextrem"
+   ]
+  },
+  "vi_band": {
+   "begriffe": [
+    "perzentilnormierung",
+    "verschneidungsindex"
+   ]
+  },
+  "fluvial_status": {
+   "begriffe": [
+    "hqextrem",
+    "uesg"
+   ]
+  },
+  "betroffen_fl": {
+   "begriffe": [
+    "betroffenheit",
+    "hqextrem"
+   ]
+  },
+  "usg_betroffen": {
+   "kurz": "Die Kante liegt in einem Überschwemmungsgebiet.",
+   "begriffe": [
+    "uesg"
+   ]
+  },
+  "gewaesser_usg": {
+   "kurz": "Gewässer, zu dessen Überschwemmungsgebiet die Kante gehört.",
+   "begriffe": [
+    "uesg"
+   ]
+  },
+  "querungspunkt": {
+   "kurz": "Die Kante quert ein Gewässer.",
+   "begriffe": [
+    "querbauwerk"
+   ]
+  },
+  "lst_p90_mean": {
+   "kurz": "Oberflächentemperatur der Kante in heißen Lagen (90. Perzentil aus Landsat 8/9), gemittelt im 30-m-Puffer. Liegt für fast alle Kanten vor, nicht nur für die aktiven.",
+   "begriffe": [
+    "lst",
+    "hitzewellenlage",
+    "komposit"
+   ]
+  },
+  "heat_pct": {
+   "kurz": "Rang der Oberflächentemperatur (LST, 90. Perzentil) unter den aktiven Kanten, 0 bis 1. Zeigt, welche Kanten besonders heiß werden, noch ohne Gewichtung mit der Netzbedeutung.",
+   "begriffe": [
+    "perzentilnormierung",
+    "lst"
+   ]
+  },
+  "vi_pct_heat": {
+   "kurz": "Zeigt, wo hohe Oberflächentemperatur auf hohe Netzbedeutung trifft: Produkt aus dem Temperatur-Rang und dem Rang der Link Importance über die aktiven Kanten, 0 bis 1.",
+   "begriffe": [
+    "verschneidungsindex",
+    "lst",
+    "oberstes_dezil"
+   ]
+  },
+  "vi_pct_heat_v2": {
+   "begriffe": [
+    "robustheit",
+    "verschneidungsindex"
+   ]
+  },
+  "vi_pct_heat_v3": {
+   "begriffe": [
+    "robustheit",
+    "verschneidungsindex",
+    "beschattung_tcd"
+   ]
+  },
+  "vi_pct_heat_v4": {
+   "begriffe": [
+    "robustheit",
+    "verschneidungsindex"
+   ]
+  },
+  "robust_n": {
+   "begriffe": [
+    "robustheit",
+    "top25"
+   ]
+  },
+  "tcd_mean": {
+   "kurz": "Anteil der Fläche im Kantenpuffer, der von Baumkronen überdeckt ist. Viel Baumkrone bedeutet Schatten und niedrigere Oberflächentemperaturen.",
+   "begriffe": [
+    "beschattung_tcd"
+   ]
+  },
+  "imd_mean": {
+   "kurz": "Anteil der versiegelten Fläche im Kantenpuffer. Hohe Versiegelung geht mit höheren Oberflächentemperaturen einher.",
+   "begriffe": [
+    "beschattung_tcd"
+   ]
+  },
+  "beschattung": {
+   "begriffe": [
+    "beschattung_tcd"
+   ]
+  },
+  "concrete_flag": {
+   "kurz": "Fahrbahn aus Beton laut OpenStreetMap."
+  },
+  "vi_pct_compound": {
+   "kurz": "Zusammentreffen von Starkregen und Flusshochwasser auf derselben Kante: Produkt der beiden Perzentilränge, 0 bis 1. 119 Kanten sind von beiden Gefahren betroffen.",
+   "begriffe": [
+    "compound_index",
+    "compound_events"
+   ]
+  },
+  "vi_roh_compound": {
+   "kurz": "Unnormiertes Gegenstück zum Compound-Index Starkregen × Flusshochwasser.",
+   "begriffe": [
+    "rohindex",
+    "compound_index"
+   ]
+  },
+  "vi_pct_compound_heat": {
+   "kurz": "Zusammentreffen von Starkregen und Hitze auf derselben Kante: Produkt der beiden Perzentilränge, 0 bis 1 (3.454 Kanten).",
+   "begriffe": [
+    "compound_index"
+   ]
+  },
+  "vi_roh_compound_heat": {
+   "kurz": "Unnormiertes Gegenstück zum Compound-Index Starkregen × Hitze.",
+   "begriffe": [
+    "rohindex",
+    "compound_index"
+   ]
+  },
+  "stark_pct": {
+   "kurz": "Perzentilrang der Starkregen-Größe innerhalb der 119 Kanten des Compound-Index Starkregen × Flusshochwasser.",
+   "begriffe": [
+    "compound_index",
+    "bezugsmenge"
+   ]
+  },
+  "stark_pct_h": {
+   "kurz": "Perzentilrang der Starkregen-Größe innerhalb der 3.454 Kanten des Compound-Index Starkregen × Hitze.",
+   "begriffe": [
+    "compound_index",
+    "bezugsmenge"
+   ]
+  },
+  "hitze_pct": {
+   "kurz": "Perzentilrang der Hitze-Größe innerhalb der 3.454 Kanten des Compound-Index Starkregen × Hitze.",
+   "begriffe": [
+    "compound_index",
+    "bezugsmenge"
+   ]
+  },
+  "mhn_bf": {
+   "kurz": "Zahl der Gefahren (0 bis 3), in denen die Kante zum obersten Dezil gehört, in der brückenfreien Fassung der Abbildung. 106 Kanten tragen zwei oder drei Gefahren.",
+   "begriffe": [
+    "belastungsprofil",
+    "oberstes_dezil",
+    "querbauwerk"
+   ]
+  },
+  "multi_hazard_n": {
+   "begriffe": [
+    "belastungsprofil",
+    "oberstes_dezil"
+   ]
+  },
+  "hoch_pluvial": {
+   "kurz": "Die Kante gehört beim Starkregen-Index zum obersten Dezil.",
+   "begriffe": [
+    "oberstes_dezil",
+    "belastungsprofil"
+   ]
+  },
+  "hoch_fluvial": {
+   "kurz": "Die Kante gehört beim fluvialen Index zum obersten Dezil.",
+   "begriffe": [
+    "oberstes_dezil",
+    "belastungsprofil"
+   ]
+  },
+  "hoch_fluvial_bf": {
+   "kurz": "Die Kante gehört zur fluvialen Spitzengruppe der brückenfreien Fassung.",
+   "begriffe": [
+    "oberstes_dezil",
+    "belastungsprofil",
+    "querbauwerk"
+   ]
+  },
+  "hoch_heat": {
+   "kurz": "Die Kante gehört beim thermischen Index zum obersten Dezil.",
+   "begriffe": [
+    "oberstes_dezil",
+    "belastungsprofil"
+   ]
+  },
+  "highway": {
+   "kurz": "Straßenklasse nach OpenStreetMap, zum Beispiel motorway, primary, secondary, tertiary oder residential."
+  },
+  "baulast": {
+   "begriffe": [
+    "baulastebene"
+   ]
+  },
+  "gemeinde": {
+   "kurz": "Gemeinde, in der der Mittelpunkt der Kante liegt. Kanten außerhalb des Landkreises haben keinen Eintrag."
+  },
+  "im_kreis": {
+   "kurz": "Der Kantenmittelpunkt liegt im Landkreis Osnabrück (26.031 Kanten). Das Netz reicht für die Routenberechnung über die Kreisgrenze hinaus."
+  },
+  "length_m": {
+   "kurz": "Länge der Kante in Metern.",
+   "begriffe": [
+    "kante"
+   ]
+  },
+  "bruecke": {
+   "kurz": "Die Kante ist in OpenStreetMap als Brücke markiert.",
+   "begriffe": [
+    "querbauwerk"
+   ]
+  },
+  "tunnel": {
+   "kurz": "Die Kante ist in OpenStreetMap als Tunnel markiert.",
+   "begriffe": [
+    "querbauwerk"
+   ]
+  },
+  "bruecke_typ": {
+   "kurz": "Art des Brückenbauwerks laut OpenStreetMap.",
+   "begriffe": [
+    "querbauwerk"
+   ]
+  },
+  "u": {
+   "kurz": "OpenStreetMap-Knoten am Anfang der Kante."
+  },
+  "v": {
+   "kurz": "OpenStreetMap-Knoten am Ende der Kante."
+  }
+ },
+ "bedienung": {
+  "abs-presets": {
+   "titel": "Karten der Arbeit",
+   "kurz": "Fertige Ansichten, die die Abbildungen des Ergebniskapitels nachstellen: Variable, Farbskala, Linienbreiten und Kontextnetz wie im Text, mit Kapitelnummer. Guter Einstieg, bevor man eigene Einstellungen wählt."
+  },
+  "arbeitsansicht": {
+   "titel": "Ansicht der Arbeit herstellen",
+   "kurz": "Mit Häkchen stellt ein Preset auch weißen Hintergrund, den Landkreis-Ausschnitt und das Farbschema der Arbeit her und setzt Filter und Labels zurück. Ohne Häkchen wechselt nur der Karteninhalt."
+  },
+  "abs-variablen": {
+   "titel": "Variablen nach Gefahr",
+   "kurz": "Alle berechneten Kennwerte, geordnet nach Netzbedeutung, den drei Gefahren, ihrem Zusammentreffen und den Kanteneigenschaften. Ein Klick auf eine Variable färbt das Netz danach ein. Die Zahl rechts nennt, wie viele Kanten einen Wert haben."
+  },
+  "top25": {
+   "titel": "Top 25",
+   "kurz": "Zeigt nur die 25 Kanten mit den höchsten Werten des Hauptindex dieser Gruppe. In der Übersicht markiert zusätzlich ein Punkt jede dieser Kanten, weil kurze Kanten sonst kleiner als ein Pixel wären."
+  },
+  "top_ebene": {
+   "titel": "Top 25 je Ebene",
+   "kurz": "Die 25 höchsten Werte innerhalb einer Baulastebene: A Autobahn, B Bundesstraße, L Landesstraße, K Kreisstraße, Gem. Gemeindestraße. Das sind meist nicht die Spitzen des ganzen Netzes, sondern die Spitzen der jeweiligen Zuständigkeit."
+  },
+  "abs-darstellung": {
+   "titel": "Darstellung",
+   "kurz": "Wie die gewählte Variable gezeichnet wird: Farbskala, Spreizung, Linienstärke, Wert-Beschriftungen, graues Kontextnetz und Farbschema. Ändert nur das Bild, nie die Werte."
+  },
+  "skala": {
+   "titel": "Skala",
+   "kurz": "Legt fest, wie Werte auf Farben verteilt werden. P2 bis P100 wie in der Arbeit: die untersten 2 % teilen sich die hellste Farbe. Quantile: gleich viele Kanten je Klasse. Gleiche Intervalle: gleich breite Wertebereiche. Feste Grenzen: eigene Werte. An Kartenausschnitt anpassen: spreizt die Farben auf die gerade sichtbaren Kanten und trennt so nah beieinander liegende Werte."
+  },
+  "gamma": {
+   "titel": "Gamma (Spreizung)",
+   "kurz": "Verschiebt die Farbverteilung, ohne die Werte zu ändern. Unter 1 bekommen niedrige Werte mehr Farbstufen, über 1 die hohen. Hilft, wenn viele Kanten fast dieselbe Farbe haben."
+  },
+  "linienstaerke": {
+   "titel": "Linienstärke",
+   "kurz": "Zeichnet alle Kanten dicker oder dünner, auch in der Detailkarte und in Exporten. Die Verhältnisse der Breiten untereinander bleiben erhalten."
+  },
+  "breite_nach_wert": {
+   "titel": "Linienbreite nach Wert",
+   "kurz": "Hohe Werte werden zusätzlich breiter gezeichnet. Das hebt die Spitzen hervor, auch für Personen, die Farben schwer unterscheiden."
+  },
+  "wert_labels": {
+   "titel": "Wert-Labels",
+   "kurz": "Schreibt ab Zoomstufe 13 den Wert der Variable an jede Kante."
+  },
+  "kontextnetz": {
+   "titel": "Kontextnetz",
+   "kurz": "Das graue Netz im Hintergrund zur Orientierung: nur die 4.212 aktiven Kanten, das ganze Netz oder gar keins."
+  },
+  "farbschema": {
+   "titel": "Farbschema",
+   "kurz": "Satz aller Farben der Karte. Arbeit entspricht den Abbildungen im Text; viridis und cividis sind für Farbfehlsichtigkeit geeignet, grau für den Druck. Der Knopf daneben öffnet den Farbeditor für eigene Paletten, Klassenfarben und Breiten."
+  },
+  "abs-basemap": {
+   "titel": "Hintergrundkarte",
+   "kurz": "Freie Hintergrundkarten zum Umschalten: topografisch (TopPlusOpen, OpenStreetMap, OpenTopoMap), Luftbild (DOP20 Niedersachsen, Sentinel-2) oder weiß wie in der Arbeit. Die Deckkraft lässt sich zurücknehmen, damit die Kantenfarben lesbar bleiben."
+  },
+  "abs-ebenen": {
+   "titel": "Ebenen (Overlays)",
+   "kurz": "Zusätzliche Flächen und Linien über der Hintergrundkarte: Kreisgrenze, Gemeinden, Gewässer, HQextrem-Flächen, das Temperaturraster, heiße Tage und die Fallbeispiele, jeweils mit eigener Deckkraft."
+  },
+  "abs-filter": {
+   "titel": "Filter",
+   "kurz": "Blendet Kanten aus, ohne Werte zu ändern: nach Wertebereich, Top N, oberstem Dezil, Mehrfachbelastung, Baulastträger, Straßentyp oder Gemeinde. Rangliste, Verteilung und Datenexport folgen dem Filter."
+  },
+  "filter_bereich": {
+   "titel": "Wertebereich",
+   "kurz": "Zeigt nur Kanten, deren Wert zwischen den beiden Grenzen liegt. Schneller geht es, direkt auf dem Farbbalken der Legende einen Bereich aufzuziehen."
+  },
+  "filter_topn": {
+   "titel": "Nur Top N",
+   "kurz": "Zeigt genau die N Kanten mit den höchsten Werten der aktuellen Variable, im ganzen Netz oder nur unter den Straßen einer Baulastebene."
+  },
+  "filter_dezil": {
+   "titel": "Oberstes Dezil",
+   "kurz": "Zeigt nur die 10 % der Kanten mit den höchsten Werten der aktuellen Variable, die Spitzengruppe der Arbeit."
+  },
+  "filter_mhn": {
+   "titel": "Mehrfachbelastung",
+   "kurz": "Zeigt nur Kanten, die in mindestens zwei der drei Gefahren zum obersten Dezil gehören (106 Kanten)."
+  },
+  "abs-histogramm": {
+   "titel": "Verteilung der Variable",
+   "kurz": "Häufigkeit der Werte als Balken in den Farben der Karte. Der Marker zeigt die gewählte Kante; ein Klick auf einen Balken setzt den Wertebereich als Filter."
+  },
+  "abs-favoriten": {
+   "titel": "Favoriten",
+   "kurz": "Kanten, die du dir mit dem Stern im Panel oder der Taste S gemerkt hast. Sie bleiben in diesem Browser gespeichert, sind in der Karte golden markiert und lassen sich als CSV ausgeben."
+  },
+  "abs-werkzeuge": {
+   "titel": "Werkzeuge",
+   "kurz": "Ausschnitt Landkreis, Distanzen messen, Lesezeichen für Ansichten, Permalink und QR-Code zur aktuellen Ansicht, heller oder dunkler Modus."
+  },
+  "legende": {
+   "titel": "Legende",
+   "kurz": "Zeigt, welche Farbe für welchen Wert steht. Beim Überfahren einer Kante wandert ein Marker an ihre Stelle im Farbbalken. Einen Bereich aufziehen filtert auf diese Werte; ein Klick auf eine Klasse blendet sie aus oder ein."
+  },
+  "panel": {
+   "titel": "Kantendetails",
+   "kurz": "Alle Kennwerte der angeklickten Kante, nach Gruppen geordnet, mit Rang und Perzentil für die gezeigte Variable. Von hier aus: Favorit, Zoom, Nachbarn, Straßenzug mit Max und Min, Melden, Anpinnen, Kopieren und Link zur Kante."
+  },
+  "detailkarte": {
+   "titel": "Detailkarte",
+   "kurz": "Zweite, stark gezoomte Ansicht der gewählten Kante mit eigener Hintergrundkarte, standardmäßig Luftbild. Die Kante trägt ihre Datenfarbe mit weißem Rand. Das Fenster-Symbol löst die Detailkarte in ein eigenes Fenster."
+  },
+  "strassenzug": {
+   "titel": "Straßenzug",
+   "kurz": "Alle Kanten mit derselben Straßennummer. Die Auswertung nennt Max, Min und Median der gezeigten Variable entlang des Zugs und springt auf Wunsch zu diesen Kanten."
+  },
+  "pins": {
+   "titel": "Pins (Vergleich)",
+   "kurz": "Bis zu zehn Kanten anpinnen und ihre Kennwerte nebeneinander vergleichen. Jeder Pin hat eine eigene Farbe in der Karte."
+  },
+  "rangliste": {
+   "titel": "Rangliste",
+   "kurz": "Tabelle aller Kanten der gezeigten Variable anstelle des Menüs: scrollen, sortieren, anklicken und hinspringen. Exportiert die gefilterten Kanten als CSV oder GeoJSON."
+  },
+  "export": {
+   "titel": "Export",
+   "kurz": "PNG oder JPEG mit Hintergrundkarte, Legende und Maßstab, SVG der aktuellen Ansicht ohne Hintergrund oder SVG im Layout der Abbildungen der Arbeit (UTM 32N)."
+  },
+  "melden": {
+   "titel": "Melden",
+   "kurz": "Fehler, auffällige Werte, Wünsche und Feedback als vorausgefülltes Ticket im GitHub-Repository der Karte."
+  }
+ }
+}

@@ -33,7 +33,7 @@ WK.legende = (() => {
     if (!spec) { el.hidden = true; return; }
     el.hidden = false;
     const K = WK.karte;
-    el.appendChild(U.el('div', { class: 'titel' }, spec.titel || spec.label || ''));
+    el.appendChild(U.el('div', { class: 'titel' }, spec.titel || spec.label || '', K.variable && WK.glossar ? WK.glossar.knopf({ variable: K.variable }) : null));
     if (spec.typ === 'kontinuierlich') {
       const wrap = U.el('div', { class: 'balken-wrap', style: { background: spec.css } });
       S.marker = U.el('div', { class: 'marker', hidden: true });

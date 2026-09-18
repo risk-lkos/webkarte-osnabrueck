@@ -182,6 +182,8 @@ WK.daten = (() => {
     const [paletten, ...schemata] = await Promise.all([ladeJson(P.paletten), ...schemaIds.map(id => ladeJson(`${P.schemata}${id}.json`).catch(e => { console.warn('Schema', id, e); return null; }))]);
     S.paletten = paletten;
     schemaIds.forEach((id, i) => { if (schemata[i]) S.schemata[id] = schemata[i]; });
+    // Glossar fuer ?-Knoepfe und Anleitung; fehlt die Datei, laeuft die Karte ohne Erklaertexte
+    S.glossar = P.glossar ? await ladeJson(P.glossar).catch(e => { console.warn('Glossar', e); return null; }) : null;
     melde('Lade Kantennetz (72.238 Kanten) …', 15);
     const k = await ladeJson(P.kanten);
     melde('Baue Geometrien …', 45);
@@ -204,6 +206,7 @@ WK.daten = (() => {
     kontext, raster, rasterBild, featureCollection,
     get meta() { return S.meta; }, get features() { return S.features; }, get anzahl() { return S.n; },
     get paletten() { return S.paletten; }, get schemata() { return S.schemata; }, get byId() { return S.byId; },
+    get glossar() { return S.glossar; },
     feature(id) { return S.byId.get(id) || null; },
     idx(id) { return S.index.get(id); },
   };

@@ -124,6 +124,49 @@ h3 { font-size: 13px; margin: 0; text-transform: uppercase; letter-spacing: .04e
 .report .arten { display: flex; gap: 6px; flex-wrap: wrap; }
 .report .kontext { font-family: var(--mono); font-size: 12px; background: var(--bg2); border: 1px solid var(--rand); border-radius: 6px; padding: 6px 8px; white-space: pre-wrap; word-break: break-all; max-height: 150px; overflow: auto; }
 .report .zeile label { display: inline; font-weight: 400; margin: 0; }
+
+/* ?-Knoepfe und Erklaer-Popover (Texte aus data/glossar.json) */
+.hilfe-knopf, .liste button.hilfe-knopf { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 17px; height: 17px; padding: 0; margin-left: 5px; border-radius: 50%; border: 1px solid var(--rand); background: var(--bg); color: var(--fg2); font-size: 11px; font-weight: 700; line-height: 1; cursor: help; vertical-align: middle; text-transform: none; letter-spacing: 0; }
+.hilfe-knopf:hover, .hilfe-knopf.aktiv, .liste button.hilfe-knopf:hover, .liste button.hilfe-knopf.aktiv { background: var(--akzent2); color: #fff; border-color: var(--akzent2); }
+.hilfe-knopf.dezent { opacity: .4; width: 15px; height: 15px; font-size: 10px; background: var(--bg3); border-color: transparent; }
+tr:hover .hilfe-knopf.dezent, .hilfe-knopf.dezent:focus, .hilfe-knopf.dezent.aktiv { opacity: 1; }
+.var-zeile { display: flex; align-items: center; }
+.var-zeile > button:first-child { flex: 1; min-width: 0; }
+.abs-titel { display: inline-flex; align-items: center; }
+.glossar-pop { position: fixed; z-index: 65; width: min(340px, calc(100vw - 16px)); max-height: min(70vh, 520px); overflow: auto; background: var(--bg); color: var(--fg); border: 1px solid var(--rand); border-radius: 10px; box-shadow: 0 4px 18px rgba(0,0,0,.25); padding: 10px 12px; font-size: 13px; line-height: 1.42; }
+.glossar-pop p { margin: 6px 0; }
+.glossar-pop .gp-kopf { display: flex; align-items: center; gap: 6px; }
+.glossar-pop .gp-kopf strong { flex: 1; font-size: 14px; }
+.glossar-pop .gp-kopf button { padding: 0 6px; font-size: 13px; line-height: 1.5; }
+.glossar-pop details { margin: 6px 0; border-left: 3px solid var(--bg3); padding-left: 8px; }
+.glossar-pop summary { cursor: pointer; color: var(--akzent2); font-size: 12.5px; }
+.glossar-pop details p { font-size: 12.5px; color: var(--fg2); }
+.glossar-pop .gp-chips { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; margin-top: 8px; }
+.glossar-pop .gp-chips button { font-size: 11.5px; padding: 1px 8px; border-radius: 10px; }
+.glossar-pop .gp-fuss { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; border-top: 1px solid var(--bg3); padding-top: 6px; }
+.glossar-pop .gp-link { background: none; border: none; color: var(--akzent2); padding: 0; font-size: 12px; text-decoration: underline; }
+.glossar-liste .gl-eintrag { padding: 8px 0; border-bottom: 1px solid var(--bg3); }
+.glossar-liste .gl-eintrag p { margin: 4px 0; }
+.glossar-liste details p { color: var(--fg2); font-size: 13px; }
+.glossar-liste summary { cursor: pointer; color: var(--akzent2); font-size: 12.5px; }
+
+/* Anleitung (gefuehrte Tour) */
+.tour-sperre { position: fixed; inset: 0; z-index: 70; }
+.tour-sperre.dunkel { background: rgba(0,0,0,.5); }
+.tour-loch { position: fixed; z-index: 71; border-radius: 8px; box-shadow: 0 0 0 9999px rgba(0,0,0,.5), 0 0 0 2px var(--akzent); pointer-events: none; transition: left .18s ease, top .18s ease, width .18s ease, height .18s ease; }
+.tour-karte { position: fixed; z-index: 72; width: min(390px, calc(100vw - 16px)); max-height: calc(100vh - 16px); overflow: auto; background: var(--bg); color: var(--fg); border-radius: 12px; box-shadow: 0 6px 28px rgba(0,0,0,.35); padding: 12px 16px 12px; font-size: 13.5px; line-height: 1.45; }
+.tour-karte.unten { left: 8px; right: 8px; bottom: 8px; width: auto; max-height: 46vh; }
+.tour-karte.oben { left: 8px; right: 8px; top: calc(var(--kopf-hoehe) + 8px); width: auto; max-height: 46vh; }
+.tour-karte h3 { font-size: 16px; text-transform: none; letter-spacing: 0; color: var(--fg); margin: 4px 0 6px; }
+.tour-karte p { margin: 6px 0; }
+.tour-karte ul { margin: 6px 0; padding-left: 18px; }
+.tour-karte li { margin: 3px 0; }
+.tour-kopf { display: flex; justify-content: space-between; align-items: center; }
+.tour-kopf button { padding: 0 7px; line-height: 1.5; }
+.tour-fuss { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 10px; }
+.tour-punkte { display: flex; gap: 4px; flex-wrap: wrap; justify-content: center; }
+.tour-punkte span { width: 6px; height: 6px; border-radius: 50%; background: var(--bg3); }
+.tour-punkte span.an { background: var(--akzent); }
 .farbe-punkt { display: inline-block; width: 12px; height: 12px; border-radius: 50%; border: 1px solid rgba(0,0,0,.2); flex: none; }
 .balken { display: inline-block; height: 10px; width: 44px; border-radius: 2px; border: 1px solid rgba(0,0,0,.15); flex: none; }
 
@@ -236,7 +279,10 @@ h3 { font-size: 13px; margin: 0; text-transform: uppercase; letter-spacing: .04e
   .kopf { gap: 6px; padding: 0 6px; }
   .kopf .titel { display: none; }
   .kopf .suche { flex: 1 1 120px; margin-left: 0; }
-  .kopf .knoepfe { gap: 3px; }
+  .kopf .suche { flex: 1 0 84px; }
+  .kopf .knoepfe { gap: 3px; flex: 0 1 auto; min-width: 0; overflow-x: auto; scrollbar-width: none; }
+  .kopf .knoepfe::-webkit-scrollbar { display: none; }
+  .kopf .knoepfe button { flex: none; }
   .kopf .knoepfe button { padding: 4px 5px; font-size: 11px; }
   .legende { max-width: 60vw; }
 }
