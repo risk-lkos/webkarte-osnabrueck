@@ -53,10 +53,13 @@ WK.suche = (() => {
       const bb = bboxIds(t.ids);
       map.fitBounds([[bb[0], bb[1]], [bb[2], bb[3]]], { padding: 60, duration: 700, maxZoom: 15 });
       WK.karte.nachbarnZeigen(t.ids);
+      // Strassenzug: Auswertung (Max/Min der aktuellen Variable) im Panel oeffnen
+      if (t.ref && WK.panel && WK.panel.zugSetzen) WK.panel.zugSetzen({ ref: t.ref, ids: t.ids });
       WK.ui.melden(`${t.ids.length} Kanten markiert: ${t.label}`, 3000);
     }
   }
-  function strassenzug(ref) { if (!S.index) indexBauen(); const r = S.index.refs.find(x => x.k === normRef(ref)); if (r) springen({ ids: r.ids, label: `Straßenzug ${r.ref}` }); }
+  function zug(ref) { if (!S.index) indexBauen(); const r = S.index.refs.find(x => x.k === normRef(ref)); return r ? { ref: r.ref, ids: r.ids } : null; }
+  function strassenzug(ref) { const r = zug(ref); if (r) springen({ ids: r.ids, label: `Straßenzug ${r.ref}`, ref: r.ref }); }
   function init() {
     const inp = document.getElementById('suche'), box = document.getElementById('suche-treffer');
     const zeigen = () => {
@@ -77,5 +80,5 @@ WK.suche = (() => {
     });
     document.addEventListener('click', e => { if (!box.contains(e.target) && e.target !== inp) box.hidden = true; });
   }
-  return { init, suchen, springen, strassenzug, norm };
+  return { init, suchen, springen, strassenzug, zug, norm };
 })();

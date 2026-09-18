@@ -1,0 +1,19 @@
+name: Auffälligkeit in den Daten
+description: Ein Wert, eine Kante oder eine Zuordnung wirkt falsch
+title: "[Daten] "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: beschreibung
+    attributes:
+      label: Beschreibung
+      description: Welche Kante oder welcher Wert wirkt falsch, und warum? Am besten die Kante in der Karte anklicken und dort „Melden" wählen.
+    validations:
+      required: true
+  - type: textarea
+    id: kontext
+    attributes:
+      label: Kartenzustand
+      description: Füllt die Karte über „Melden" automatisch aus (Link zur Ansicht, Variable, gewählte Kante, Datenstand, Browser).
+    validations:
+      required: false

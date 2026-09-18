@@ -53,7 +53,25 @@ sich dazu „nur Top N" mit „unter: <Ebene>" frei kombinieren. Bei aktivem Top
 Kantenfarbe jede Top-Kante (kurze Kanten fallen bei kleinem Zoom aus den Kacheln; abschaltbar im
 Filter, blendet zwischen Zoom 12 und 14 aus, erscheint auch im PNG-Export). Favoriten (☆ im Panel, Taste S)
 und bis zu zehn Pins für den Vergleich (Taste P) bleiben im Browser gespeichert. Export (E),
-Rangliste (R), Farben (C), Hilfe (?).
+Farben (C), Hilfe (?).
+
+Die Variablengruppen im Menü sind einklappbar und starten eingeklappt; ein Punkt zeigt, in welcher
+Gruppe die gezeigte Variable liegt. Die Rangliste (R) ersetzt das Menü durch eine scrollbare,
+sortierbare Attributtabelle der aktuellen Variable: Klick auf eine Zeile springt zur Kante,
+Pfeiltasten blättern, „⇔ Spalten" zeigt weitere Kennwerte, „✕ Schließen" (oben fixiert) holt das
+Menü zurück; CSV und GeoJSON exportieren die gefilterten Kanten. „Straßenzug <Nr.>" im Panel zoomt
+auf alle Kanten derselben Nummer und öffnet eine Auswertung mit Max, Min und Median der aktuellen
+Variable als Sprungziele.
+
+## Meldungen (GitHub-Issues)
+
+„Melden" (M, auch im Panel je Kante) öffnet ein Formular für Fehler, Datenauffälligkeiten, Wünsche
+und Feedback. Die Seite ist statisch und enthält kein Zugangstoken: sie öffnet das passende
+Issue-Formular des Repositories (`.github/ISSUE_TEMPLATE/*.yml`, Labels `bug`, `enhancement`,
+`question`) mit Titel, Beschreibung und Kartenzustand (Link zur Ansicht, Variable, gewählte Kante,
+Datenstand, Browser) vorausgefüllt; abgeschickt wird auf GitHub mit dem Konto der meldenden Person.
+Ohne Konto bleibt „Text kopieren"; ein E-Mail-Knopf erscheint, wenn in `docs/js/config.js` unter
+`report.email` eine Adresse steht. Repository und öffentliche Adresse stehen ebenfalls dort.
 
 ## Farbschemata (austauschbare Farben)
 

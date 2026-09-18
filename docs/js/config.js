@@ -33,6 +33,9 @@ WK.config = {
   speicher: { schema: 'wk.schema', ansicht: 'wk.ansicht', lesezeichen: 'wk.lesezeichen', theme: 'wk.theme', favoriten: 'wk.favoriten' },
   // Hauptindex je Gruppe fuer die "Top 25"-Auswahl (wie die Top-25-Listen der Arbeit)
   topVariable: { importance: 'imp_pct100', pluvial: 'vi_pct', fluvial: 'vi_pct_fluvial', heat: 'vi_pct_heat', compound: 'vi_pct_compound' },
+  // Meldefunktion: Issues im GitHub-Repository (kein Token in der Seite; die meldende Person schickt auf GitHub ab).
+  // seite = oeffentliche Adresse fuer den Link im Ticket; email = optionaler Rueckweg ohne GitHub-Konto (leer = aus)
+  report: { repo: 'risk-lkos/webkarte-osnabrueck', seite: 'https://risk-lkos.github.io/webkarte-osnabrueck/', email: '' },
   // Baulastebenen fuer "Top 25 je Ebene" (Klassen aus AP7_baulast, Attribut baulast). Rangregel wie im
   // AP7-Vermerk: globaler Index, je Ebene die hoechsten Werte.
   baulastEbenen: [

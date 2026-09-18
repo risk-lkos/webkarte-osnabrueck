@@ -42,11 +42,15 @@ WK.ui = (() => {
       for (const tv of topVars) { const w = p[tv.id]; if (typeof w === 'number' && (!tv.m.gt0 || w > 0)) { const k = tv.id + '|' + p.baulast; ebenenZahl[k] = (ebenenZahl[k] || 0) + 1; } }
     }
     const ebenenKnoepfe = [];
+    // Variablengruppen sind einklappbar und starten eingeklappt (kompaktes Menue); der Zustand bleibt im Browser gespeichert
+    const gruppenOffen = new Set(U.ls('wk.gruppen.offen') || []), gruppenUi = [];
     for (const g of meta.gruppen) {
       const vars = meta.variablen.filter(v => v.gruppe === g.id);
       if (!vars.length) continue;
       const topVar = WK.config.topVariable[g.id];
-      a2.inhalt.appendChild(U.el('div', { class: 'gruppe-kopf', title: g.text }, U.el('span', {}, g.label),
+      const pfeil = U.el('span', { class: 'pfeil' }, '▸'), punkt = U.el('span', { class: 'aktiv-punkt', title: 'enthält die aktuell gezeigte Variable', hidden: true });
+      const toggle = U.el('button', { class: 'gruppe-toggle', 'aria-expanded': 'false', title: g.text + ' (Klick klappt die Variablen auf oder zu)' }, pfeil, U.el('span', {}, g.label), U.el('span', { class: 'anzahl' }, `(${vars.length})`), punkt);
+      a2.inhalt.appendChild(U.el('div', { class: 'gruppe-kopf' }, toggle,
         topVar && WK.daten.variable(topVar) ? U.el('button', { style: { padding: '1px 7px', fontSize: '11px' }, title: `Die 25 Kanten mit den höchsten Werten von ${WK.daten.variable(topVar).label} (Top-25-Liste dieser Gefahr)`, onclick: () => { WK.karte.setVariable(topVar); if (WK.filter) WK.filter.setTopN(25); melden(`Top 25 ${g.label}: ${WK.daten.variable(topVar).label}`); } }, 'Top 25') : U.el('span', { class: 'kurz' }, g.kurz)));
       if (topVar && WK.daten.variable(topVar)) {
         // Top 25 je Baulastebene: Rang innerhalb der Ebene nach dem globalen Index (Rangregel des AP7-Vermerks)
@@ -62,7 +66,11 @@ WK.ui = (() => {
         }
         a2.inhalt.appendChild(zeile);
       }
-      const l = U.el('div', { class: 'liste' });
+      const l = U.el('div', { class: 'liste gruppe-inhalt' });
+      const setOffen = an => { l.hidden = !an; pfeil.textContent = an ? '▾' : '▸'; toggle.setAttribute('aria-expanded', an ? 'true' : 'false'); };
+      setOffen(gruppenOffen.has(g.id));
+      toggle.addEventListener('click', () => { const an = l.hidden; setOffen(an); if (an) gruppenOffen.add(g.id); else gruppenOffen.delete(g.id); U.ls('wk.gruppen.offen', [...gruppenOffen]); });
+      gruppenUi.push({ punkt, ids: new Set(vars.map(x => x.id)) });
       for (const v of vars) {
         const b = U.el('button', { title: v.beschreibung || v.label, onclick: () => WK.karte.setVariable(v.id) },
           U.el('span', { class: 'balken', style: { background: v.typ === 'kategorial' ? 'repeating-linear-gradient(90deg,#999 0 6px,#ddd 6px 12px)' : WK.stil.rampe(v.rolle).css() } }),
@@ -173,7 +181,8 @@ WK.ui = (() => {
     document.getElementById('btn-seite').addEventListener('click', () => { const app = document.getElementById('app'); if (window.innerWidth <= 900) app.classList.toggle('seite-offen'); else app.classList.toggle('ohne-seite'); setTimeout(() => WK.karte.map && WK.karte.map.resize(), 50); });
     document.getElementById('btn-farben').addEventListener('click', () => WK.farben && WK.farben.oeffnen());
     document.getElementById('btn-export').addEventListener('click', () => WK.exportPng && WK.exportPng.dialog());
-    document.getElementById('btn-rangliste').addEventListener('click', () => WK.rangliste && WK.rangliste.oeffnen());
+    document.getElementById('btn-rangliste').addEventListener('click', () => WK.rangliste && WK.rangliste.umschalten());
+    document.getElementById('btn-melden').addEventListener('click', () => WK.report && WK.report.oeffnen());
     document.getElementById('btn-hilfe').addEventListener('click', () => WK.hilfe && WK.hilfe.hilfe());
     document.getElementById('btn-ueber').addEventListener('click', () => WK.hilfe && WK.hilfe.ueber());
     document.getElementById('dialog-schliessen').addEventListener('click', dialogSchliessen);
@@ -182,6 +191,7 @@ WK.ui = (() => {
     // Ereignisse
     WK.bus.on('variable', info => {
       for (const [id, b] of S.varKnoepfe) b.classList.toggle('aktiv', id === info.variable);
+      for (const gu of gruppenUi) gu.punkt.hidden = !gu.ids.has(info.variable);
       for (const [id, b] of S.presetKnoepfe) b.classList.toggle('aktiv', !!(info.preset && info.preset.id === id));
       const sk = info.skala || {};
       const m = WK.karte.modus;
@@ -268,7 +278,8 @@ WK.ui = (() => {
         case 'f': case 'F': document.getElementById('suche').focus(); e.preventDefault(); break;
         case 'e': case 'E': if (WK.exportPng) WK.exportPng.dialog(); break;
         case 'c': case 'C': if (WK.farben) WK.farben.oeffnen(); break;
-        case 'r': case 'R': if (WK.rangliste) WK.rangliste.oeffnen(); break;
+        case 'r': case 'R': if (WK.rangliste) WK.rangliste.umschalten(); break;
+        case 'm': case 'M': if (WK.report) WK.report.oeffnen(); break;
         case 'd': case 'D': document.getElementById('app').classList.toggle('ohne-panel'); setTimeout(() => K.map && K.map.resize(), 50); break;
         case 'l': case 'L': document.getElementById('cb-labels').click(); break;
         case 'p': case 'P': if (WK.vergleich && K.auswahl !== null) WK.vergleich.anpinnen(K.auswahl); break;

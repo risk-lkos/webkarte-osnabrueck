@@ -1,0 +1,19 @@
+name: Fehler in der Karte
+description: Etwas funktioniert nicht oder wird falsch dargestellt
+title: "[Fehler] "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: beschreibung
+    attributes:
+      label: Beschreibung
+      description: Was ist passiert, was hättest du erwartet? Schritte zum Nachstellen helfen.
+    validations:
+      required: true
+  - type: textarea
+    id: kontext
+    attributes:
+      label: Kartenzustand
+      description: Füllt die Karte über „Melden" automatisch aus (Link zur Ansicht, Variable, gewählte Kante, Datenstand, Browser).
+    validations:
+      required: false

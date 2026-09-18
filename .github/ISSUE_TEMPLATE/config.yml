@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Zur interaktiven Karte
+    url: https://risk-lkos.github.io/webkarte-osnabrueck/
+    about: Meldungen am besten direkt aus der Karte über den Knopf „Melden" anlegen, dann hängt der Kartenzustand automatisch an.

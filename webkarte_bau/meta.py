@@ -17,7 +17,7 @@ from . import quellen as Q
 H = Q.H
 
 GRUPPEN = [
-    {"id": "importance", "label": "Netzkritikalität", "kurz": "Link Importance",
+    {"id": "importance", "label": "Netzbedeutung", "kurz": "Link Importance",
      "rolle": "importance",
      "text": "Link Importance = mittlerer zusätzlicher Reiseaufwand (Sekunden) je relevantem Quelle-Ziel-Paar, "
              "wenn die Kante gesperrt wird; berechnet über 129 Gemeindeknoten auf dem vereinfachten Netz. "

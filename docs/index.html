@@ -24,13 +24,15 @@
     <nav class="knoepfe">
       <button id="btn-farben" title="Farbschema und Farbeditor (C)">Farben</button>
       <button id="btn-export" title="Karte exportieren (E)">Export</button>
-      <button id="btn-rangliste" title="Rangliste und Datenexport (R)">Rangliste</button>
+      <button id="btn-rangliste" title="Rangliste als Tabelle anstelle des Menüs, mit Datenexport (R)">Rangliste</button>
+      <button id="btn-melden" title="Fehler, Auffälligkeit, Anmerkung oder Feedback melden (M)">Melden</button>
       <button id="btn-hilfe" title="Hilfe und Tastaturkürzel (?)">Hilfe</button>
       <button id="btn-ueber" title="Über diese Karte, Datenquellen, Lizenzen">Über</button>
     </nav>
   </header>
 
   <aside id="seite" class="seite" aria-label="Steuerung"></aside>
+  <aside id="rangliste" class="seite rangliste" aria-label="Rangliste" hidden></aside>
 
   <main id="mitte" class="mitte">
     <div id="karte" class="karte"></div>
@@ -107,6 +109,7 @@
 <script src="./js/hilfe.js"></script>
 <script src="./js/ui.js"></script>
 <script src="./js/favoriten.js"></script>
+<script src="./js/report.js"></script>
 <script src="./js/main.js"></script>
 </body>
 </html>

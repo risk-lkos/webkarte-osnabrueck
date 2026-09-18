@@ -347,7 +347,7 @@
     "viridis"
    ]
   },
-  "zeitpunkt": "2026-09-17 20:59"
+  "zeitpunkt": "2026-09-18 15:01"
  },
  "crs_arbeit": "EPSG:25832 (UTM 32N)",
  "datenbasis": {
@@ -368,7 +368,7 @@
   {
    "id": "importance",
    "kurz": "Link Importance",
-   "label": "Netzkritikalität",
+   "label": "Netzbedeutung",
    "rolle": "importance",
    "text": "Link Importance = mittlerer zusätzlicher Reiseaufwand (Sekunden) je relevantem Quelle-Ziel-Paar, wenn die Kante gesperrt wird; berechnet über 129 Gemeindeknoten auf dem vereinfachten Netz. Nur 4.212 Kanten im Landkreis sind ‚aktiv' (importance_s > 0)."
   },

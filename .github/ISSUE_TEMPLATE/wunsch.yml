@@ -1,0 +1,19 @@
+name: Verbesserung oder Wunsch
+description: Eine Funktion fehlt oder ginge besser
+title: "[Wunsch] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: beschreibung
+    attributes:
+      label: Beschreibung
+      description: Was fehlt oder ginge besser, und wofür würdest du es nutzen?
+    validations:
+      required: true
+  - type: textarea
+    id: kontext
+    attributes:
+      label: Kartenzustand
+      description: Füllt die Karte über „Melden" automatisch aus (Link zur Ansicht, Variable, gewählte Kante, Datenstand, Browser).
+    validations:
+      required: false

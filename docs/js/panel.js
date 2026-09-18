@@ -1,7 +1,7 @@
 /* Detail-Panel: Kennwerte der gewaehlten Kante nach Gruppen, Rang/Dezil-Badges, Kopieren, Nachbarn, Pins */
 WK.panel = (() => {
   const U = WK.util;
-  const S = { el: null, titel: null, id: null };
+  const S = { el: null, titel: null, id: null, zug: null };   // zug: { ref, ids, set } = geoeffnete Strassenzug-Auswertung
   const BOOL_SPALTEN = new Set(['aktiv', 'im_kreis', 'bruecke', 'tunnel', 'usg_betroffen', 'pruefbedarf', 'querungspunkt', 'betroffen_fl',
                                'concrete_flag', 'hoch_pluvial', 'hoch_fluvial', 'hoch_heat', 'hoch_fluvial_bf']);
 
@@ -23,14 +23,57 @@ WK.panel = (() => {
     if (typeof v === 'number') return U.formatZahl(v, sp.dezimalen === null || sp.dezimalen === undefined ? undefined : sp.dezimalen) + (sp.einheit ? ' ' + sp.einheit : '');
     return String(v);
   }
+  // --- Strassenzug-Auswertung: Max/Min/Median der aktuellen Variable entlang aller Kanten mit derselben Nummer ---
+  function zugSetzen(z) {
+    S.zug = z && z.ids && z.ids.length ? { ref: z.ref, ids: z.ids, set: new Set(z.ids) } : null;
+    if (S.zug) document.getElementById('app').classList.add('panel-offen');
+    zeigen(S.id, true);
+  }
+  function zugWerte() {
+    const K = WK.karte, v = K.variable, m = K.meta || {}, aus = [];
+    if (!S.zug || !v || m.typ === 'kategorial') return aus;
+    for (const id of S.zug.ids) { const fe = WK.daten.feature(id), w = fe && fe.properties[v]; if (typeof w === 'number' && !Number.isNaN(w) && (!m.gt0 || w > 0)) aus.push([w, id]); }
+    return aus.sort((a, b) => b[0] - a[0] || a[1] - b[1]);
+  }
+  function zugBox() {
+    const z = S.zug, K = WK.karte, v = K.variable, m = K.meta || {}, werte = zugWerte();
+    const hin = id => { K.waehlen(id, { quelle: 'zug' }); K.fokus(id); };
+    const box = U.el('div', { class: 'zug-box' });
+    box.appendChild(U.el('div', { class: 'zug-kopf' },
+      U.el('span', {}, U.el('strong', {}, `Straßenzug ${z.ref}`), U.el('span', { class: 'klein' }, ` · ${U.formatZahl(z.ids.length, 0)} Kanten${werte.length ? `, ${U.formatZahl(werte.length, 0)} mit Wert` : ''}`)),
+      U.el('button', { title: 'Auswertung schließen und Markierung des Straßenzugs entfernen', onclick: () => { S.zug = null; K.nachbarnZeigen([]); zeigen(S.id, true); } }, '✕')));
+    const kn = U.el('div', { class: 'zug-knoepfe' });
+    if (werte.length) {
+      const sp = WK.daten.spalte(v) || {}, d = sp.dezimalen === null || sp.dezimalen === undefined ? 3 : sp.dezimalen, f = w => U.formatZahl(w, d);
+      const max = werte[0], min = werte[werte.length - 1], med = werte[Math.floor(werte.length / 2)];
+      const mittel = werte.reduce((s, x) => s + x[0], 0) / werte.length;
+      const knopf = (label, e, titel) => U.el('button', { class: e[1] === S.id ? 'aktiv' : '', title: titel, onclick: () => hin(e[1]) }, label + ' ', U.el('span', { class: 'mono' }, f(e[0])), ' →');
+      box.appendChild(U.el('div', { class: 'klein', style: { marginTop: '3px' } }, `${m.label || v} · Mittel der Kanten ${f(mittel)}`));
+      kn.appendChild(knopf('Max', max, 'Zur Kante mit dem höchsten Wert in diesem Straßenzug springen'));
+      kn.appendChild(knopf('Min', min, 'Zur Kante mit dem niedrigsten Wert in diesem Straßenzug springen'));
+      kn.appendChild(knopf('Median', med, 'Zur Kante mit dem mittleren Wert (Median) in diesem Straßenzug springen'));
+      const i = S.id === null ? -1 : werte.findIndex(x => x[1] === S.id);
+      if (i >= 0) {
+        kn.appendChild(U.el('button', { disabled: i === 0, title: 'Zur Kante mit dem nächsthöheren Wert im Straßenzug', onclick: () => hin(werte[i - 1][1]) }, '▲ höher'));
+        kn.appendChild(U.el('button', { disabled: i === werte.length - 1, title: 'Zur Kante mit dem nächstniedrigeren Wert im Straßenzug', onclick: () => hin(werte[i + 1][1]) }, '▼ niedriger'));
+        box.appendChild(U.el('div', { class: 'klein' }, `Gewählte Kante: Rang ${i + 1} von ${werte.length} im Straßenzug`));
+      }
+    } else box.appendChild(U.el('div', { class: 'klein', style: { marginTop: '3px' } }, !v ? 'Keine Kantenvariable gewählt: Max und Min gibt es, sobald eine Variable gezeigt wird.' : m.typ === 'kategorial' ? `Max und Min gibt es nur für Zahlenvariablen (aktuell: ${m.label || v}).` : `Keine Kante dieses Straßenzugs hat einen Wert für ${m.label || v}.`));
+    kn.appendChild(U.el('button', { title: 'Karte auf den ganzen Straßenzug zoomen', onclick: () => { if (WK.suche) WK.suche.springen({ ids: z.ids, label: `Straßenzug ${z.ref}`, ref: z.ref }); } }, 'ganzer Zug'));
+    box.appendChild(kn);
+    return box;
+  }
+
   function zeigen(id, still) {
     S.id = id;
     const el = S.el;
     const app = document.getElementById('app');
+    // gewaehlte Kante liegt ausserhalb des geoeffneten Strassenzugs: Auswertung schliessen
+    if (S.zug && id !== null && id !== undefined && !S.zug.set.has(id)) S.zug = null;
     if (id === null || id === undefined) {
-      S.titel.textContent = 'Keine Kante gewählt';
+      S.titel.textContent = S.zug ? `Straßenzug ${S.zug.ref}` : 'Keine Kante gewählt';
       el.innerHTML = '<p class="hinweis">Klicke auf eine Kante in der Karte, um ihre Kennwerte zu sehen. Beim Überfahren erscheint der Wert der aktuellen Variablen.</p>';
-      WK.karte.nachbarnZeigen([]);
+      if (S.zug) { el.insertBefore(zugBox(), el.firstChild); WK.karte.nachbarnZeigen(S.zug.ids); } else WK.karte.nachbarnZeigen([]);
       return;
     }
     const fe = WK.daten.feature(id); if (!fe) return;
@@ -61,9 +104,11 @@ WK.panel = (() => {
       WK.favoriten ? U.el('button', { class: WK.favoriten.ist(id) ? 'aktiv' : '', title: 'Favorit merken / entfernen (S)', onclick: () => { WK.favoriten.toggle(id); zeigen(id, true); } }, WK.favoriten.ist(id) ? '★ Favorit' : '☆ Favorit') : null,
       U.el('button', { onclick: () => WK.karte.fokus(id) }, 'Zoom'),
       U.el('button', { onclick: () => { const n = WK.daten.nachbarn(id); WK.karte.nachbarnZeigen(n); WK.ui.melden(`${n.length} Nachbarkanten markiert`); } }, 'Nachbarn'),
-      p.ref ? U.el('button', { onclick: () => { if (WK.suche) WK.suche.strassenzug(p.ref); } }, `Straßenzug ${p.ref}`) : null,
-      U.el('button', { onclick: () => { if (WK.karte.map) { WK.karte.map.setFilter('nachbarn', ['==', ['id'], -1]); } } }, 'Markierung weg'));
+      ...(p.ref ? String(p.ref).split(/[;,]/).map(r => r.trim()).filter(Boolean).map(r => U.el('button', { class: S.zug && WK.suche && WK.suche.norm(S.zug.ref) === WK.suche.norm(r) ? 'aktiv' : '', title: `Auf alle Kanten der ${r} zoomen und Max/Min der aktuellen Variable entlang des Straßenzugs zeigen`, onclick: () => { if (WK.suche) WK.suche.strassenzug(r); } }, `Straßenzug ${r}`)) : []),
+      U.el('button', { onclick: () => { S.zug = null; WK.karte.nachbarnZeigen([]); zeigen(id, true); } }, 'Markierung weg'),
+      WK.report ? U.el('button', { title: 'Fehler oder Auffälligkeit zu dieser Kante melden (M)', onclick: () => WK.report.oeffnen({ kante: id }) }, 'Melden') : null);
     el.appendChild(aktionen);
+    if (S.zug) { el.appendChild(zugBox()); WK.karte.nachbarnZeigen(S.zug.ids); }
     // Gruppen
     for (const g of meta.gruppen) {
       const zeilen = Object.entries(meta.spalten).filter(([sp, def]) => def.gruppe === g.id && p[sp] !== undefined && sp !== 'name' && sp !== 'ref');
@@ -92,5 +137,5 @@ WK.panel = (() => {
     const ok = await U.kopieren(markdown(S.id));
     WK.ui.melden(ok ? 'Kennwerte als Markdown-Tabelle kopiert' : 'Kopieren fehlgeschlagen');
   }
-  return { init, zeigen, markdown, wertText, get id() { return S.id; } };
+  return { init, zeigen, zugSetzen, markdown, wertText, get id() { return S.id; }, get zug() { return S.zug; } };
 })();

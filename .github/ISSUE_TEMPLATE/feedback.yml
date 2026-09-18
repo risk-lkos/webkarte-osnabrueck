@@ -1,0 +1,19 @@
+name: Anmerkung, Frage, Feedback
+description: Verständnisfragen, Lob, Kritik, Hinweise zur Darstellung
+title: "[Feedback] "
+labels: ["question"]
+body:
+  - type: textarea
+    id: beschreibung
+    attributes:
+      label: Beschreibung
+      description: Alles, was nicht Fehler oder Wunsch ist.
+    validations:
+      required: true
+  - type: textarea
+    id: kontext
+    attributes:
+      label: Kartenzustand
+      description: Füllt die Karte über „Melden" automatisch aus (Link zur Ansicht, Variable, gewählte Kante, Datenstand, Browser).
+    validations:
+      required: false
