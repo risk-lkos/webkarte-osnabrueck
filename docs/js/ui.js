@@ -34,12 +34,34 @@ WK.ui = (() => {
 
     // Variablen nach Gruppen
     const a2 = abschnitt('Variablen nach Gefahr', true, 'abs-variablen');
+    // Anzahl gueltiger Werte je Top-Variable und Baulastebene (fuer die Knoepfe "Top 25 je Ebene")
+    const topVars = [...new Set(Object.values(WK.config.topVariable))].map(id => ({ id, m: WK.daten.variable(id) })).filter(x => x.m);
+    const ebenenZahl = {};
+    for (const fe of WK.daten.features) {
+      const p = fe.properties; if (!p.baulast) continue;
+      for (const tv of topVars) { const w = p[tv.id]; if (typeof w === 'number' && (!tv.m.gt0 || w > 0)) { const k = tv.id + '|' + p.baulast; ebenenZahl[k] = (ebenenZahl[k] || 0) + 1; } }
+    }
+    const ebenenKnoepfe = [];
     for (const g of meta.gruppen) {
       const vars = meta.variablen.filter(v => v.gruppe === g.id);
       if (!vars.length) continue;
       const topVar = WK.config.topVariable[g.id];
       a2.inhalt.appendChild(U.el('div', { class: 'gruppe-kopf', title: g.text }, U.el('span', {}, g.label),
         topVar && WK.daten.variable(topVar) ? U.el('button', { style: { padding: '1px 7px', fontSize: '11px' }, title: `Die 25 Kanten mit den höchsten Werten von ${WK.daten.variable(topVar).label} (Top-25-Liste dieser Gefahr)`, onclick: () => { WK.karte.setVariable(topVar); if (WK.filter) WK.filter.setTopN(25); melden(`Top 25 ${g.label}: ${WK.daten.variable(topVar).label}`); } }, 'Top 25') : U.el('span', { class: 'kurz' }, g.kurz)));
+      if (topVar && WK.daten.variable(topVar)) {
+        // Top 25 je Baulastebene: Rang innerhalb der Ebene nach dem globalen Index (Rangregel des AP7-Vermerks)
+        const vl = WK.daten.variable(topVar).label;
+        const zeile = U.el('div', { class: 'top-ebenen' }, U.el('span', { class: 'klein', title: 'Top 25 innerhalb einer Baulastebene: die 25 höchsten Werte des Index unter den Straßen dieser Ebene. Das sind meist nicht die Spitzenwerte des ganzen Netzes, sondern die Spitzen der jeweiligen Zuständigkeit.' }, 'je Ebene'));
+        for (const e of WK.config.baulastEbenen) {
+          const n = ebenenZahl[topVar + '|' + e.id] || 0;
+          const b = U.el('button', { disabled: !n,
+            title: n ? `Top 25 der ${e.plural}: die ${Math.min(25, n)} höchsten Werte von ${vl} unter ${U.formatZahl(n, 0)} Kanten dieser Ebene mit Wert` : `Keine ${e.plural} mit Wert für ${vl}`,
+            onclick: () => { WK.karte.setVariable(topVar); if (WK.filter) WK.filter.setTopN(25, e.id); melden(`Top 25 ${e.plural} · ${g.label}: ${vl} (Liste mit Taste R)`); } }, e.kurz);
+          ebenenKnoepfe.push({ b, variable: topVar, ebene: e.id });
+          zeile.appendChild(b);
+        }
+        a2.inhalt.appendChild(zeile);
+      }
       const l = U.el('div', { class: 'liste' });
       for (const v of vars) {
         const b = U.el('button', { title: v.beschreibung || v.label, onclick: () => WK.karte.setVariable(v.id) },
@@ -49,6 +71,9 @@ WK.ui = (() => {
       }
       a2.inhalt.appendChild(l);
     }
+    // aktiven Ebenen-Knopf hervorheben (Top N je Baulastebene auf der Top-Variable dieser Gruppe)
+    const ebenenMarkieren = () => { const F = WK.filter; for (const k of ebenenKnoepfe) k.b.classList.toggle('aktiv', !!(F && F.topN && F.topBaulast === k.ebene && WK.karte.variable === k.variable)); };
+    for (const ev of ['filter', 'variable', 'sichtbar']) WK.bus.on(ev, ebenenMarkieren);
     S.seite.appendChild(a2.d);
 
     // Darstellung

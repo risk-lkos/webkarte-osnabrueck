@@ -8,7 +8,8 @@ WK.karte = (() => {
     mess: { an: false, punkte: [] },
     arbeitsansicht: (() => { const v = U.ls('wk.arbeitsansicht'); return v === null || v === undefined ? true : !!v; })(),
   };
-  const LAYER_DATEN = ['daten', 'kontext_netz'];
+  // 'top_marker' = Punktmarker der Top-N-Kanten (Layer aus filter.js); gleiche ids wie die Kanten, daher klick- und hoverbar
+  const LAYER_DATEN = ['top_marker', 'daten', 'kontext_netz'];
 
   function erzeugen(container) {
     const meta = WK.daten.meta;
@@ -183,6 +184,9 @@ WK.karte = (() => {
     const bb = [[point.x - r, point.y - r], [point.x + r, point.y + r]];
     const fs = S.map.queryRenderedFeatures(bb, { layers: LAYER_DATEN.filter(l => S.map.getLayer(l)) });
     if (!fs.length) return null;
+    // Top-N-Marker liegen sichtbar obenauf: sie gewinnen, bei Ueberlappung der mit dem hoechsten Wert
+    const marker = fs.filter(f => f.layer.id === 'top_marker');
+    if (marker.length) { const v = S.variable; return marker.reduce((a, b) => ((+b.properties[v] || 0) > (+a.properties[v] || 0) ? b : a)); }
     const daten = fs.find(f => f.layer.id === 'daten');
     return daten || fs[0];
   }

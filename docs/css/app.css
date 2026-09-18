@@ -75,6 +75,10 @@ h3 { font-size: 13px; margin: 0; text-transform: uppercase; letter-spacing: .04e
 .liste button.aktiv .n { color: #fff; }
 .gruppe-kopf { font-weight: 600; margin: 8px 0 3px; display: flex; justify-content: space-between; align-items: baseline; }
 .gruppe-kopf .kurz { color: var(--fg2); font-weight: 400; font-size: 12px; }
+.top-ebenen { display: flex; align-items: center; justify-content: flex-end; gap: 4px; margin: 0 0 4px; flex-wrap: wrap; }
+.top-ebenen .klein { margin-right: 2px; color: var(--fg2); }
+.top-ebenen button { padding: 1px 7px; font-size: 11px; }
+.top-ebenen button:disabled { opacity: .4; cursor: default; }
 .farbe-punkt { display: inline-block; width: 12px; height: 12px; border-radius: 50%; border: 1px solid rgba(0,0,0,.2); flex: none; }
 .balken { display: inline-block; height: 10px; width: 44px; border-radius: 2px; border: 1px solid rgba(0,0,0,.15); flex: none; }
 

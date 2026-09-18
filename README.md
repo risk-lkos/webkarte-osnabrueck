@@ -46,7 +46,12 @@ Hintergrund, Landkreis-Ausschnitt und Farbschema „Arbeit". Regler „Linienst�
 Kanten dicker (wirkt auch in Detailkarte und Exporten). Die Detailkarte zeichnet die gewählte Kante
 breiter mit weißem Rand, aber in ihrer aktuellen Datenfarbe (ohne Wert grau), damit der Farbwert
 ablesbar bleibt. „Top 25" neben jeder Gefahrengruppe zeigt
-die 25 Kanten mit den höchsten Indexwerten (Filter „nur Top N"). Favoriten (☆ im Panel, Taste S)
+die 25 Kanten mit den höchsten Indexwerten (Filter „nur Top N"). Die Knöpfe A, B, L, K und Gem.
+darunter zeigen die Top 25 innerhalb einer Baulastebene (Autobahn, Bundes-, Landes-, Kreis-,
+Gemeindestraße), gereiht nach dem globalen Index wie im AP7-Vermerk der Arbeit; im Filter lässt
+sich dazu „nur Top N" mit „unter: <Ebene>" frei kombinieren. Bei aktivem Top-N-Filter markiert in der Übersicht ein Punkt in
+Kantenfarbe jede Top-Kante (kurze Kanten fallen bei kleinem Zoom aus den Kacheln; abschaltbar im
+Filter, blendet zwischen Zoom 12 und 14 aus, erscheint auch im PNG-Export). Favoriten (☆ im Panel, Taste S)
 und bis zu zehn Pins für den Vergleich (Taste P) bleiben im Browser gespeichert. Export (E),
 Rangliste (R), Farben (C), Hilfe (?).
 
