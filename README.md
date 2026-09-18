@@ -63,6 +63,28 @@ Menü zurück; CSV und GeoJSON exportieren die gefilterten Kanten. „Straßenzu
 auf alle Kanten derselben Nummer und öffnet eine Auswertung mit Max, Min und Median der aktuellen
 Variable als Sprungziele.
 
+## Amtliche Gefahrenkarten (WMS)
+
+Unter „Ebenen" lassen sich die Originalkarten einblenden, aus denen die Arbeit ihre
+Gefahrengrößen ableitet; die Bilder kommen direkt von den Diensten (beide mit CORS-Freigabe,
+daher auch im PNG-Export) und brauchen Internet:
+
+- BKG, Hinweiskarte Starkregengefahren (`sgx.geodatenzentrum.de/wms_starkregen`, Layer `ni_*`):
+  Überflutungstiefe, Fließgeschwindigkeit und Fließrichtung (nur Maßstab 1:500 bis 1:4.250, ab
+  Zoom 16) für das extreme Ereignis (100 mm in 1 h, Szenario der Arbeit) und das außergewöhnliche
+  Ereignis (100-jährlich nach KOSTRA);
+- NLWKN, Dienst „Hochwasserschutz" (`umweltkarten-niedersachsen.de/.../HWSchutz_wms`): Wassertiefen
+  Binnenland für HQextrem, HQ100 und HQhäufig sowie die festgesetzten und vorläufig gesicherten
+  Überschwemmungsgebiete. Fließgeschwindigkeiten gibt es für Flusshochwasser nicht.
+
+Ist eine dieser Ebenen an, fragt ein Klick in die Karte die Dienste am Punkt ab (GetFeatureInfo):
+beim BKG Tiefe in cm und Geschwindigkeit in m/s (dazu ihr Produkt), beim NLWKN die Tiefenklasse.
+Dessen Klassencodes sind 1 bis 5 (HQ100, HQhäufig) bzw. 11 bis 15 (HQextrem) für die fünf
+Tiefenklassen der Legende und 21 bis 25 für dieselben Klassen hinter Schutzanlagen; geprüft an
+Flächen, deren Klasse aus den HWRM-Daten der Arbeit bekannt ist (11, 12, 21, 22, 1, 2), die
+übrigen folgen der Legendenreihenfolge. Dienste, Layer und Abfragegruppen stehen als Daten in
+`docs/js/config.js` unter `wms`.
+
 ## Anleitung, Glossar und ?-Knöpfe
 
 „Anleitung" (A) startet eine geführte Tour durch alle Bereiche; beim ersten Besuch startet sie
@@ -123,7 +145,9 @@ verknüpft sie über die id (`WK.daten`). `kanten_keys.csv` verbindet id und Sch
 
 Straßennetz © OpenStreetMap-Mitwirkende (ODbL). Hintergrundkarten: TopPlusOpen © BKG
 (dl-de/by-2-0), Luftbild DOP20 © LGLN (CC BY 4.0), Sentinel-2 cloudless by EOX (CC BY-NC-SA 4.0),
-OpenStreetMap (ODbL), OpenTopoMap (CC BY-SA 3.0). Gefahrendaten: BKG-Hinweiskarte Starkregen
+OpenStreetMap (ODbL), OpenTopoMap (CC BY-SA 3.0). WMS-Gefahrenkarten: Hinweiskarte
+Starkregengefahren © BKG (Jahr des Datenbezugs) dl-de/by-2-0 (Quellenvermerk und Datenquellen laut
+Dienst), Hochwassergefahrenkarten HWRM-RL © NLWKN. Gefahrendaten: BKG-Hinweiskarte Starkregen
 (© GeoBasis-DE/BKG), Hochwassergefahrenkarten HWRM-RL (© NLWKN, dl-de/by-2.0), Landsat 8/9
 (USGS/NASA), Copernicus HRL (© European Union). Bibliotheken: MapLibre GL JS (BSD-3), proj4js (MIT),
 qrcodejs (MIT), Open Sans (OFL).

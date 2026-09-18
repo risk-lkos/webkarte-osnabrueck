@@ -150,6 +150,19 @@ tr:hover .hilfe-knopf.dezent, .hilfe-knopf.dezent:focus, .hilfe-knopf.dezent.akt
 .glossar-liste details p { color: var(--fg2); font-size: 13px; }
 .glossar-liste summary { cursor: pointer; color: var(--akzent2); font-size: 12.5px; }
 
+/* WMS-Gefahrenkarten: Legendenbild des Dienstes und Punktabfrage */
+.wms-legende { margin: 2px 0 8px 22px; padding: 4px 6px; background: #fff; color: #1c1e21; border: 1px solid var(--rand); border-radius: 6px; display: inline-block; max-width: calc(100% - 22px); }
+.wms-legende img { display: block; max-width: 100%; height: auto; }
+.wms-legende .klein { color: #5a5f66; margin-top: 3px; }
+.wms-info { color: #1c1e21; font-size: 12.5px; line-height: 1.4; }
+.wms-info strong { display: block; margin-top: 6px; }
+.wms-info strong:first-child { margin-top: 0; }
+.wms-info table { border-collapse: collapse; width: 100%; }
+.wms-info td { padding: 1px 0; vertical-align: top; }
+.wms-info td.wert { text-align: right; padding-left: 10px; font-family: var(--mono); font-size: 12px; }
+.wms-info .klein { color: #5a5f66; margin-top: 6px; font-size: 11px; }
+.maplibregl-popup-content { border-radius: 8px; padding: 10px 12px; }
+
 /* Anleitung (gefuehrte Tour) */
 .tour-sperre { position: fixed; inset: 0; z-index: 70; }
 .tour-sperre.dunkel { background: rgba(0,0,0,.5); }

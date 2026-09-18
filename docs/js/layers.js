@@ -10,27 +10,112 @@ WK.layers = (() => {
     { id: 'hot_days', label: 'Heiße Tage pro Jahr (Raster)', typ: 'raster', raster: 'hot_days' },
     { id: 'fallbeispiele', label: 'Fallbeispiele (Shortlists der Arbeit)', typ: 'fallbeispiele', datei: 'fallbeispiele' },
   ];
-  const S = { an: new Set(['lk_grenze']), auto: new Set(), deckkraft: {}, geladen: {}, rasterMeta: {}, ui: {} };
+  // amtliche Gefahrenkarten als WMS-Ebenen (Definition in WK.config.wms)
+  const WMS = WK.config.wms || { dienste: {}, ebenen: [], abfragen: {} };
+  for (const w of WMS.ebenen) EBENEN.push(Object.assign({ typ: 'wms' }, w));
+  const S = { an: new Set(['lk_grenze']), auto: new Set(), deckkraft: {}, geladen: {}, rasterMeta: {}, ui: {},
+              abfrageAn: (() => { const v = U.ls('wk.wms.abfrage'); return v === null || v === undefined ? true : !!v; })(), popup: null, abbruch: null };
   const FARBE_GEFAHR = { pluvial: '#08519c', fluvial: '#0868ac', heat: '#bd0026' };
+  const enc = namen => namen.map(encodeURIComponent).join(',');
+  const dienst = e => WMS.dienste[e.dienst] || {};
+  const legendeUrl = (e, name) => `${dienst(e).url}?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetLegendGraphic&FORMAT=image/png&LAYER=${encodeURIComponent(name)}`;
 
   function init(map) {
     const wrap = document.getElementById('ebenen-inhalt');
+    let wmsKopf = false;
     for (const e of EBENEN) {
+      if (e.typ === 'wms' && !wmsKopf) {
+        wmsKopf = true;
+        const abCb = U.el('input', { type: 'checkbox', checked: S.abfrageAn });
+        abCb.addEventListener('change', () => { S.abfrageAn = abCb.checked; U.ls('wk.wms.abfrage', S.abfrageAn); if (!S.abfrageAn && S.popup) S.popup.remove(); });
+        wrap.appendChild(U.el('div', { class: 'gruppe-kopf', style: { marginTop: '12px' } }, U.el('span', {}, 'Amtliche Gefahrenkarten (WMS)'), WK.glossar ? WK.glossar.knopf({ bedienung: 'wms_gefahren' }) : null));
+        wrap.appendChild(U.el('div', { class: 'klein' }, 'Bilder direkt von BKG und NLWKN, brauchen Internet. Ein Klick in die Karte fragt die Werte am Punkt ab.'));
+        wrap.appendChild(U.el('div', { class: 'zeile' }, U.el('label', {}, abCb, ' Punktabfrage bei Klick (Tiefe, Geschwindigkeit)'), WK.glossar ? WK.glossar.knopf({ bedienung: 'wms_abfrage' }) : null));
+      }
+      const start = e.deckkraft !== undefined ? e.deckkraft : (e.typ === 'hqextrem' ? 0.7 : (e.typ === 'raster' || e.typ === 'wms' ? 0.75 : 1));
       const cb = U.el('input', { type: 'checkbox', id: 'eb-' + e.id, checked: S.an.has(e.id) });
-      const op = U.el('input', { type: 'range', min: 0, max: 1, step: 0.05, value: e.typ === 'hqextrem' ? 0.7 : (e.typ === 'raster' ? 0.75 : 1), style: { width: '70px' }, title: 'Deckkraft' });
+      const op = U.el('input', { type: 'range', min: 0, max: 1, step: 0.05, value: start, style: { width: '70px' }, title: 'Deckkraft' });
       S.deckkraft[e.id] = +op.value;
       cb.addEventListener('change', () => { S.auto.delete(e.id); setzen(e.id, cb.checked); });
       op.addEventListener('input', () => { S.deckkraft[e.id] = +op.value; deckkraft(e.id); });
       S.ui[e.id] = { cb, op };
       wrap.appendChild(U.el('div', { class: 'zeile' }, U.el('label', { for: 'eb-' + e.id }, cb, ' ' + e.label), op));
+      if (e.typ === 'wms') { S.ui[e.id].legende = U.el('div', { class: 'wms-legende', hidden: true }); wrap.appendChild(S.ui[e.id].legende); }
     }
     WK.bus.on('stil', () => { for (const id of S.an) stil(id); });
+    if (map) map.on('click', ev => punktabfrage(ev));
+  }
+  // Legende eines WMS-Layers: Bild des Dienstes, erst beim Einschalten geladen
+  function wmsLegende(e, an) {
+    const box = S.ui[e.id] && S.ui[e.id].legende; if (!box) return;
+    box.hidden = !an;
+    if (an && !box.childNodes.length) {
+      for (const name of e.layers) box.appendChild(U.el('img', { src: legendeUrl(e, name), alt: 'Legende ' + e.label }));
+      box.appendChild(U.el('div', { class: 'klein' }, dienst(e).attribution || ''));
+    }
+  }
+  function attributionen() { return [...new Set(EBENEN.filter(e => e.typ === 'wms' && S.an.has(e.id)).map(e => dienst(e).attribution).filter(Boolean))]; }
+
+  // --- Punktabfrage der WMS-Gefahrenkarten (GetFeatureInfo) ------------------------------------------
+  function merc(ll) { const x = ll.lng * 20037508.34 / 180; const y = Math.log(Math.tan((90 + ll.lat) * Math.PI / 360)) / (Math.PI / 180) * 20037508.34 / 180; return [x, y]; }
+  function infoUrl(ab, ll) {
+    const d = WMS.dienste[ab.dienst], [x, y] = merc(ll), r = 10, l = enc(ab.layers);
+    return `${d.url}?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&CRS=EPSG:3857&BBOX=${x - r},${y - r},${x + r},${y + r}&WIDTH=101&HEIGHT=101&LAYERS=${l}&QUERY_LAYERS=${l}&INFO_FORMAT=${encodeURIComponent(d.info)}&I=50&J=50&FEATURE_COUNT=${ab.layers.length + 2}`;
+  }
+  function tiefenklasse(code) {
+    const n = parseInt(code, 10); if (Number.isNaN(n)) return 'nicht überflutet';
+    const kl = (WMS.tiefenklassen || [])[(n % 10) - 1]; if (!kl) return `Klasse ${code}`;
+    return kl + (n >= 20 ? ' (geschützt, hinter Schutzanlage)' : '');
+  }
+  function auswerten(key, ab, json) {
+    const fs = (json && json.features) || [], zeilen = [];
+    if (ab.dienst === 'bkg') {
+      let t = null, v = null;
+      for (const f of fs) { const p = f.properties || {}; if (typeof p.Tiefe === 'number') t = p.Tiefe; if (typeof p.Geschwindigkeit === 'number') v = p.Geschwindigkeit; }
+      const tOk = t !== null && t >= 0 && t < 100000, vOk = v !== null && v >= 0 && v < 1000;
+      zeilen.push(['Überflutungstiefe', tOk ? (t >= 100 ? `${U.formatZahl(t / 100, 2)} m` : `${U.formatZahl(t, 0)} cm`) + (t < 10 ? ' (unter 10 cm, in der Karte nicht dargestellt)' : '') : 'kein Wert']);
+      zeilen.push(['Fließgeschwindigkeit', vOk ? `${U.formatZahl(v, 2)} m/s` + (v < 0.2 ? ' (unter 0,2 m/s, nicht dargestellt)' : '') : 'kein Wert']);
+      if (tOk && vOk) zeilen.push(['Tiefe × Geschwindigkeit', `${U.formatZahl(t / 100 * v, 3)} m²/s`]);
+    } else {
+      // der Dienst nennt je Treffer den Layertitel ("Wassertiefen Binnenland HQ100"); Zuordnung ueber die Szenarionamen
+      for (const kurz of (ab.namen || [])) {
+        const f = fs.find(x => String(x.layerName || '').trim().endsWith(kurz));
+        zeilen.push([kurz, f ? tiefenklasse((f.properties || {})['UniqueValue.Pixelwert']) : 'kein Wert']);
+      }
+    }
+    return zeilen;
+  }
+  async function punktabfrage(ev) {
+    if (!S.abfrageAn || (WK.karte.S.mess && WK.karte.S.mess.an) || (WK.tour && WK.tour.aktiv)) return;
+    const gruppen = [...new Set(EBENEN.filter(e => e.typ === 'wms' && e.abfrage && S.an.has(e.id)).map(e => e.abfrage))];
+    if (!gruppen.length) return;
+    if (S.abbruch) S.abbruch.abort();
+    S.abbruch = new AbortController(); const signal = S.abbruch.signal, ll = ev.lngLat;
+    const inhalt = U.el('div', { class: 'wms-info' }, U.el('div', { class: 'klein' }, 'Frage Gefahrenkarten ab …'));
+    if (S.popup) S.popup.remove();
+    S.popup = new maplibregl.Popup({ closeButton: true, maxWidth: '320px', offset: 8 }).setLngLat(ll).setDOMContent(inhalt).addTo(WK.karte.map);
+    const teile = await Promise.all(gruppen.map(async key => {
+      const ab = WMS.abfragen[key];
+      try { const r = await fetch(infoUrl(ab, ll), { signal }); if (!r.ok) throw new Error('HTTP ' + r.status); return { ab, zeilen: auswerten(key, ab, await r.json()) }; }
+      catch (err) { if (err && err.name === 'AbortError') return null; console.warn('WMS-Abfrage', key, err); return { ab, fehler: true }; }
+    }));
+    if (signal.aborted) return;
+    inhalt.innerHTML = '';
+    for (const t of teile) {
+      if (!t) continue;
+      inhalt.appendChild(U.el('strong', {}, t.ab.titel));
+      if (t.fehler) { inhalt.appendChild(U.el('div', { class: 'klein' }, 'Dienst nicht erreichbar')); continue; }
+      const tab = U.el('table'); for (const [k, w] of t.zeilen) tab.appendChild(U.el('tr', {}, U.el('td', {}, k), U.el('td', { class: 'wert' }, w)));
+      inhalt.appendChild(tab);
+    }
+    inhalt.appendChild(U.el('div', { class: 'klein' }, `Werte der Dienste am angeklickten Punkt (${ll.lat.toFixed(5)}° N, ${ll.lng.toFixed(5)}° E). ${attributionen().join(' · ')}`));
   }
   function def(id) { return EBENEN.find(e => e.id === id); }
   async function setzen(id, an) {
     const map = WK.karte.map, e = def(id); if (!e) return;
     if (S.ui[id]) S.ui[id].cb.checked = !!an;
-    if (!an) { S.an.delete(id); sichtbarkeit(id, false); WK.bus.emit('ebenen', [...S.an]); return; }
+    if (e.typ === 'wms') wmsLegende(e, !!an);
+    if (!an) { S.an.delete(id); sichtbarkeit(id, false); if (e.typ === 'wms' && S.popup && !EBENEN.some(x => x.typ === 'wms' && x.abfrage && S.an.has(x.id))) S.popup.remove(); WK.bus.emit('ebenen', [...S.an]); return; }
     S.an.add(id);
     try { await anlegen(e, map); } catch (err) { console.warn('Ebene', id, err); WK.ui.melden(`Ebene ${e.label} konnte nicht geladen werden`); S.an.delete(id); if (S.ui[id]) S.ui[id].cb.checked = false; return; }
     sichtbarkeit(id, true);
@@ -44,6 +129,7 @@ WK.layers = (() => {
     if (e.typ === 'gewaesser') return ['ov_gewaesser'];
     if (e.typ === 'hqextrem') return ['ov_hqextrem'];
     if (e.typ === 'raster') return ['ov_raster_' + e.raster];
+    if (e.typ === 'wms') return ['ov_' + e.id];
     if (e.typ === 'fallbeispiele') return ['ov_fb_halo', 'ov_fb', 'ov_fb_label'];
     return [];
   }
@@ -86,6 +172,13 @@ WK.layers = (() => {
       S.rasterMeta[e.raster] = m;
       map.addSource('ov_raster_' + e.raster, { type: 'image', url: WK.daten.rasterBild(e.raster), coordinates: m.coordinates });
       map.addLayer({ id: 'ov_raster_' + e.raster, type: 'raster', source: 'ov_raster_' + e.raster, paint: { 'raster-opacity': S.deckkraft[e.id], 'raster-resampling': 'nearest', 'raster-fade-duration': 0 } }, vor);
+    } else if (e.typ === 'wms') {
+      const d = dienst(e);
+      const url = `${d.url}?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&LAYERS=${enc(e.layers)}&STYLES=&CRS=EPSG:3857&BBOX={bbox-epsg-3857}&WIDTH=512&HEIGHT=512&FORMAT=${encodeURIComponent(d.format || 'image/png')}&TRANSPARENT=TRUE`;
+      map.addSource('ov_' + e.id, { type: 'raster', tiles: [url], tileSize: 512, attribution: d.attribution || '' });
+      const lay = { id: 'ov_' + e.id, type: 'raster', source: 'ov_' + e.id, paint: { 'raster-opacity': S.deckkraft[e.id], 'raster-fade-duration': 0 } };
+      if (e.minzoom) lay.minzoom = e.minzoom;
+      map.addLayer(lay, vor);
     } else if (e.typ === 'fallbeispiele') {
       const gj = await WK.daten.kontext('fallbeispiele');
       map.addSource('ov_fb', { type: 'geojson', data: gj });
@@ -128,5 +221,6 @@ WK.layers = (() => {
     if (p.overlay === 'gewaesser') { const r = WK.stil.rampe('coverage'); return { typ: 'kontinuierlich', label: p.legende_label || 'abgedeckter Längenanteil', vmin: 0, vmax: 1, stops: r.stops, css: r.css(), ticks: [0, 0.25, 0.5, 0.75, 1], einheit: '' }; }
     return null;
   }
-  return { EBENEN, S, init, setzen, deckkraft, presetOverlays, rasterSpec, overlaySpec, get an() { return [...S.an]; }, rasterMeta: name => S.rasterMeta[name] };
+  return { EBENEN, S, init, setzen, deckkraft, presetOverlays, rasterSpec, overlaySpec, attributionen, punktabfrage, infoUrl, auswerten, tiefenklasse,
+           get an() { return [...S.an]; }, rasterMeta: name => S.rasterMeta[name] };
 })();

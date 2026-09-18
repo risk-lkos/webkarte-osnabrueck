@@ -292,6 +292,22 @@
     "exposition"
    ],
    "lang": "Im Simpson-Framework: Die Prädisposition eines Systems, durch das Auftreten einer Gefahr nachteilig beeinflusst zu werden (Simpson et al. 2021). Im RNP-Kontext: Die Anfälligkeit eines Netzwerkes für Vorfälle, die zu einer erheblichen Beeinträchtigung der Funktionsfähigkeit führen können (Berdica 2002). Einziges RNP-Konzept, das eine negative Netzwerkeigenschaft misst (Rivera Royero et al. 2022). Setzt sich zusammen aus Eintrittswahrscheinlichkeit und Konsequenzen; bei seltenen Extremereignissen kann die Wahrscheinlichkeit ausgespart werden (konditionelle Vulnerabilität/Exposition nach Jenelius et al. 2006)."
+  },
+  "starkregen_szenarien": {
+   "titel": "Starkregen-Szenarien (BKG)",
+   "kurz": "Die Hinweiskarte Starkregengefahren des BKG rechnet zwei Szenarien: ein außergewöhnliches Ereignis (100-jährlich, regional nach KOSTRA-Daten des DWD) und ein extremes Ereignis mit 100 mm Niederschlag in einer Stunde. Die Arbeit verwendet das extreme Ereignis. Kanalnetz und Versickerung sind im Modell vernachlässigt, der gesamte Niederschlag fließt an der Oberfläche ab.",
+   "siehe": [
+    "gefaehrdungsstufe",
+    "ortsgekoppelt"
+   ]
+  },
+  "hq_szenarien": {
+   "titel": "HQhäufig, HQ100, HQextrem",
+   "kurz": "Die drei Szenarien der Hochwassergefahrenkarten nach Hochwasserrisikomanagement-Richtlinie: häufiges Hochwasser, hundertjährliches Hochwasser und Extremereignis. Die Arbeit verwendet HQextrem. Der Zusatz geschützt kennzeichnet Flächen hinter Schutzanlagen wie Deichen, die erst bei deren Versagen überflutet würden.",
+   "siehe": [
+    "hqextrem",
+    "uesg"
+   ]
   }
  },
  "gruppen": {
@@ -839,7 +855,7 @@
   },
   "abs-ebenen": {
    "titel": "Ebenen (Overlays)",
-   "kurz": "Zusätzliche Flächen und Linien über der Hintergrundkarte: Kreisgrenze, Gemeinden, Gewässer, HQextrem-Flächen, das Temperaturraster, heiße Tage und die Fallbeispiele, jeweils mit eigener Deckkraft."
+   "kurz": "Zusätzliche Flächen und Linien über der Hintergrundkarte: Kreisgrenze, Gemeinden, Gewässer, HQextrem-Flächen, das Temperaturraster, heiße Tage und die Fallbeispiele, jeweils mit eigener Deckkraft. Darunter die amtlichen Gefahrenkarten als WMS: Überflutungstiefe und Fließgeschwindigkeit bei Starkregen, Wassertiefen bei Flusshochwasser."
   },
   "abs-filter": {
    "titel": "Filter",
@@ -904,6 +920,24 @@
   "melden": {
    "titel": "Melden",
    "kurz": "Fehler, auffällige Werte, Wünsche und Feedback als vorausgefülltes Ticket im GitHub-Repository der Karte."
+  },
+  "wms_gefahren": {
+   "titel": "Amtliche Gefahrenkarten (WMS)",
+   "kurz": "Die Originalkarten, aus denen die Arbeit ihre Gefahrengrößen ableitet, als Bild direkt von den Diensten: Überflutungstiefe, Fließgeschwindigkeit und Fließrichtung bei Starkregen (BKG) sowie Wassertiefen bei Flusshochwasser und die Überschwemmungsgebiete (NLWKN). Sie brauchen Internet. So lässt sich prüfen, warum eine Kante ihre Stufe oder ihren Index hat. Geschwindigkeiten gibt es nur für Starkregen.",
+   "begriffe": [
+    "starkregen_szenarien",
+    "hq_szenarien",
+    "gefaehrdungsstufe",
+    "uesg"
+   ]
+  },
+  "wms_abfrage": {
+   "titel": "Punktabfrage bei Klick",
+   "kurz": "Ist eine Gefahrenkarte eingeblendet, fragt ein Klick in die Karte den Dienst am angeklickten Punkt ab: bei Starkregen Überflutungstiefe, Fließgeschwindigkeit und ihr Produkt, bei Flusshochwasser die Tiefenklasse für HQextrem, HQ100 und HQhäufig. Die Kantenwerte der Arbeit fassen dagegen die ganze Kante zusammen, ein einzelner Punkt kann davon abweichen.",
+   "begriffe": [
+    "ortsgekoppelt",
+    "gefaehrdungsstufe"
+   ]
   }
  }
 }

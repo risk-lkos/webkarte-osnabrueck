@@ -13,6 +13,7 @@ WK.exportPng = (() => {
   function attributionText() {
     const K = WK.karte, m = WK.daten.meta, teile = [];
     const bm = WK.basemaps.def(WK.basemaps.aktuell); if (bm && bm.attribution) teile.push(bm.attribution);
+    if (WK.layers && WK.layers.attributionen) teile.push(...WK.layers.attributionen());     // eingeblendete WMS-Gefahrenkarten
     const key = K.preset && K.preset.impressum ? K.preset.impressum : null;
     teile.push(key && m.datenbasis[key] ? m.datenbasis[key] : 'Straßennetz © OpenStreetMap-Mitwirkende; Kennwerte: eigene Berechnung.');
     return teile.join('  ·  ');
