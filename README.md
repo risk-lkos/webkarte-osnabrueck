@@ -43,7 +43,9 @@ zeigt sie keinen Kartenhintergrund („weiß"), alles andere funktioniert.
 
 Presets „Karten der Arbeit" stellen die Abbildungen nach; mit gesetztem Häkchen auch weißer
 Hintergrund, Landkreis-Ausschnitt und Farbschema „Arbeit". Regler „Linienstärke" zeichnet alle
-Kanten dicker (wirkt auch in Detailkarte und Exporten). „Top 25" neben jeder Gefahrengruppe zeigt
+Kanten dicker (wirkt auch in Detailkarte und Exporten). Die Detailkarte zeichnet die gewählte Kante
+breiter mit weißem Rand, aber in ihrer aktuellen Datenfarbe (ohne Wert grau), damit der Farbwert
+ablesbar bleibt. „Top 25" neben jeder Gefahrengruppe zeigt
 die 25 Kanten mit den höchsten Indexwerten (Filter „nur Top N"). Favoriten (☆ im Panel, Taste S)
 und bis zu zehn Pins für den Vergleich (Taste P) bleiben im Browser gespeichert. Export (E),
 Rangliste (R), Farben (C), Hilfe (?).

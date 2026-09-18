@@ -76,12 +76,24 @@ WK.detail = (() => {
     }
     S.folgenPause = false;
   }
+  // Farbe der gewaehlten Kante: ihre aktuelle Datenfarbe (Wert der aktiven Variablen im aktiven
+  // Schema), damit der Farbwert ablesbar bleibt; Breite und weisser Halo markieren die Auswahl.
+  // Ohne gueltigen Wert (kein Wert, Rasterpreset, 0 bei ">0"-Variablen) das Kontextgrau wie in der Karte.
+  function auswahlFarbe() {
+    const K = WK.karte, grau = WK.stil.kontext('grau');
+    if (S.id === null || S.id === undefined || !K.variable || !K.skala) return grau;
+    const fe = WK.daten.feature(S.id); if (!fe) return grau;
+    const m = K.meta || {}, w = fe.properties[K.variable];
+    if (w === undefined || w === null) return grau;
+    if (m.typ !== 'kategorial' && m.gt0 && !(w > 0)) return grau;
+    return WK.stil.farbe(K.variable, w, K.skala, m) || grau;
+  }
   function stilNeu() {
     if (!S.bereit) return;
     const K = WK.karte, map = S.map;
     map.setPaintProperty('hintergrund', 'background-color', WK.stil.kontext('hintergrund'));
     map.setPaintProperty('d_kontext', 'line-color', WK.stil.kontext('grau'));
-    map.setPaintProperty('d_auswahl', 'line-color', WK.stil.kontext('auswahl'));
+    map.setPaintProperty('d_auswahl', 'line-color', auswahlFarbe());
     if (!K.variable) { map.setFilter('d_daten', ['==', ['id'], -1]); map.setFilter('d_labels', ['==', ['id'], -1]); return; }
     map.setFilter('d_daten', K.basisFilter());
     map.setPaintProperty('d_daten', 'line-color', WK.stil.ausdruckFarbe(K.variable, K.skala, K.meta));
