@@ -34,6 +34,21 @@ WK.config = {
   speicher: { schema: 'wk.schema', ansicht: 'wk.ansicht', lesezeichen: 'wk.lesezeichen', theme: 'wk.theme', favoriten: 'wk.favoriten' },
   // Hauptindex je Gruppe fuer die "Top 25"-Auswahl (wie die Top-25-Listen der Arbeit)
   topVariable: { importance: 'imp_pct100', pluvial: 'vi_pct', fluvial: 'vi_pct_fluvial', heat: 'vi_pct_heat', compound: 'vi_pct_compound' },
+  // Kantendetails: Kernwerte je Gruppe in Rangfolge. Gezeigt werden die ersten panelKernMax vorhandenen Werte,
+  // die hinteren Eintraege sind Ersatz, wenn vordere fehlen (z. B. Kante ohne Index). Alles andere erscheint erst
+  // mit "Erweiterte Werte". Die gerade in der Karte gezeigte Variable ist immer dabei.
+  panelKern: {
+    importance: ['importance_s', 'imp_pct100', 'klasse'],
+    pluvial: ['hazard_klasse', 'tiefe_max_m', 'vi_pct', 'flut_anteil'],
+    fluvial: ['h_klasse_fl', 'tiefe_repr_fl', 'vi_pct_fluvial', 'fluvial_status', 'usg_betroffen'],
+    heat: ['lst_p90_mean', 'heat_pct', 'vi_pct_heat', 'beschattung', 'surface_class'],
+    compound: ['vi_pct_compound', 'vi_pct_compound_heat'],
+    profil: ['mhn_bf'],
+    kontext: ['bruecke', 'tunnel'],
+  },
+  panelKernMax: 3,
+  // Balken hinter Rang- und Indexwerten (Wert / Maximum): Kanten sind so auf einen Blick vergleichbar
+  panelBalken: { imp_pct100: 100, vi_pct: 1, vi_pct_fluvial: 1, heat_pct: 1, vi_pct_heat: 1, vi_pct_compound: 1, vi_pct_compound_heat: 1 },
   // Amtliche Gefahrenkarten als WMS-Ebenen. Die Bilder kommen direkt von den Diensten (beide mit CORS-Freigabe,
   // daher auch im PNG-Export); ohne Internet bleiben die Ebenen leer. abfrage = Gruppe der Punktabfrage bei Klick.
   wms: {

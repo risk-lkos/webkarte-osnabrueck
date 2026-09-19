@@ -895,7 +895,7 @@
   },
   "panel": {
    "titel": "Kantendetails",
-   "kurz": "Alle Kennwerte der angeklickten Kante, nach Gruppen geordnet, mit Rang und Perzentil für die gezeigte Variable. Von hier aus: Favorit, Zoom, Nachbarn, Straßenzug mit Max und Min, Melden, Anpinnen, Kopieren und Link zur Kante."
+   "kurz": "Die Kennwerte der angeklickten Kante, nach Gruppen geordnet. Zuerst erscheinen nur die Kernwerte, zwei bis drei je Gruppe, damit sich Kanten schnell vergleichen lassen; Balken hinter Rang- und Indexwerten zeigen den Anteil am Maximum. Der Knopf Erweiterte Werte unter der Detailkarte zeigt alle berechneten Werte. Von hier aus: Favorit, Zoom, Nachbarn, Straßenzug mit Max und Min, Melden, Anpinnen, Kopieren und Link zur Kante."
   },
   "detailkarte": {
    "titel": "Detailkarte",
@@ -937,6 +937,15 @@
    "begriffe": [
     "ortsgekoppelt",
     "gefaehrdungsstufe"
+   ]
+  },
+  "erweiterte_werte": {
+   "titel": "Kernwerte und erweiterte Werte",
+   "kurz": "Kernwerte sind die zwei bis drei Größen je Gruppe, die für das Verständnis genügen: etwa Link Importance in Sekunden und ihr Rang, Gefährdungsstufe, Wassertiefe und Verschneidungsindex, Oberflächentemperatur und thermischer Index. Fehlt einer Kante ein Kernwert, rückt ein Ersatzwert nach. Erweiterte Werte zeigt alle Zwischengrößen, Rohindizes und Varianten. Die gerade in der Karte gezeigte Variable ist immer dabei. Die Einstellung gilt auch für den Vergleich angepinnter Kanten und bleibt im Browser gespeichert.",
+   "begriffe": [
+    "verschneidungsindex",
+    "link_importance",
+    "rohindex"
    ]
   }
  }

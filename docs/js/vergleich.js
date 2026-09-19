@@ -39,8 +39,15 @@ WK.vergleich = (() => {
     const kopf = U.el('tr', {}, U.el('th', {}, 'Kennwert'));
     fs.forEach((fe, i) => kopf.appendChild(U.el('th', { style: { borderBottom: `3px solid ${f[i]}` } }, `${[fe.properties.ref, fe.properties.name].filter(Boolean).join(' · ') || 'Kante'} (${fe.id})`)));
     t.appendChild(kopf);
+    // wie im Panel: zuerst nur die Kernwerte (Vereinigung ueber alle angepinnten Kanten), alle Werte auf Wunsch
+    const erweitert = WK.panel.erweitert;
     for (const g of meta.gruppen) {
-      const spalten = Object.entries(meta.spalten).filter(([sp, def]) => def.gruppe === g.id && fs.some(fe => fe.properties[sp] !== undefined));
+      let spalten = Object.entries(meta.spalten).filter(([sp, def]) => def.gruppe === g.id && sp !== 'name' && sp !== 'ref' && fs.some(fe => fe.properties[sp] !== undefined));
+      if (!erweitert) {
+        const kern = new Set(); let festgelegt = false;
+        for (const fe of fs) { const k = WK.panel.kernSpalten(fe.properties, g.id); if (k) { festgelegt = true; k.forEach(s => kern.add(s)); } }
+        if (festgelegt) spalten = spalten.filter(([sp]) => kern.has(sp));
+      }
       if (!spalten.length) continue;
       t.appendChild(U.el('tr', {}, U.el('th', { colspan: fs.length + 1, style: { background: 'var(--bg3)' } }, g.label)));
       for (const [sp, def] of spalten) {
@@ -52,7 +59,10 @@ WK.vergleich = (() => {
         t.appendChild(tr);
       }
     }
-    box.appendChild(U.el('div', { class: 'zeile' }, U.el('button', { onclick: () => { leeren(); WK.ui.dialogSchliessen(); } }, 'Pins leeren'), U.el('span', { class: 'klein' }, 'Höchster Zahlenwert je Zeile fett.')));
+    box.appendChild(U.el('div', { class: 'zeile' },
+      U.el('button', { class: erweitert ? 'aktiv' : '', title: 'Zwischen den Kernwerten und allen berechneten Werten umschalten (gilt auch für die Kantendetails)', onclick: () => { WK.panel.setErweitert(!erweitert); oeffnen(); } }, erweitert ? 'Nur Kernwerte' : 'Erweiterte Werte'),
+      U.el('button', { onclick: () => { leeren(); WK.ui.dialogSchliessen(); } }, 'Pins leeren'),
+      U.el('span', { class: 'klein' }, 'Höchster Zahlenwert je Zeile fett.')));
     box.appendChild(t);
     WK.ui.dialog('Vergleich angepinnter Kanten', box, { breit: true });
   }

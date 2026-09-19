@@ -55,6 +55,11 @@ Filter, blendet zwischen Zoom 12 und 14 aus, erscheint auch im PNG-Export). Favo
 und bis zu zehn Pins für den Vergleich (Taste P) bleiben im Browser gespeichert. Export (E),
 Farben (C), Hilfe (?).
 
+Die Kantendetails zeigen zuerst nur Kernwerte, zwei bis drei je Gruppe (Liste und Rangfolge in
+`docs/js/config.js` unter `panelKern`; hintere Einträge rücken nach, wenn vordere fehlen), mit
+Balken hinter Rang- und Indexwerten. „Erweiterte Werte" unter der Detailkarte schaltet auf alle
+Werte um; die Einstellung gilt auch für den Vergleich der Pins und bleibt im Browser gespeichert.
+
 Die Variablengruppen im Menü sind einklappbar und starten eingeklappt; ein Punkt zeigt, in welcher
 Gruppe die gezeigte Variable liegt. Die Rangliste (R) ersetzt das Menü durch eine scrollbare,
 sortierbare Attributtabelle der aktuellen Variable: Klick auf eine Zeile springt zur Kante,

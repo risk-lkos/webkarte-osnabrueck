@@ -1,7 +1,8 @@
 /* Detail-Panel: Kennwerte der gewaehlten Kante nach Gruppen, Rang/Dezil-Badges, Kopieren, Nachbarn, Pins */
 WK.panel = (() => {
   const U = WK.util;
-  const S = { el: null, titel: null, id: null, zug: null };   // zug: { ref, ids, set } = geoeffnete Strassenzug-Auswertung
+  const S = { el: null, titel: null, id: null, zug: null,      // zug: { ref, ids, set } = geoeffnete Strassenzug-Auswertung
+              erweitert: !!U.ls('wk.panel.erweitert') };       // false = nur Kernwerte (Start), true = alle Werte
   const BOOL_SPALTEN = new Set(['aktiv', 'im_kreis', 'bruecke', 'tunnel', 'usg_betroffen', 'pruefbedarf', 'querungspunkt', 'betroffen_fl',
                                'concrete_flag', 'hoch_pluvial', 'hoch_fluvial', 'hoch_heat', 'hoch_fluvial_bf']);
 
@@ -16,6 +17,33 @@ WK.panel = (() => {
     document.getElementById('btn-detail-link').addEventListener('click', async () => { if (WK.url && S.id !== null) { const ok = await U.kopieren(WK.url.permalink({ kante: S.id })); WK.ui.melden(ok ? 'Link zur Kante kopiert' : 'Kopieren fehlgeschlagen'); } });
     document.getElementById('btn-detail-pin').addEventListener('click', () => { if (WK.vergleich && S.id !== null) WK.vergleich.anpinnen(S.id); });
     document.getElementById('btn-detail-zoom').addEventListener('click', () => { if (S.id !== null) WK.karte.fokus(S.id); });
+    const be = document.getElementById('btn-detail-erweitert');
+    if (be) {
+      be.addEventListener('click', () => setErweitert(!S.erweitert)); erweitertKnopf();
+      const hk = WK.glossar ? WK.glossar.knopf({ bedienung: 'erweiterte_werte' }) : null; if (hk) be.after(hk);
+    }
+  }
+  // --- Kernwerte / erweiterte Werte -----------------------------------------------------------------
+  function erweitertKnopf() {
+    const be = document.getElementById('btn-detail-erweitert') || (WK.detail && WK.detail.map && WK.detail.map.getContainer().ownerDocument.getElementById('btn-detail-erweitert'));
+    if (!be) return;
+    be.textContent = S.erweitert ? 'Nur Kernwerte' : 'Erweiterte Werte';
+    be.setAttribute('aria-pressed', S.erweitert ? 'true' : 'false'); be.classList.toggle('aktiv', S.erweitert);
+  }
+  function setErweitert(an) { S.erweitert = !!an; U.ls('wk.panel.erweitert', S.erweitert); erweitertKnopf(); zeigen(S.id, true); WK.bus.emit('panel-modus', S.erweitert); }
+  // Kernspalten einer Gruppe fuer eine Kante: die ersten panelKernMax vorhandenen aus WK.config.panelKern,
+  // dazu immer die gerade gezeigte Variable. null = fuer diese Gruppe ist nichts festgelegt (alles zeigen).
+  function kernSpalten(p, gid) {
+    const liste = (WK.config.panelKern || {})[gid]; if (!liste) return null;
+    const sp = WK.daten.meta.spalten, aus = liste.filter(s => sp[s] && p[s] !== undefined).slice(0, WK.config.panelKernMax || 3);
+    const v = WK.karte.variable; if (v && sp[v] && sp[v].gruppe === gid && p[v] !== undefined && !aus.includes(v)) aus.push(v);
+    return aus;
+  }
+  // Balken hinter Rang- und Indexwerten (Anteil am Maximum) in der Farbe der Gruppe
+  function balkenStil(spalte, wert, rolle) {
+    const max = (WK.config.panelBalken || {})[spalte]; if (!max || typeof wert !== 'number') return null;
+    const pct = Math.max(0, Math.min(100, wert / max * 100)).toFixed(1), f = WK.stil.rampe(rolle || 'pluvial').farbe(0.7);
+    return `linear-gradient(to right, color-mix(in srgb, ${f} 30%, transparent) ${pct}%, transparent ${pct}%)`;
   }
   function wertText(spalte, v) {
     const sp = WK.daten.spalte(spalte) || {};
@@ -109,18 +137,30 @@ WK.panel = (() => {
       WK.report ? U.el('button', { title: 'Fehler oder Auffälligkeit zu dieser Kante melden (M)', onclick: () => WK.report.oeffnen({ kante: id }) }, 'Melden') : null);
     el.appendChild(aktionen);
     if (S.zug) { el.appendChild(zugBox()); WK.karte.nachbarnZeigen(S.zug.ids); }
-    // Gruppen
+    // Gruppen: zuerst nur die Kernwerte (zwei bis drei je Gruppe), alle Werte ueber "Erweiterte Werte"
+    let versteckt = 0;
     for (const g of meta.gruppen) {
-      const zeilen = Object.entries(meta.spalten).filter(([sp, def]) => def.gruppe === g.id && p[sp] !== undefined && sp !== 'name' && sp !== 'ref');
-      if (!zeilen.length) continue;
+      const alle = Object.entries(meta.spalten).filter(([sp, def]) => def.gruppe === g.id && p[sp] !== undefined && sp !== 'name' && sp !== 'ref');
+      if (!alle.length) continue;
+      let zeilen = alle;
+      if (!S.erweitert) {
+        const kern = kernSpalten(p, g.id);
+        if (kern) zeilen = kern.map(sp => [sp, meta.spalten[sp]]);
+        versteckt += alle.length - zeilen.length;
+        if (!zeilen.length) continue;
+      }
       el.appendChild(U.el('h4', {}, U.el('span', { class: 'farbe-punkt', style: { background: WK.stil.rampe(g.rolle || 'pluvial').farbe(0.8) } }), g.label, WK.glossar ? WK.glossar.knopf({ gruppe: g.id }) : null));
       const tab = U.el('table');
       for (const [sp, def] of zeilen) {
-        const tr = U.el('tr', { class: sp === v ? 'hervor' : '' }, U.el('td', { title: sp }, def.label, WK.glossar ? WK.glossar.knopf({ variable: sp }, { klasse: 'dezent' }) : null), U.el('td', { class: 'wert' }, wertText(sp, p[sp])));
+        const balken = balkenStil(sp, p[sp], g.rolle);
+        const tr = U.el('tr', { class: sp === v ? 'hervor' : '' }, U.el('td', { title: sp }, def.label, WK.glossar ? WK.glossar.knopf({ variable: sp }, { klasse: 'dezent' }) : null), U.el('td', { class: 'wert', style: balken ? { background: balken } : null }, wertText(sp, p[sp])));
         tab.appendChild(tr);
       }
       el.appendChild(tab);
     }
+    if (S.erweitert || versteckt > 0) el.appendChild(S.erweitert
+      ? U.el('button', { class: 'mehr-werte', onclick: () => setErweitert(false) }, '▴ nur die Kernwerte zeigen')
+      : U.el('button', { class: 'mehr-werte', title: 'Alle berechneten Werte dieser Kante zeigen (auch über „Erweiterte Werte" unter der Detailkarte)', onclick: () => setErweitert(true) }, `▾ ${versteckt} weitere Werte zeigen`));
     if (WK.vergleich) el.appendChild(WK.vergleich.pinsDom());
     if (!still && WK.detail) WK.detail.folgen(id);
   }
@@ -137,5 +177,5 @@ WK.panel = (() => {
     const ok = await U.kopieren(markdown(S.id));
     WK.ui.melden(ok ? 'Kennwerte als Markdown-Tabelle kopiert' : 'Kopieren fehlgeschlagen');
   }
-  return { init, zeigen, zugSetzen, markdown, wertText, get id() { return S.id; }, get zug() { return S.zug; } };
+  return { init, zeigen, zugSetzen, markdown, wertText, kernSpalten, setErweitert, get id() { return S.id; }, get zug() { return S.zug; }, get erweitert() { return S.erweitert; } };
 })();
