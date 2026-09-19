@@ -36,16 +36,20 @@
   <aside id="rangliste" class="seite rangliste" aria-label="Rangliste" hidden></aside>
 
   <main id="mitte" class="mitte">
-    <div id="karte" class="karte"></div>
-    <div id="legende" class="legende" aria-live="polite"></div>
-    <div id="tooltip" class="tooltip" hidden></div>
-    <div id="status" class="status"></div>
-    <div id="laden" class="laden">
-      <div class="laden-box">
-        <div class="laden-text" id="laden-text">Lade Daten …</div>
-        <progress id="laden-progress" max="100" value="0"></progress>
+    <!-- Kartenfeld: Karte mit allem, was darueber liegt. Die Statusleiste steht darunter als eigene Zeile,
+         damit sie Massstab und Quellenangabe der Karte nicht verdeckt. -->
+    <div id="kartenfeld" class="kartenfeld">
+      <div id="karte" class="karte"></div>
+      <div id="legende" class="legende" aria-live="polite"></div>
+      <div id="tooltip" class="tooltip" hidden></div>
+      <div id="laden" class="laden">
+        <div class="laden-box">
+          <div class="laden-text" id="laden-text">Lade Daten …</div>
+          <progress id="laden-progress" max="100" value="0"></progress>
+        </div>
       </div>
     </div>
+    <div id="status" class="status"></div>
   </main>
 
   <aside id="panel" class="panel" aria-label="Kantendetails">

@@ -26,6 +26,14 @@ WK.karte = (() => {
     S.map = map;
     map.addControl(new maplibregl.NavigationControl({ showCompass: true, visualizePitch: false }), 'top-left');
     map.addControl(new maplibregl.ScaleControl({ maxWidth: 140, unit: 'metric' }), 'bottom-left');
+    // Hoehe der Quellenangabe unten rechts an das Kartenfeld melden: die Legende sitzt darueber und rueckt nach oben,
+    // wenn die Angabe waechst (z. B. mit eingeblendeten WMS-Gefahrenkarten oder auf schmalen Karten)
+    const feld = document.getElementById('kartenfeld'), ur = map.getContainer().querySelector('.maplibregl-ctrl-bottom-right');
+    if (feld && ur) {
+      const melden = U.debounce(() => feld.style.setProperty('--unten-rechts', ur.offsetHeight + 'px'), 60);
+      if (window.ResizeObserver) new ResizeObserver(melden).observe(ur);
+      for (const ev of ['styledata', 'sourcedata', 'resize', 'load']) map.on(ev, melden);   // die Quellenangabe aendert sich mit Stil und Quellen
+    }
     S.tooltip = document.getElementById('tooltip');
     map.on('load', () => {
       quellenAnlegen(); layerAnlegen(); ereignisse();

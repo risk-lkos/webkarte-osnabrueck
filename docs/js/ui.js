@@ -239,22 +239,34 @@ WK.ui = (() => {
     if (dunkel) document.documentElement.removeAttribute('data-theme'); else document.documentElement.setAttribute('data-theme', 'dunkel');
     U.ls(WK.config.speicher.theme, dunkel ? 'hell' : 'dunkel');
   }
-  let mausText = '';
+  let maus = null;
   function statusMaus(ll) {
     if (!ll) return;
     let utm = '';
-    try { const u = U.utm([ll.lng, ll.lat]); utm = ` · UTM 32N ${U.formatZahl(u[0], 0)} E / ${U.formatZahl(u[1], 0)} N`; } catch (e) { /* proj4 fehlt */ }
-    mausText = `${ll.lat.toFixed(5)}°N ${ll.lng.toFixed(5)}°E${utm}`;
+    try { const u = U.utm([ll.lng, ll.lat]); utm = `UTM 32N ${U.formatZahl(u[0], 0)} E / ${U.formatZahl(u[1], 0)} N`; } catch (e) { /* proj4 fehlt */ }
+    maus = { geo: `${ll.lat.toFixed(5)}°N ${ll.lng.toFixed(5)}°E`, utm };
     statusNeu();
   }
+  // Statusleiste: eine Zeile fester Hoehe unter der Karte. Der Variablenname gibt als Erstes nach (wird gekuerzt).
+  // Reicht der Platz trotzdem nicht, wird gemessen und stufenweise gekuerzt: erst ohne UTM, dann ohne "im Ausschnitt",
+  // zuletzt ohne Variablennamen. Die vollen Koordinaten stehen immer im Tooltip.
   function statusNeu() {
     if (!S.status) return;
-    const K = WK.karte, teile = [];
-    if (K.map) teile.push(`Zoom ${K.map.getZoom().toFixed(1)}`);
-    if (K.variable) teile.push(`${(K.meta || {}).label || K.variable}: ${U.formatZahl(K.S.sichtbar || 0, 0)} Kanten im Ausschnitt`);
-    if (mausText) teile.push(mausText);
-    if (WK.filter && WK.filter.aktiv()) teile.push('Filter aktiv');
-    S.status.innerHTML = teile.map(t => `<span>${U.esc(t)}</span>`).join('');
+    const K = WK.karte;
+    const sp = (kl, t, titel) => `<span class="${kl}"${titel ? ` title="${U.esc(titel)}"` : ''}>${U.esc(t)}</span>`;
+    const bau = stufe => {
+      let h = '';
+      if (K.map) h += sp('st-fest', `Zoom ${K.map.getZoom().toFixed(1)}`);
+      if (K.variable) {
+        const label = (K.meta || {}).label || K.variable;
+        if (stufe < 3) h += sp('st-label', label + ':', label);
+        h += sp('st-fest', `${U.formatZahl(K.S.sichtbar || 0, 0)} Kanten${stufe < 2 ? ' im Ausschnitt' : ''}`, `${label}: Kanten mit Wert im Kartenausschnitt`);
+      }
+      if (WK.filter && WK.filter.aktiv()) h += sp('st-fest', 'Filter aktiv');
+      if (maus) { const voll = maus.utm ? `${maus.geo} · ${maus.utm}` : maus.geo; h += sp('st-fest st-koord', stufe < 1 ? voll : maus.geo, voll); }
+      return h;
+    };
+    for (let stufe = 0; stufe <= 3; stufe++) { S.status.innerHTML = bau(stufe); if (S.status.scrollWidth <= S.status.clientWidth + 1) break; }
   }
   // Dialoge
   function dialog(titel, inhalt, opts) {

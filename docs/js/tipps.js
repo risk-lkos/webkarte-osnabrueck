@@ -77,7 +77,7 @@ WK.tipps = (() => {
       U.el('p', {}, t.text), knoepfe,
       U.el('p', { class: 'klein', style: { margin: '8px 0 0' } }, 'Hier eingeblendete Ebenen bleiben, solange du bei dieser Gefahr bleibst, und verschwinden beim Wechsel zu einer anderen. Dauerhaft schaltest du Ebenen links unter „Ebenen".'),
       U.el('div', { class: 'tipp-fuss' }, U.el('label', {}, aus, ' keine Tipps mehr zeigen'), U.el('button', { onclick: schliessen }, 'Verstanden')));
-    (document.getElementById('mitte') || document.body).appendChild(S.karte);
+    (document.getElementById('kartenfeld') || document.getElementById('mitte') || document.body).appendChild(S.karte);
   }
   function zuruecksetzen() { U.ls(GESEHEN, []); U.ls(AUS, null); if (WK.ui) WK.ui.melden('Tipps erscheinen wieder beim ersten Anklicken einer Gruppe'); }
   return { init, fuerGruppe, fuerPreset, fuerVariable, schliessen, zuruecksetzen, get offen() { return !!S.karte; }, get vonTipp() { return new Map(S.vonTipp); }, get gruppe() { return S.gruppe; } };

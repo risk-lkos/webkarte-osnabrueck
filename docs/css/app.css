@@ -205,9 +205,11 @@ tr:hover .hilfe-knopf.dezent, .hilfe-knopf.dezent:focus, .hilfe-knopf.dezent.akt
 .balken { display: inline-block; height: 10px; width: 44px; border-radius: 2px; border: 1px solid rgba(0,0,0,.15); flex: none; }
 
 /* Karte */
-.mitte { grid-area: mitte; position: relative; min-width: 0; }
+.mitte { grid-area: mitte; min-width: 0; min-height: 0; display: flex; flex-direction: column; }
+.kartenfeld { position: relative; flex: 1; min-height: 0; }
 .karte { position: absolute; inset: 0; }
-.legende { position: absolute; right: 12px; bottom: 34px; z-index: 5; background: rgba(255,255,255,.92); color: #1c1e21; border: 1px solid #d3d6db; border-radius: 8px; padding: 8px 10px; min-width: 200px; max-width: 320px; box-shadow: var(--schatten); font-size: 12px; }
+/* die Legende sitzt ueber der Quellenangabe der Karte; deren Hoehe meldet karte.js als --unten-rechts */
+.legende { position: absolute; right: 12px; bottom: calc(var(--unten-rechts, 24px) + 8px); z-index: 5; background: rgba(255,255,255,.92); color: #1c1e21; border: 1px solid #d3d6db; border-radius: 8px; padding: 8px 10px; min-width: 200px; max-width: 320px; box-shadow: var(--schatten); font-size: 12px; }
 :root[data-theme="dunkel"] .legende { background: rgba(27,29,33,.92); color: var(--fg); border-color: var(--rand); }
 .legende .titel { font-weight: 600; margin-bottom: 6px; font-size: 12.5px; }
 .legende .balken-wrap { position: relative; height: 14px; border-radius: 3px; border: 1px solid rgba(0,0,0,.2); cursor: crosshair; }
@@ -225,8 +227,12 @@ tr:hover .hilfe-knopf.dezent, .hilfe-knopf.dezent:focus, .hilfe-knopf.dezent.akt
 .legende .fuss { margin-top: 6px; color: #5a5f66; font-size: 11px; }
 .tooltip { position: absolute; z-index: 6; pointer-events: none; background: rgba(28,30,33,.92); color: #fff; padding: 5px 8px; border-radius: 6px; font-size: 12px; max-width: 280px; box-shadow: var(--schatten); }
 .tooltip .wert { font-weight: 600; }
-.status { position: absolute; left: 0; right: 0; bottom: 0; z-index: 5; display: flex; gap: 16px; padding: 3px 10px; font-size: 11.5px; background: rgba(255,255,255,.85); color: #1c1e21; border-top: 1px solid #d3d6db; font-family: var(--mono); }
-:root[data-theme="dunkel"] .status { background: rgba(27,29,33,.9); color: var(--fg); border-color: var(--rand); }
+/* Statusleiste: eigene Zeile unter der Karte, feste Hoehe (einzeilig, zu lange Teile werden gekuerzt), damit die
+   Karte beim Bewegen der Maus nicht staendig ihre Groesse aendert */
+.status { flex: none; display: flex; gap: 16px; padding: 3px 10px; min-height: 22px; font-size: 11.5px; background: var(--bg2); color: var(--fg); border-top: 1px solid var(--rand); font-family: var(--mono); white-space: nowrap; overflow: hidden; }
+.status .st-fest { flex: none; }
+.status .st-label { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; margin-right: -10px; color: var(--fg2); }
+.status .st-koord { margin-left: auto; }
 .laden { position: absolute; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,.8); }
 .laden-box { background: var(--bg); border: 1px solid var(--rand); border-radius: 10px; padding: 18px 24px; box-shadow: var(--schatten); min-width: 280px; text-align: center; }
 .laden-box progress { width: 100%; margin-top: 8px; }
