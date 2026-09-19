@@ -94,6 +94,14 @@ Flächen, deren Klasse aus den HWRM-Daten der Arbeit bekannt ist (11, 12, 21, 22
 übrigen folgen der Legendenreihenfolge. Dienste, Layer und Abfragegruppen stehen als Daten in
 `docs/js/config.js` unter `wms`.
 
+Tipps: Beim ersten Anklicken einer Variable oder Karte aus einer Gruppe bietet ein Hinweis die
+passenden Ebenen als Option an (Texte und Aktionen in `docs/data/glossar.json` unter `tipps`).
+Die Karte merkt sich die Herkunft: Eine über den Tipp eingeblendete Ebene gehört zu dieser Gefahr,
+bleibt innerhalb der Gruppe bestehen und wird ausgeblendet, sobald eine andere Gruppe gewählt wird
+(egal ob per Klick, Tastatur oder Link), damit sich die Gefahrenkarten nicht überlagern. Unter
+„Ebenen" von Hand geschaltete Ebenen bleiben unberührt; wer eine Tipp-Ebene dort aus- und wieder
+einschaltet, macht sie dauerhaft.
+
 ## Anleitung, Glossar und ?-Knöpfe
 
 „Anleitung" (A) startet eine geführte Tour durch alle Bereiche; beim ersten Besuch startet sie

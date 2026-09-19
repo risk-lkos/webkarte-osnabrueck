@@ -9,7 +9,7 @@
     WK.stil.init(WK.daten.paletten, WK.daten.schemata, (meta.stil || {}).standard_schema || 'arbeit');
     WK.util.utmInit();
     const map = WK.karte.erzeugen('karte');
-    const module = ['legende', 'panel', 'ui', 'layers', 'filter', 'suche', 'histogramm', 'rangliste', 'vergleich', 'farben', 'detail', 'exportPng', 'exportSvg', 'layoutArbeit', 'url', 'hilfe', 'favoriten', 'report'];
+    const module = ['legende', 'panel', 'ui', 'layers', 'filter', 'suche', 'histogramm', 'rangliste', 'vergleich', 'farben', 'detail', 'exportPng', 'exportSvg', 'layoutArbeit', 'url', 'hilfe', 'favoriten', 'report', 'tipps'];
     WK.bus.on('karte-bereit', () => {
       for (const m of module) { if (WK[m] && typeof WK[m].init === 'function') { try { WK[m].init(map); } catch (e) { console.error('init', m, e); } } }
       const url = WK.url ? WK.url.lesen() : null;
