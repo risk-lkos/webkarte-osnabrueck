@@ -5,12 +5,22 @@ WK.basemaps = (() => {
   function def(id) { return liste().find(b => b.id === id) || null; }
   function standard() { const b = liste().find(b => b.standard); return b ? b.id : (liste()[0] || {}).id; }
 
+  // Die Hintergrundkarte gehoert ganz nach unten: direkt ueber den Kartenhintergrund, also vor die Ebene, die dort
+  // gerade als naechste liegt. Frueher wurde sie vor das Kontextnetz gesetzt; dort sitzen aber auch die Overlays
+  // (WMS, HQextrem, Raster), und eine spaeter gewaehlte Hintergrundkarte lag dann ueber ihnen.
+  function unterste(map, vorId) {
+    const folge = typeof map.getLayersOrder === 'function' ? map.getLayersOrder() : ((map.style && map.style._order) || []);
+    const i = folge.indexOf('hintergrund');
+    const ziel = folge.find((id, j) => j > i && id !== 'basemap');
+    return ziel || vorId;
+  }
   function setzen(map, id, vorId, schluessel) {
     schluessel = schluessel || 'haupt';
     const b = def(id);
     if (!b) return false;
     const layerId = 'basemap';
     if (map.getLayer(layerId)) map.removeLayer(layerId);
+    vorId = unterste(map, vorId);
     if (b.typ !== 'keiner' && !(navigator.onLine === false && !window.WK_INLINE_NUR)) {
       const srcId = 'bm_' + b.id;
       if (!map.getSource(srcId)) {
