@@ -71,7 +71,6 @@ KATEGORIEN_ABGELEITET = {
     "beschattung": {"abgeleitet": "coverage", "werte": ["unbeschattet", "gering", "mittel", "hoch"]},
     "vi_band": {"abgeleitet": "fluvial", "werte": ["0", "1", "2", "3", "4"]},
     "robust_n": {"abgeleitet": "heat", "werte": ["0", "1", "2", "3", "4"]},
-    "robustheit": {"abgeleitet": "pluvial", "werte": ["0", "1", "2", "3", "4"]},
 }
 
 # Linienbreiten je Variable (Zahlen der Abbildungsnotebooks) und je Kategorie

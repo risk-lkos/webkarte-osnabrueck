@@ -8,12 +8,15 @@ WK.daten = (() => {
   };
   const U = WK.util;
 
-  async function ladeJson(pfad) {
+  // frisch = immer beim Server nachfragen (meta.json, glossar.json). Alle anderen Dateien tragen den Build-Stand als
+  // Versionsmarke in der Adresse: nach einem neuen Build holt der Browser sie neu, sonst nimmt er seinen Cache.
+  async function ladeJson(pfad, frisch) {
     if (window.WK_INLINE && window.WK_INLINE[pfad] !== undefined) {
       const v = window.WK_INLINE[pfad];
       return typeof v === 'string' ? JSON.parse(v) : v;
     }
-    const r = await fetch(pfad, { cache: 'default' });
+    const url = !frisch && S.version ? `${pfad}${pfad.includes('?') ? '&' : '?'}v=${S.version}` : pfad;
+    const r = await fetch(url, { cache: frisch ? 'no-cache' : 'default' });
     if (!r.ok) throw new Error(`${pfad}: HTTP ${r.status}`);
     return r.json();
   }
@@ -170,20 +173,21 @@ WK.daten = (() => {
   }
   function rasterBild(name) {
     if (window.WK_INLINE && window.WK_INLINE[`raster/${name}`]) return window.WK_INLINE[`raster/${name}`];
-    return `${WK.config.pfade.raster}${name}_3857.png`;
+    return `${WK.config.pfade.raster}${name}_3857.png${S.version ? '?v=' + S.version : ''}`;
   }
 
   async function laden(fortschritt) {
     const P = WK.config.pfade, melde = (t, p) => { if (fortschritt) fortschritt(t, p); };
     melde('Lade Katalog …', 3);
-    S.meta = await ladeJson(P.meta);
+    S.meta = await ladeJson(P.meta, true);
+    S.version = String((S.meta.build || {}).zeitpunkt || '').replace(/\D/g, '');
     const schemaIds = (S.meta.stil && S.meta.stil.schemata) || ['arbeit'];
     melde('Lade Farben …', 8);
     const [paletten, ...schemata] = await Promise.all([ladeJson(P.paletten), ...schemaIds.map(id => ladeJson(`${P.schemata}${id}.json`).catch(e => { console.warn('Schema', id, e); return null; }))]);
     S.paletten = paletten;
     schemaIds.forEach((id, i) => { if (schemata[i]) S.schemata[id] = schemata[i]; });
     // Glossar fuer ?-Knoepfe und Anleitung; fehlt die Datei, laeuft die Karte ohne Erklaertexte
-    S.glossar = P.glossar ? await ladeJson(P.glossar).catch(e => { console.warn('Glossar', e); return null; }) : null;
+    S.glossar = P.glossar ? await ladeJson(P.glossar, true).catch(e => { console.warn('Glossar', e); return null; }) : null;
     melde('Lade Kantennetz (72.238 Kanten) …', 15);
     const k = await ladeJson(P.kanten);
     melde('Baue Geometrien …', 45);

@@ -8,7 +8,7 @@ WK.layers = (() => {
     { id: 'hqextrem', label: 'HQextrem-Flächen nach Tiefenklasse', typ: 'hqextrem', datei: 'hqextrem' },
     { id: 'lst_p90', label: 'Oberflächentemperatur LST P90 (Raster)', typ: 'raster', raster: 'lst_p90' },
     { id: 'hot_days', label: 'Heiße Tage pro Jahr (Raster)', typ: 'raster', raster: 'hot_days' },
-    { id: 'fallbeispiele', label: 'Fallbeispiele (Shortlists der Arbeit)', typ: 'fallbeispiele', datei: 'fallbeispiele' },
+    { id: 'fallbeispiele', label: 'Fallbeispiele (Kandidaten je Gefahr)', typ: 'fallbeispiele', datei: 'fallbeispiele' },
   ];
   // amtliche Gefahrenkarten als WMS-Ebenen (Definition in WK.config.wms)
   const WMS = WK.config.wms || { dienste: {}, ebenen: [], abfragen: {} };
@@ -186,7 +186,7 @@ WK.layers = (() => {
       map.addLayer({ id: 'ov_fb_halo', type: 'line', source: 'ov_fb', layout: { 'line-cap': 'round' }, paint: { 'line-color': '#fff', 'line-width': ['interpolate', ['linear'], ['zoom'], 8, 6, 14, 12] } });
       map.addLayer({ id: 'ov_fb', type: 'line', source: 'ov_fb', layout: { 'line-cap': 'round' }, paint: { 'line-color': farbe, 'line-width': ['interpolate', ['linear'], ['zoom'], 8, 3, 14, 7] } });
       map.addLayer({ id: 'ov_fb_label', type: 'symbol', source: 'ov_fb', layout: { 'symbol-placement': 'point', 'text-field': ['concat', ['get', 'gefahr'], ' · ', ['get', 'gemeinde']], 'text-font': ['Open Sans Bold'], 'text-size': 11, 'text-offset': [0, 1.2], 'text-anchor': 'top' }, paint: { 'text-color': farbe, 'text-halo-color': '#fff', 'text-halo-width': 1.6 } });
-      map.on('click', 'ov_fb', ev => { const p = ev.features[0].properties; if (p.id !== undefined) WK.karte.waehlen(+p.id, { quelle: 'fallbeispiel' }); WK.ui.melden(`Fallbeispiel ${p.gefahr} · ${p.gemeinde || ''} · Cluster ${p.cluster} · Typizität ${U.formatZahl(+p.typizitaet, 2)}${p.is_medoid ? ' · Medoid' : ''}`, 4000); });
+      map.on('click', 'ov_fb', ev => { const p = ev.features[0].properties; if (p.id !== undefined) WK.karte.waehlen(+p.id, { quelle: 'fallbeispiel' }); const gefahr = { pluvial: 'Starkregen', fluvial: 'Flusshochwasser', heat: 'Hitze' }[p.gefahr] || p.gefahr; WK.ui.melden(`Fallbeispiel-Kandidat ${gefahr}${p.gemeinde ? ' · ' + p.gemeinde : ''} · Gruppe ${p.cluster}${p.is_medoid ? ' · typischster Vertreter seiner Gruppe' : ''}`, 4000); });
     }
     S.geladen[e.id] = true;
   }

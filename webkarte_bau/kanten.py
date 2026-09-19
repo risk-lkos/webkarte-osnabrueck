@@ -24,7 +24,7 @@ L = Q.LAYER
 
 SPALTEN_04 = ["u", "v", "osmid", "edge_id", "length_m", "klasse", "tiefe_max_m_y", "d_at", "v_at",
               "v_max", "dv_max", "hazard_klasse", "flut_anteil", "loch_anteil", "ist_bruecke",
-              "ist_tunnel", "querbauwerk", "bruecke_typ", "befund", "vi_roh", "imp_pct", "dv_pct",
+              "ist_tunnel", "querbauwerk", "bruecke_typ", "vi_roh", "imp_pct", "dv_pct",
               "vi_pct", "rang_pct"]
 SPALTEN_12 = ["key", "betroffen_fl", "h_num_fl", "h_klasse_fl", "ufl_m", "tiefe_repr_fl",
               "querungspunkt", "usg_betroffen", "gewaesser_usg", "fluvial_status", "pruefbedarf"]
@@ -33,7 +33,8 @@ SPALTEN_16 = ["key", "vi_pct_fluvial", "vi_band"]
 SPALTEN_09 = ["key", "vi_pct_fluvial_voll"]
 SPALTEN_10 = ["key", "stark_pct", "vi_pct_compound", "vi_roh_compound"]
 SPALTEN_CH = ["key", "stark_pct", "hitze_pct", "vi_pct_compound_heat", "vi_roh_compound_heat"]
-SPALTEN_03 = ["u", "v", "osmid", "dv_stufe", "mechanismus_klar", "robustheit"]
+# Layer 03 (manuelle Pruefschicht der 128 kritischen Kanten) und die Spalte befund aus Layer 04 sind kein Ergebnis
+# der Arbeit und werden nicht in die Karte uebernommen.
 SPALTEN_PROFIL = ["key", "hoch_pluvial", "hoch_fluvial", "hoch_heat", "multi_hazard_n"]
 
 FALLBEISPIELE = (("pluvial", "pluvial_shortlist"), ("fluvial", "fluvial_shortlist"),
@@ -140,10 +141,6 @@ def laden(p: dict[str, Path]) -> tuple[gpd.GeoDataFrame, dict]:
     _anhaengen("compound_heat", _tabelle(p["compound_heat"], ch_layer, SPALTEN_CH),
                {"stark_pct": "stark_pct_h"})
 
-    k03 = _tabelle(p["wasser"], L["f03"], SPALTEN_03)
-    k03["key"] = schluessel(k03)
-    _anhaengen("f03", k03.drop(columns=["u", "v", "osmid"]))
-
     bl_teile = []
     for layer, _ in pyogrio.list_layers(p["baulast"]):
         df = _tabelle(p["baulast"], layer, ["key"])
@@ -231,7 +228,7 @@ RUNDUNG = {
     "stark_pct": 6, "vi_pct_compound": 6, "vi_roh_compound": 4, "stark_pct_h": 6,
     "hitze_pct": 6, "vi_pct_compound_heat": 6, "vi_roh_compound_heat": 4,
 }
-GANZZAHL = {"rang_pct", "robustheit", "h_num_fl", "vi_band", "robust_n", "multi_hazard_n",
+GANZZAHL = {"rang_pct", "h_num_fl", "vi_band", "robust_n", "multi_hazard_n",
             "mhn_bf", "length_m"}
 BOOL = {"usg_betroffen", "pruefbedarf", "querungspunkt", "betroffen_fl", "concrete_flag",
         "hoch_pluvial", "hoch_fluvial", "hoch_heat", "hoch_fluvial_bf", "aktiv", "im_kreis",
@@ -241,7 +238,7 @@ TABELLEN = {
     "attr_importance.json": ["imp_pct", "imp_pct100", "klasse"],
     "attr_pluvial.json": ["tiefe_max_m", "d_at", "v_at", "v_max", "dv_max", "flut_anteil",
                           "loch_anteil", "imp_pct_pluvial", "dv_pct", "vi_pct", "vi_roh", "rang_pct",
-                          "befund", "bruecke_typ", "dv_stufe", "mechanismus_klar", "robustheit"],
+                          "bruecke_typ"],
     "attr_fluvial.json": ["fluvial_status", "usg_betroffen", "pruefbedarf", "querungspunkt",
                           "gewaesser_usg", "betroffen_fl", "h_klasse_fl", "h_num_fl",
                           "tiefe_repr_fl", "ufl_m", "imp_pct_nb", "haz_pct_nb", "vi_pct_fluvial",
@@ -268,7 +265,6 @@ def tabellen(basis: gpd.GeoDataFrame) -> dict[str, pd.DataFrame]:
     """Spaltentabellen je Gruppe; Zeilenmenge je Tabelle fachlich festgelegt."""
     df = basis.copy()
     df["tiefe_max_m"] = df["tiefe_max_m_y"]
-    df.loc[df["befund"].astype("string").fillna("") == "keine", "befund"] = pd.NA
     df.loc[~df["aktiv"], "imp_pct"] = np.nan
     df.loc[~df["aktiv"], "klasse"] = pd.NA
     # robust_n nur, wo ein Hitze-Index existiert (sonst 0 = kein Wert)

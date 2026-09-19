@@ -1,7 +1,7 @@
 # Web-Karte: Straßennetz Landkreis Osnabrück (Multi-Hazard-Vulnerabilität)
 
 Interaktive Karte zur Masterarbeit. Sie zeigt dieselben Kennwerte wie die Abbildungen des
-Ergebniskapitels, aber je Kante abrufbar: 72.238 Kanten des Analysenetzes mit Link Importance,
+Ergebniskapitels, aber je Kante abrufbar: 72.238 Kanten des Straßennetzes mit Link Importance,
 Starkregen (H-Stufen, Verschneidungsindex), Flusshochwasser (HQextrem), Hitze (LST, thermischer
 Index), Compound-Indizes und Belastungsprofil. Alle Werte stammen unverändert aus den
 Ergebnisdateien der Arbeitspakete; der Build liest nur.

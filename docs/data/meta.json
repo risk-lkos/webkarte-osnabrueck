@@ -96,6 +96,7 @@
    "farbschemata/grau.json": 0.0,
    "farbschemata/kontrast.json": 0.0,
    "farbschemata/viridis.json": 0.0,
+   "glossar.json": 0.04,
    "kanten.json": 5.45,
    "kontext/fallbeispiele.json": 0.01,
    "kontext/gemeinden.json": 0.15,
@@ -347,7 +348,7 @@
     "viridis"
    ]
   },
-  "zeitpunkt": "2026-09-18 15:01"
+  "zeitpunkt": "2026-09-19 14:36"
  },
  "crs_arbeit": "EPSG:25832 (UTM 32N)",
  "datenbasis": {
@@ -370,49 +371,49 @@
    "kurz": "Link Importance",
    "label": "Netzbedeutung",
    "rolle": "importance",
-   "text": "Link Importance = mittlerer zusätzlicher Reiseaufwand (Sekunden) je relevantem Quelle-Ziel-Paar, wenn die Kante gesperrt wird; berechnet über 129 Gemeindeknoten auf dem vereinfachten Netz. Nur 4.212 Kanten im Landkreis sind ‚aktiv' (importance_s > 0)."
+   "text": "Link Importance nach Jenelius et al.: durchschnittlicher Reisezeitanstieg in Sekunden je relevantem Quell-Ziel-Paar, wenn die Kante gesperrt wird und die kürzesten Reisezeiten neu berechnet werden. Quell- und Zielpunkte sind die 129 Demand Nodes (Gemeindezentren). Nur 4.212 der 72.238 Kanten sind aktiv (Link Importance > 0)."
   },
   {
    "id": "pluvial",
    "kurz": "pluvial",
    "label": "Starkregen",
    "rolle": "pluvial",
-   "text": "BKG-Hinweiskarte Starkregengefahren (100 mm/h, 1-m-Raster), entlang jeder Kante abgetastet. Gefährdungsstufen H1–H6 nach Tiefe × Fließgeschwindigkeit (Smith, Davey & Cox 2014); Verschneidungsindex vi_pct = Rangprodukt aus Link-Importance- und Gefahrenperzentil."
+   "text": "BKG-Hinweiskarte Starkregengefahren, extremes Ereignis (100 mm/h, 1-m-Raster), Abtastung im Meterabstand entlang jeder Kante. Gefährdungsstufen H1 bis H6 nach dem H-Schema aus Überflutungstiefe × Fließgeschwindigkeit (ortsgekoppelt). Verschneidungsindex vi_pct = Produkt der Perzentilränge von Gefahrengröße und Link Importance innerhalb der betroffenen und aktiven Kanten."
   },
   {
    "id": "fluvial",
    "kurz": "fluvial",
    "label": "Flusshochwasser",
    "rolle": "fluvial",
-   "text": "Hochwassergefahrenkarten HQextrem (NLWKN, HWRM-RL) für Hase, Hunte und Große Aue; Kanten in Überflutungsflächen mit repräsentativer Tiefe. Brückenfreier Index vi_pct_fluvial als Rangprodukt (n = 138)."
+   "text": "Hochwassergefahrenkarten HQextrem des NLWKN für die Risikogewässer Hase und Hunte. Die fluviale Gefährdungsstufe folgt aus der klassierten Tiefe, ohne Fließgeschwindigkeit. Brückenfreier Verschneidungsindex vi_pct_fluvial über 138 Kanten. Kanten, die nur in Überschwemmungsgebieten ohne Tiefenangabe liegen, sind Prüffälle und gehen nicht in den Index ein."
   },
   {
    "id": "heat",
    "kurz": "heat",
    "label": "Hitze",
    "rolle": "heat",
-   "text": "Landoberflächentemperatur aus Landsat 8/9 (90-Perzentil-Komposit) im 30-m-Puffer je Kante; thermischer Index vi_pct_heat = heat_pct × imp_pct über die aktiven Kanten. Oberfläche und Beschattung (Copernicus HRL) als Suszeptibilitätskontext."
+   "text": "Hitzewellenlage: 90. Perzentil der Landoberflächentemperatur aus Landsat 8 und 9 (Komposit), Zonenstatistik im 50-m-Puffer je Kante. Thermischer Verschneidungsindex vi_pct_heat = Produkt der Perzentilränge von Hitzewellenlage und Link Importance über die aktiven Kanten. Belag, Beton und Beschattung beschreiben die materielle Anfälligkeit; Baumbedeckung und Versiegelung im Straßenumfeld erklären die Temperaturunterschiede."
   },
   {
    "id": "compound",
    "kurz": "compound",
    "label": "Compound",
    "rolle": "compound",
-   "text": "Zusammentreffen zweier Gefahren auf derselben Kante: Starkregen × Flusshochwasser (vi_pct_compound) und Starkregen × Hitze (vi_pct_compound_heat), jeweils als Rangprodukt."
+   "text": "Zusammentreffen zweier Gefahren auf derselben Kante. Der Compound-Index der Wassergefahren verknüpft die Perzentilränge des pluvialen Verschneidungsindex und der fluvialen Gefährdungsstufe (vi_pct_compound). Ergänzend dieselbe Verknüpfung für Starkregen und Hitze (vi_pct_compound_heat)."
   },
   {
    "id": "profil",
    "kurz": "Mehrfachbelastung",
    "label": "Belastungsprofil",
    "rolle": "compound",
-   "text": "Zahl der Gefahren, in denen eine Kante dem obersten Dezil angehört. mhn_bf = Fassung der Abbildung (brückenfrei, fluviale Spitzengruppe aus Layer 16); multi_hazard_n = Fassung des Multi-Hazard-Profils."
+   "text": "Gefahrenübergreifendes Belastungsprofil: Zahl der Gefahren, in denen eine Kante zum obersten Dezil ihres Verschneidungsindex gehört. mhn_bf = Fassung der Abbildung (brückenfrei, fluviale Spitzengruppe aus Layer 16); multi_hazard_n = Fassung des Multi-Hazard-Profils."
   },
   {
    "id": "kontext",
    "kurz": "Kontext",
    "label": "Kanteneigenschaften",
    "rolle": "importance",
-   "text": "Straßentyp, Baulastträger, Gemeinde und Länge aus OpenStreetMap bzw. Zuordnung."
+   "text": "Straßentyp, Baulastebene, Gemeinde und Länge aus OpenStreetMap bzw. Zuordnung."
   }
  ],
  "presets": [
@@ -459,7 +460,7 @@
    "skala": {
     "modus": "kategorial"
    },
-   "titel": "Starkregengefahr nach H-Stufe (pluvial, HQextrem-Analogon)",
+   "titel": "Starkregengefahr nach Gefährdungsstufe (H-Schema)",
    "variable": "hazard_klasse"
   },
   {
@@ -476,7 +477,7 @@
    "skala": {
     "modus": "p2_p100"
    },
-   "titel": "Verschneidungskarte von Link Importance und Starkregengefahr",
+   "titel": "Perzentilnormierter Starkregen-Verschneidungsindex",
    "variable": "vi_pct"
   },
   {
@@ -638,7 +639,7 @@
    "skala": {
     "modus": "p2_p100"
    },
-   "titel": "Compound-Index (Starkregen-Vulnerabilität × Flusshochwasser)",
+   "titel": "Compound-Index der Wassergefahren",
    "variable": "vi_pct_compound"
   },
   {
@@ -763,19 +764,13 @@
    "dezimalen": null,
    "einheit": "",
    "gruppe": "kontext",
-   "label": "Baulastträger"
-  },
-  "befund": {
-   "dezimalen": null,
-   "einheit": "",
-   "gruppe": "pluvial",
-   "label": "Prüfbefund"
+   "label": "Baulastebene"
   },
   "beschattung": {
    "dezimalen": null,
    "einheit": "",
    "gruppe": "heat",
-   "label": "Beschattung"
+   "label": "Beschattungsklasse"
   },
   "betroffen_fl": {
    "dezimalen": null,
@@ -799,7 +794,7 @@
    "dezimalen": null,
    "einheit": "",
    "gruppe": "heat",
-   "label": "Beton"
+   "label": "Betonbelag"
   },
   "d_at": {
    "dezimalen": 2,
@@ -817,13 +812,7 @@
    "dezimalen": 4,
    "einheit": "",
    "gruppe": "pluvial",
-   "label": "Gefahren-Perzentil"
-  },
-  "dv_stufe": {
-   "dezimalen": null,
-   "einheit": "",
-   "gruppe": "pluvial",
-   "label": "dv-Stufe"
+   "label": "Perzentilrang Gefahrengröße"
   },
   "flut_anteil": {
    "dezimalen": 3,
@@ -847,25 +836,25 @@
    "dezimalen": null,
    "einheit": "",
    "gruppe": "fluvial",
-   "label": "Gewässer (UESG)"
+   "label": "Gewässer (Überschwemmungsgebiet)"
   },
   "h_klasse_fl": {
    "dezimalen": null,
    "einheit": "",
    "gruppe": "fluvial",
-   "label": "HQextrem-Stufe"
+   "label": "Gefährdungsstufe (HQextrem)"
   },
   "h_num_fl": {
    "dezimalen": 0,
    "einheit": "",
    "gruppe": "fluvial",
-   "label": "HQextrem-Stufe (numerisch)"
+   "label": "Gefährdungsstufe (numerisch)"
   },
   "haz_pct_nb": {
    "dezimalen": 4,
    "einheit": "",
    "gruppe": "fluvial",
-   "label": "Gefahren-Perzentil (fluvial)"
+   "label": "Perzentilrang Gefährdungsstufe (fluvial)"
   },
   "hazard_klasse": {
    "dezimalen": null,
@@ -931,25 +920,25 @@
    "dezimalen": 4,
    "einheit": "",
    "gruppe": "importance",
-   "label": "Importance-Perzentil"
+   "label": "Perzentilrang Link Importance"
   },
   "imp_pct100": {
    "dezimalen": 1,
    "einheit": "%",
    "gruppe": "importance",
-   "label": "Importance-Perzentilrang"
+   "label": "Perzentilrang Link Importance (0–100)"
   },
   "imp_pct_nb": {
    "dezimalen": 4,
    "einheit": "",
    "gruppe": "fluvial",
-   "label": "Importance-Perzentil (fluvial)"
+   "label": "Perzentilrang Link Importance (fluvial)"
   },
   "imp_pct_pluvial": {
    "dezimalen": 4,
    "einheit": "",
    "gruppe": "pluvial",
-   "label": "Importance-Perzentil (pluviale Bezugsmenge)"
+   "label": "Perzentilrang Link Importance (pluviale Bezugsmenge)"
   },
   "importance_s": {
    "dezimalen": 4,
@@ -961,7 +950,7 @@
    "dezimalen": null,
    "einheit": "",
    "gruppe": "importance",
-   "label": "Importance-Klasse"
+   "label": "Klasse der Link Importance"
   },
   "length_m": {
    "dezimalen": 0,
@@ -979,13 +968,7 @@
    "dezimalen": 2,
    "einheit": "°C",
    "gruppe": "heat",
-   "label": "LST P90"
-  },
-  "mechanismus_klar": {
-   "dezimalen": null,
-   "einheit": "",
-   "gruppe": "pluvial",
-   "label": "Mechanismus"
+   "label": "Hitzewellenlage (LST P90)"
   },
   "mhn_bf": {
    "dezimalen": 0,
@@ -1009,7 +992,7 @@
    "dezimalen": null,
    "einheit": "",
    "gruppe": "fluvial",
-   "label": "Prüfbedarf"
+   "label": "Prüffall"
   },
   "querungspunkt": {
    "dezimalen": null,
@@ -1033,13 +1016,7 @@
    "dezimalen": 0,
    "einheit": "",
    "gruppe": "heat",
-   "label": "Robustheit (Varianten)"
-  },
-  "robustheit": {
-   "dezimalen": 0,
-   "einheit": "",
-   "gruppe": "pluvial",
-   "label": "Robustheit"
+   "label": "Variantenrobustheit (0–4)"
   },
   "stark_pct": {
    "dezimalen": 4,
@@ -1057,25 +1034,25 @@
    "dezimalen": null,
    "einheit": "",
    "gruppe": "heat",
-   "label": "Oberfläche"
+   "label": "Fahrbahnbelag"
   },
   "tcd_mean": {
    "dezimalen": 1,
    "einheit": "%",
    "gruppe": "heat",
-   "label": "Baumkronendeckung"
+   "label": "Baumbedeckung"
   },
   "tiefe_max_m": {
    "dezimalen": 2,
    "einheit": "m",
    "gruppe": "pluvial",
-   "label": "max. Wassertiefe"
+   "label": "max. Überflutungstiefe"
   },
   "tiefe_repr_fl": {
    "dezimalen": 2,
    "einheit": "m",
    "gruppe": "fluvial",
-   "label": "repräsentative Tiefe"
+   "label": "Tiefe (Klassenobergrenze)"
   },
   "tunnel": {
    "dezimalen": null,
@@ -1129,79 +1106,79 @@
    "dezimalen": 4,
    "einheit": "",
    "gruppe": "pluvial",
-   "label": "Starkregen-Index vi_pct"
+   "label": "Starkregen-Verschneidungsindex"
   },
   "vi_pct_compound": {
    "dezimalen": 4,
    "einheit": "",
    "gruppe": "compound",
-   "label": "Compound Starkregen × Fluvial"
+   "label": "Compound-Index Wassergefahren"
   },
   "vi_pct_compound_heat": {
    "dezimalen": 4,
    "einheit": "",
    "gruppe": "compound",
-   "label": "Compound Starkregen × Hitze"
+   "label": "Compound-Index Starkregen × Hitze"
   },
   "vi_pct_fluvial": {
    "dezimalen": 4,
    "einheit": "",
    "gruppe": "fluvial",
-   "label": "Fluvialer Index (brückenfrei)"
+   "label": "Fluvialer Verschneidungsindex (brückenfrei)"
   },
   "vi_pct_fluvial_voll": {
    "dezimalen": 4,
    "einheit": "",
    "gruppe": "fluvial",
-   "label": "Fluvialer Index (mit Brücken)"
+   "label": "Fluvialer Index (mit Querbauwerken)"
   },
   "vi_pct_heat": {
    "dezimalen": 4,
    "einheit": "",
    "gruppe": "heat",
-   "label": "Thermischer Index"
+   "label": "Thermischer Verschneidungsindex"
   },
   "vi_pct_heat_v2": {
    "dezimalen": 4,
    "einheit": "",
    "gruppe": "heat",
-   "label": "Index Variante Material"
+   "label": "Bewertungsvariante Belag"
   },
   "vi_pct_heat_v3": {
    "dezimalen": 4,
    "einheit": "",
    "gruppe": "heat",
-   "label": "Index Variante Schatten"
+   "label": "Bewertungsvariante Beschattung"
   },
   "vi_pct_heat_v4": {
    "dezimalen": 4,
    "einheit": "",
    "gruppe": "heat",
-   "label": "Index Variante kombiniert"
+   "label": "Bewertungsvariante Belag und Beschattung"
   },
   "vi_roh": {
    "dezimalen": 3,
    "einheit": "",
    "gruppe": "pluvial",
-   "label": "Starkregen-Rohindex"
+   "label": "Starkregen-Index, unnormiert"
   },
   "vi_roh_compound": {
    "dezimalen": 3,
    "einheit": "",
    "gruppe": "compound",
-   "label": "Compound-Rohindex"
+   "label": "Compound-Index Wassergefahren, unnormiert"
   },
   "vi_roh_compound_heat": {
    "dezimalen": 3,
    "einheit": "",
    "gruppe": "compound",
-   "label": "Compound-Rohindex (Hitze)"
+   "label": "Compound-Index Starkregen × Hitze, unnormiert"
   },
   "vi_roh_fluvial_nb": {
    "dezimalen": 3,
    "einheit": "",
    "gruppe": "fluvial",
-   "label": "Fluvialer Rohindex"
+   "label": "Fluvialer Index, unnormiert"
   }
  },
  "stil": {
@@ -1429,7 +1406,7 @@
    "typ": "quintil"
   },
   {
-   "beschreibung": "Mittlerer zusätzlicher Reiseaufwand je relevantem OD-Paar bei Sperrung der Kante.",
+   "beschreibung": "Durchschnittlicher Reisezeitanstieg je relevantem Quell-Ziel-Paar bei Sperrung der Kante.",
    "datei": "kanten.json",
    "einheit": "s",
    "gruppe": "importance",
@@ -1644,7 +1621,7 @@
    "typ": "kontinuierlich"
   },
   {
-   "beschreibung": "Perzentilrang 0–1 (Eingang der Rangprodukte).",
+   "beschreibung": "Perzentilrang 0–1; geht in die Verschneidungsindizes ein.",
    "datei": "attr_importance.json",
    "einheit": "",
    "gruppe": "importance",
@@ -1872,7 +1849,7 @@
    "gruppe": "importance",
    "gt0": false,
    "id": "klasse",
-   "label": "Importance-Klasse",
+   "label": "Klasse der Link Importance",
    "n_gueltig": 4212,
    "rolle": "importance",
    "typ": "kategorial",
@@ -1894,7 +1871,7 @@
     "H6": 1093,
     "querbauwerk": 760
    },
-   "beschreibung": "H1–H6 nach Tiefe × Geschwindigkeit; Querbauwerke (Brücken/Tunnel) gesondert; ohne Stufe = außerhalb des Abtastgebiets.",
+   "beschreibung": "H1 bis H6 nach dem H-Schema (Überflutungstiefe × Fließgeschwindigkeit); Querbauwerke (Brücken, Tunnel) gesondert; ohne Stufe = außerhalb der Abtastung.",
    "datei": "kanten.json",
    "einheit": "",
    "gruppe": "pluvial",
@@ -1915,7 +1892,7 @@
    ]
   },
   {
-   "beschreibung": "imp_pct_pluvial × dv_pct (Rangprodukt über die pluvial betroffenen aktiven Kanten), Perzentilrang 0–1; oberstes Dezil = Spitzengruppe.",
+   "beschreibung": "Produkt der Perzentilränge von Link Importance (imp_pct_pluvial) und Gefahrengröße (dv_pct) innerhalb der pluvial betroffenen und aktiven Kanten; oberstes Dezil = Spitzengruppe.",
    "datei": "attr_pluvial.json",
    "einheit": "",
    "gruppe": "pluvial",
@@ -2130,7 +2107,7 @@
    "typ": "kontinuierlich"
   },
   {
-   "beschreibung": "importance_s × dv_max (unnormiert).",
+   "beschreibung": "importance_s × dv_max; wird der perzentilnormierten Fassung gegenübergestellt.",
    "datei": "attr_pluvial.json",
    "einheit": "s·m²/s",
    "gruppe": "pluvial",
@@ -2223,7 +2200,7 @@
     ]
    },
    "id": "vi_roh",
-   "label": "Starkregen-Rohindex",
+   "label": "Starkregen-Verschneidungsindex, unnormierte Fassung",
    "max": 64.41376003360749,
    "median": 0.011324702149033547,
    "min": 7.834783755242824e-10,
@@ -2560,7 +2537,7 @@
    "typ": "kontinuierlich"
   },
   {
-   "beschreibung": "Größte abgetastete Wassertiefe der Kante.",
+   "beschreibung": "Größte Überflutungstiefe entlang der Kante (Abtastung im Meterabstand).",
    "datei": "attr_pluvial.json",
    "einheit": "m",
    "gruppe": "pluvial",
@@ -2653,7 +2630,7 @@
     ]
    },
    "id": "tiefe_max_m",
-   "label": "max. Wassertiefe",
+   "label": "max. Überflutungstiefe",
    "max": 8.76,
    "median": 0.17,
    "min": 0.01,
@@ -2868,7 +2845,7 @@
     ]
    },
    "id": "flut_anteil",
-   "label": "überfluteter Längenanteil",
+   "label": "überfluteter Anteil",
    "max": 1.0,
    "median": 0.883,
    "min": 0.001,
@@ -2991,95 +2968,19 @@
   },
   {
    "anzahl": {
-    "extrem (Fahrzeuge/Personen mitgerissen)": 43,
-    "hoch (Pkw verliert Lagestabilität)": 18,
-    "kritisch (Gehen gefährlich)": 20,
-    "moderat": 47
-   },
-   "beschreibung": "Mechanismus-Prüfung der 128 kritischen Kanten (Layer 03).",
-   "datei": "attr_pluvial.json",
-   "einheit": "",
-   "gruppe": "pluvial",
-   "gt0": false,
-   "id": "dv_stufe",
-   "label": "dv-Stufe (kritische Kanten)",
-   "n_gueltig": 128,
-   "rolle": "pluvial",
-   "typ": "kategorial",
-   "werte": [
-    "moderat",
-    "extrem (Fahrzeuge/Personen mitgerissen)",
-    "kritisch (Gehen gefährlich)",
-    "hoch (Pkw verliert Lagestabilität)"
-   ]
-  },
-  {
-   "anzahl": {
-    "Durchlass (lokal überlastet)": 27,
-    "Durchlass + flächiges Überfließen": 19,
-    "Senke / flächige Überflutung": 16,
-    "ungeprüft (v_at < 1, unkritisch)": 65,
-    "unklar": 1
-   },
-   "beschreibung": "Durchlass, Senke oder unklar (Layer 03).",
-   "datei": "attr_pluvial.json",
-   "einheit": "",
-   "gruppe": "pluvial",
-   "gt0": false,
-   "id": "mechanismus_klar",
-   "label": "Überflutungsmechanismus",
-   "n_gueltig": 128,
-   "rolle": "pluvial",
-   "typ": "kategorial",
-   "werte": [
-    "ungeprüft (v_at < 1, unkritisch)",
-    "Durchlass (lokal überlastet)",
-    "Durchlass + flächiges Überfließen",
-    "Senke / flächige Überflutung",
-    "unklar"
-   ]
-  },
-  {
-   "anzahl": {
-    "0": 85,
-    "1": 14,
-    "2": 10,
-    "3": 9,
-    "4": 10
-   },
-   "beschreibung": "In wie vielen der vier Rangvarianten die Kante unter den Top 25 liegt.",
-   "datei": "attr_pluvial.json",
-   "einheit": "",
-   "gruppe": "pluvial",
-   "gt0": false,
-   "id": "robustheit",
-   "label": "Robustheit (Anzahl Top-Listen)",
-   "n_gueltig": 128,
-   "rolle": "pluvial",
-   "typ": "kategorial",
-   "werte": [
-    "0",
-    "1",
-    "2",
-    "3",
-    "4"
-   ]
-  },
-  {
-   "anzahl": {
     "H2": 532,
     "H3": 376,
     "H4": 279,
     "H5": 221,
     "H6": 15
    },
-   "beschreibung": "Gefahrenstufe aus der repräsentativen Wassertiefe der HQextrem-Fläche.",
+   "beschreibung": "Gefährdungsstufe aus der klassierten Tiefe der HQextrem-Fläche (reine Tiefenschwellen, ohne Fließgeschwindigkeit).",
    "datei": "attr_fluvial.json",
    "einheit": "",
    "gruppe": "fluvial",
    "gt0": false,
    "id": "h_klasse_fl",
-   "label": "HQextrem-Gefahrenstufe",
+   "label": "Fluviale Gefährdungsstufe (HQextrem)",
    "n_gueltig": 1423,
    "rolle": "fluvial",
    "typ": "kategorial",
@@ -3092,7 +2993,7 @@
    ]
   },
   {
-   "beschreibung": "imp_pct_nb × haz_pct_nb, n = 138 (Layer 14/16, Endprodukt der Arbeit).",
+   "beschreibung": "Produkt der Perzentilränge von Link Importance und fluvialer Gefährdungsstufe, ohne Querbauwerke, 138 Kanten (Endergebnis der Arbeit für diese Gefahr).",
    "datei": "attr_fluvial.json",
    "einheit": "",
    "gruppe": "fluvial",
@@ -3307,7 +3208,7 @@
    "typ": "kontinuierlich"
   },
   {
-   "beschreibung": "Zwischenstand inkl. Brücken (Layer 09, n = 197).",
+   "beschreibung": "Zwischenstand einschließlich Querbauwerken (n = 197).",
    "datei": "attr_fluvial.json",
    "einheit": "",
    "gruppe": "fluvial",
@@ -3400,7 +3301,7 @@
     ]
    },
    "id": "vi_pct_fluvial_voll",
-   "label": "Fluvialer Index (mit Brücken)",
+   "label": "Fluvialer Verschneidungsindex (mit Querbauwerken)",
    "max": 0.9021103352315184,
    "median": 0.17608029065422967,
    "min": 0.0021000283439408384,
@@ -3522,7 +3423,7 @@
    "typ": "kontinuierlich"
   },
   {
-   "beschreibung": "importance_s × h_num_fl (unnormiert, brückenfrei).",
+   "beschreibung": "importance_s × Gefährdungsstufe (brückenfrei); wird der perzentilnormierten Fassung gegenübergestellt.",
    "datei": "attr_fluvial.json",
    "einheit": "",
    "gruppe": "fluvial",
@@ -3615,7 +3516,7 @@
     ]
    },
    "id": "vi_roh_fluvial_nb",
-   "label": "Fluvialer Rohindex",
+   "label": "Fluvialer Verschneidungsindex, unnormierte Fassung",
    "max": 123.839,
    "median": 0.6043499999999999,
    "min": 0.0046,
@@ -3737,7 +3638,7 @@
    "typ": "kontinuierlich"
   },
   {
-   "beschreibung": "Repräsentative Tiefe der Gefahrenfläche, in der die Kante liegt.",
+   "beschreibung": "Obergrenze der Tiefenklasse der HQextrem-Fläche, in der die Kante liegt.",
    "datei": "attr_fluvial.json",
    "einheit": "m",
    "gruppe": "fluvial",
@@ -3830,7 +3731,7 @@
     ]
    },
    "id": "tiefe_repr_fl",
-   "label": "repräsentative Wassertiefe HQextrem",
+   "label": "Tiefe der HQextrem-Fläche (Klassenobergrenze)",
    "max": 5.0,
    "median": 1.0,
    "min": 0.5,
@@ -4197,7 +4098,7 @@
     "Tiefe HQextrem": 1423,
     "nur Ausdehnung": 396
    },
-   "beschreibung": "Tiefe aus HQextrem-Gefahrenkarte vorhanden oder nur Überschwemmungsgebiet (UESG).",
+   "beschreibung": "Tiefe aus der HQextrem-Gefahrenkarte vorhanden oder nur Ausdehnung ohne Tiefe (Überschwemmungsgebiet, Prüffall).",
    "datei": "attr_fluvial.json",
    "einheit": "",
    "gruppe": "fluvial",
@@ -4231,7 +4132,7 @@
    ]
   },
   {
-   "beschreibung": "Mittel des 90-Perzentil-Komposits (Landsat 8/9) im Kantenpuffer, alle Kanten.",
+   "beschreibung": "Mittel der Hitzewellenlage (90. Perzentil des Landsat-Komposits) im 50-m-Puffer, alle Kanten.",
    "datei": "attr_heat.json",
    "einheit": "°C",
    "gruppe": "heat",
@@ -4324,7 +4225,7 @@
     ]
    },
    "id": "lst_p90_mean",
-   "label": "Oberflächentemperatur (LST P90)",
+   "label": "Hitzewellenlage (LST, 90. Perzentil)",
    "max": 53.012306213378906,
    "median": 37.79489517211914,
    "min": 29.18796730041504,
@@ -4446,7 +4347,7 @@
    "typ": "kontinuierlich"
   },
   {
-   "beschreibung": "Perzentilrang von lst_p90_mean über die aktiven Kanten (Abb. 5-4).",
+   "beschreibung": "Perzentilrang der Hitzewellenlage über die aktiven Kanten.",
    "datei": "attr_heat.json",
    "einheit": "",
    "gruppe": "heat",
@@ -4661,7 +4562,7 @@
    "typ": "kontinuierlich"
   },
   {
-   "beschreibung": "heat_pct × imp_pct (Rangprodukt), Abb. 5-5.",
+   "beschreibung": "Produkt der Perzentilränge von Hitzewellenlage (heat_pct) und Link Importance (imp_pct) über die aktiven Kanten.",
    "datei": "attr_heat.json",
    "einheit": "",
    "gruppe": "heat",
@@ -4876,7 +4777,7 @@
    "typ": "kontinuierlich"
   },
   {
-   "beschreibung": "Robustheitsvariante mit Oberflächenklasse.",
+   "beschreibung": "Bewertungsvariante, die den Belag zusätzlich als Anfälligkeitsfaktor gewichtet.",
    "datei": "attr_heat.json",
    "einheit": "",
    "gruppe": "heat",
@@ -4969,7 +4870,7 @@
     ]
    },
    "id": "vi_pct_heat_v2",
-   "label": "Thermischer Index, Variante Material",
+   "label": "Thermischer Verschneidungsindex, Bewertungsvariante Belag",
    "max": 0.967760703624713,
    "median": 0.18470966423781482,
    "min": 0.00013486520049800027,
@@ -5091,7 +4992,7 @@
    "typ": "kontinuierlich"
   },
   {
-   "beschreibung": "Robustheitsvariante mit Beschattung.",
+   "beschreibung": "Bewertungsvariante, die die Beschattung zusätzlich als Anfälligkeitsfaktor gewichtet.",
    "datei": "attr_heat.json",
    "einheit": "",
    "gruppe": "heat",
@@ -5184,7 +5085,7 @@
     ]
    },
    "id": "vi_pct_heat_v3",
-   "label": "Thermischer Index, Variante Schatten",
+   "label": "Thermischer Verschneidungsindex, Bewertungsvariante Beschattung",
    "max": 0.968686347530619,
    "median": 0.18648854271764292,
    "min": 0.00013486520049800027,
@@ -5306,7 +5207,7 @@
    "typ": "kontinuierlich"
   },
   {
-   "beschreibung": "Robustheitsvariante Material + Schatten.",
+   "beschreibung": "Bewertungsvariante mit Belag und Beschattung als Anfälligkeitsfaktoren.",
    "datei": "attr_heat.json",
    "einheit": "",
    "gruppe": "heat",
@@ -5399,7 +5300,7 @@
     ]
    },
    "id": "vi_pct_heat_v4",
-   "label": "Thermischer Index, Variante kombiniert",
+   "label": "Thermischer Verschneidungsindex, Bewertungsvariante Belag und Beschattung",
    "max": 0.967760703624713,
    "median": 0.1862785330974654,
    "min": 0.00013486520049800027,
@@ -5526,13 +5427,13 @@
     "2": 4,
     "4": 23
    },
-   "beschreibung": "In wie vielen der vier Varianten die Kante unter den Top 25 liegt (23 Kanten in allen vier).",
+   "beschreibung": "In wie vielen der vier Bewertungsvarianten die Kante unter den Top 25 liegt; die 23 Kanten in allen vier bilden den thermischen Robustheitskern (varianteninvariante Kernmenge).",
    "datei": "attr_heat.json",
    "einheit": "",
    "gruppe": "heat",
    "gt0": false,
    "id": "robust_n",
-   "label": "Robustheit (Anzahl Varianten Top 25)",
+   "label": "Variantenrobustheit (Bewertungsvarianten in den Top 25)",
    "n_gueltig": 4211,
    "rolle": "heat",
    "typ": "kategorial",
@@ -5543,7 +5444,7 @@
    ]
   },
   {
-   "beschreibung": "Copernicus HRL Tree Cover Density im Kantenpuffer.",
+   "beschreibung": "Baumbedeckung im Straßenumfeld (Copernicus HRL Tree Cover Density, Kantenpuffer).",
    "datei": "attr_heat.json",
    "einheit": "%",
    "gruppe": "heat",
@@ -5636,7 +5537,7 @@
     ]
    },
    "id": "tcd_mean",
-   "label": "Baumkronendeckung",
+   "label": "Baumbedeckung",
    "max": 94.75221252441406,
    "median": 3.351844549179077,
    "min": 0.0,
@@ -5758,7 +5659,7 @@
    "typ": "kontinuierlich"
   },
   {
-   "beschreibung": "Copernicus HRL Imperviousness Density im Kantenpuffer.",
+   "beschreibung": "Versiegelung im Straßenumfeld (Copernicus HRL Imperviousness Density, Kantenpuffer).",
    "datei": "attr_heat.json",
    "einheit": "%",
    "gruppe": "heat",
@@ -5981,13 +5882,13 @@
     "sonstig": 4,
     "ungebunden": 261
    },
-   "beschreibung": "Aus OSM surface abgeleitet.",
+   "beschreibung": "Fahrbahnbelag aus OpenStreetMap (surface); Kanten ohne Angabe sind als asphaltiert approximiert.",
    "datei": "attr_heat.json",
    "einheit": "",
    "gruppe": "heat",
    "gt0": false,
    "id": "surface_class",
-   "label": "Oberflächenklasse",
+   "label": "Fahrbahnbelag",
    "n_gueltig": 71739,
    "rolle": "heat",
    "typ": "kategorial",
@@ -6007,13 +5908,13 @@
     "mittel": 4399,
     "unbeschattet": 49543
    },
-   "beschreibung": "Klassen aus der Baumkronendeckung.",
+   "beschreibung": "Klassen aus der Baumbedeckung im Straßenumfeld.",
    "datei": "attr_heat.json",
    "einheit": "",
    "gruppe": "heat",
    "gt0": false,
    "id": "beschattung",
-   "label": "Beschattung",
+   "label": "Beschattungsklasse",
    "n_gueltig": 69466,
    "rolle": "coverage",
    "typ": "kategorial",
@@ -6025,7 +5926,7 @@
    ]
   },
   {
-   "beschreibung": "Rangprodukt aus Starkregen-Index und fluvialer Gefahr (Layer 10, n = 119).",
+   "beschreibung": "Verknüpft den Perzentilrang des pluvialen Verschneidungsindex mit dem der fluvialen Gefährdungsstufe (n = 119).",
    "datei": "attr_compound.json",
    "einheit": "",
    "gruppe": "compound",
@@ -6118,7 +6019,7 @@
     ]
    },
    "id": "vi_pct_compound",
-   "label": "Compound-Index Starkregen × Flusshochwasser",
+   "label": "Compound-Index der Wassergefahren (Starkregen × Flusshochwasser)",
    "max": 0.9285714285714286,
    "median": 0.16524256761528142,
    "min": 0.004131064190382035,
@@ -6333,7 +6234,7 @@
     ]
    },
    "id": "vi_roh_compound",
-   "label": "Compound-Rohindex Starkregen × Flusshochwasser",
+   "label": "Compound-Index der Wassergefahren, unnormierte Fassung",
    "max": 4.808087442222832,
    "median": 0.6118008046393468,
    "min": 0.004205193505081878,
@@ -6455,7 +6356,7 @@
    "typ": "kontinuierlich"
   },
   {
-   "beschreibung": "Rangprodukt aus Starkregen- und Hitzeperzentil (n = 3.454).",
+   "beschreibung": "Produkt der Perzentilränge von Starkregen und Hitze (n = 3.454).",
    "datei": "attr_compound.json",
    "einheit": "",
    "gruppe": "compound",
@@ -7195,13 +7096,13 @@
     "kreisstrasse": 5684,
     "landesstrasse": 17943
    },
-   "beschreibung": "Zuordnung nach ref/highway (AP7).",
+   "beschreibung": "Zuordnung nach Straßennummer und Straßentyp.",
    "datei": "kanten.json",
    "einheit": "",
    "gruppe": "kontext",
    "gt0": false,
    "id": "baulast",
-   "label": "Baulastträger",
+   "label": "Baulastebene",
    "n_gueltig": 72238,
    "rolle": "importance",
    "typ": "kategorial",

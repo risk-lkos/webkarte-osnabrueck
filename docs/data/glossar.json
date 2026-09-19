@@ -1,10 +1,10 @@
 {
  "format": "glossar-1",
- "hinweis": "kurz = Erklaertext der ?-Knoepfe (von Hand pflegen). glossar = fett gesetzter Begriff in Glossar.md der Arbeit; lang = dessen Wortlaut, wird mit build_webkarte.py --glossar neu eingelesen und nie von Hand geaendert. siehe = verwandte Begriffe. variablen gilt fuer Variablen und Panel-Spalten (Schluessel = Spaltenname); ohne eigenes kurz gilt die Beschreibung aus meta.json. bedienung = Bedienelemente (Schluessel = Abschnitts-id oder Name).",
+ "hinweis": "kurz = Erklaertext der ?-Knoepfe (von Hand pflegen). glossar = fett gesetzter Begriff in Glossar.md der Arbeit; lang = dessen Wortlaut, wird mit build_webkarte.py --glossar neu eingelesen und nie von Hand geaendert. siehe = verwandte Begriffe. variablen gilt fuer Variablen und Panel-Spalten (Schluessel = Spaltenname); ohne eigenes kurz gilt die Beschreibung aus meta.json. bedienung = Bedienelemente (Schluessel = Abschnitts-id oder Name). tipps = Hinweis beim ersten Oeffnen einer Gruppe (Schluessel = Gruppen-id; aktionen schalten Ebenen aus WK.layers ein).",
  "begriffe": {
   "kante": {
    "titel": "Kante",
-   "kurz": "Abschnitt des Straßennetzes zwischen zwei Knoten (Kreuzung, Einmündung oder Ende) aus OpenStreetMap. Die Kante ist die kleinste Einheit aller Kennwerte; das Analysenetz hat 72.238 Kanten.",
+   "kurz": "Abschnitt des Straßennetzes zwischen zwei Knoten (Kreuzung, Einmündung oder Ende) aus OpenStreetMap. Die Kante ist die kleinste Einheit aller Kennwerte; das Straßennetz der Arbeit hat 72.238 Kanten.",
    "siehe": [
     "aktive_kante"
    ]
@@ -20,7 +20,7 @@
   "link_importance": {
    "titel": "Link Importance",
    "glossar": "Link Importance",
-   "kurz": "Maß für die Bedeutung einer Kante im Netz: Um wie viele Sekunden verlängert sich die Reisezeit im Mittel je Quelle-Ziel-Paar, wenn diese Kante gesperrt wird und alle kürzesten Wege neu berechnet werden. Hoch bei Kanten ohne gute Ausweichroute, über die viele Verbindungen laufen.",
+   "kurz": "Maß für die Bedeutung einer Kante im Netz: Um wie viele Sekunden steigt die Reisezeit im Durchschnitt je Quell-Ziel-Paar, wenn diese Kante gesperrt wird und alle kürzesten Wege neu berechnet werden. Hoch bei Kanten ohne gute Ausweichroute, über die viele Verbindungen laufen.",
    "siehe": [
     "demand_nodes",
     "aktive_kante",
@@ -99,15 +99,15 @@
    "lang": "Kantenbezogener Index aus der multiplikativen Verknüpfung der Perzentilränge von Gefahrengröße und Link Importance innerhalb der betroffenen und aktiven Kanten. Hebt Kanten hervor, die zugleich hohe Gefährdung und hohe Netzbedeutung tragen (vi_pct pluvial, vi_pct_fluvial fluvial, vi_pct_heat thermisch)."
   },
   "rohindex": {
-   "titel": "Rohindex",
-   "kurz": "Unnormiertes Produkt aus Link Importance in Sekunden und der Gefahrengröße. Er hängt an Einheiten und einzelnen Extremwerten und dient dem Vergleich mit dem Verschneidungsindex aus Perzentilrängen.",
+   "titel": "Unnormierte Fassung eines Index",
+   "kurz": "Produkt aus Link Importance in Sekunden und der Gefahrengröße, ohne Perzentilnormierung. Die Arbeit stellt es je Wassergefahr der normierten Fassung gegenüber, um zu zeigen, wie sich die Perzentilnormierung auf die Rangfolge auswirkt.",
    "siehe": [
     "verschneidungsindex"
    ]
   },
   "oberstes_dezil": {
    "titel": "Oberstes Dezil (Spitzengruppe)",
-   "kurz": "Die 10 % der Kanten mit den höchsten Werten eines Index, also alles ab dem 90. Perzentil. In der Arbeit gilt diese Gruppe je Gefahr als hoch belastet.",
+   "kurz": "Die 10 % der Kanten mit den höchsten Werten eines Index, also alles ab dem 90. Perzentil. In der Arbeit ist das je Gefahr die Spitzengruppe.",
    "siehe": [
     "belastungsprofil",
     "top25"
@@ -122,8 +122,8 @@
    ]
   },
   "robustheit": {
-   "titel": "Robustheit der Rangfolge",
-   "kurz": "Zahl der Rechenvarianten, in denen eine Kante unter den Top 25 liegt. Beim Hitze-Index gibt es vier Varianten (Basis, Material, Schatten, kombiniert); 23 Kanten liegen in allen vier vorn und bilden den robusten Kern.",
+   "titel": "Variantenrobustheit und Robustheitskern",
+   "kurz": "Variantenrobustheit meint die Unempfindlichkeit der Rangfolge gegenüber der methodischen Setzung. Für den thermischen Verschneidungsindex gibt es vier Bewertungsvarianten; die 23 Kanten, die in allen vier unter den Top 25 bleiben, bilden den thermischen Robustheitskern (varianteninvariante Kernmenge).",
    "siehe": [
     "top25"
    ]
@@ -131,7 +131,7 @@
   "gefaehrdungsstufe": {
    "titel": "Gefährdungsstufe (H1 bis H6)",
    "glossar": "Gefährdungsstufe (H-Schema)",
-   "kurz": "Sechs Stufen der Überflutungsgefahr nach dem Produkt aus Wassertiefe und Fließgeschwindigkeit. Sie beschreiben, ob Fahrzeuge und Personen eine Stelle noch passieren können; in den höchsten Stufen sind auch Gebäude gefährdet. Beim Flusshochwasser fehlen Geschwindigkeiten, dort zählen nur Tiefenschwellen.",
+   "kurz": "Sechs Stufen der Überflutungsgefahr nach dem Produkt aus Überflutungstiefe und Fließgeschwindigkeit (H-Schema). Sie beschreiben, ob Fahrzeuge und Personen eine Stelle noch passieren können; in den höchsten Stufen sind auch Gebäude gefährdet. Beim Flusshochwasser fehlen Geschwindigkeiten, dort zählen nur Tiefenschwellen.",
    "siehe": [
     "ortsgekoppelt",
     "querbauwerk",
@@ -142,7 +142,7 @@
   "ortsgekoppelt": {
    "titel": "Ortsgekoppelt",
    "glossar": "Ortsgekoppelt",
-   "kurz": "Wassertiefe und Fließgeschwindigkeit werden am selben Punkt der Kante verknüpft, weil die tiefste und die schnellste Stelle nicht zusammenfallen müssen.",
+   "kurz": "Überflutungstiefe und Fließgeschwindigkeit werden am selben Punkt der Kante verknüpft, weil die tiefste und die schnellste Stelle nicht zusammenfallen müssen.",
    "siehe": [
     "gefaehrdungsstufe"
    ],
@@ -170,7 +170,7 @@
   "hqextrem": {
    "titel": "HQextrem",
    "glossar": "HQextrem",
-   "kurz": "Extremes Hochwasserszenario der amtlichen Hochwassergefahrenkarten (NLWKN), seltener als ein hundertjährliches Hochwasser. Grundlage der Flusshochwasser-Kennwerte, hier für Hase, Hunte und Große Aue.",
+   "kurz": "Extremes Hochwasserszenario der amtlichen Hochwassergefahrenkarten (NLWKN), seltener als ein hundertjährliches Hochwasser. Grundlage der Flusshochwasser-Kennwerte, hier für die Risikogewässer Hase und Hunte.",
    "siehe": [
     "uesg",
     "gefaehrdungsstufe"
@@ -178,8 +178,8 @@
    "lang": "Extremes Hochwasserszenario der Hochwassergefahrenkarten nach EG-HWRM-Richtlinie, das Ereignisse jenseits eines hundertjährlichen Hochwassers (HQ100) abbildet. Datengrundlage der fluvialen Gefahr in dieser Arbeit (NLWKN)."
   },
   "uesg": {
-   "titel": "Überschwemmungsgebiet (UESG)",
-   "kurz": "Überschwemmungsfläche, für die nur die Ausdehnung vorliegt, keine Wassertiefe. Kanten darin sind als betroffen markiert, erhalten aber keine Gefahrenstufe und keinen Index.",
+   "titel": "Überschwemmungsgebiet und Prüffall",
+   "kurz": "Wasserrechtliche Überschwemmungsgebiete und Risikogebiete weisen nur die Ausdehnung aus, keine Tiefe. Kanten, die allein darin liegen, führt die Arbeit als Prüffälle: betroffen, aber ohne Gefährdungsstufe und ohne Index.",
    "siehe": [
     "hqextrem"
    ]
@@ -187,7 +187,7 @@
   "lst": {
    "titel": "Landoberflächentemperatur (LST)",
    "glossar": "Landoberflächentemperatur (LST)",
-   "kurz": "Vom Satelliten (Landsat 8/9) gemessene Temperatur der Oberfläche, nicht der Luft. Für die Belastung des Fahrbahnmaterials aussagekräftiger als die Lufttemperatur, weil besonnter Asphalt deutlich heißer wird. Je Kante gemittelt in einem 30-m-Puffer.",
+   "kurz": "Vom Satelliten (Landsat 8/9) gemessene Temperatur der Oberfläche, nicht der Luft. Für die Belastung des Fahrbahnmaterials aussagekräftiger als die Lufttemperatur, weil besonnter Asphalt deutlich heißer wird. Je Kante als Zonenstatistik im 50-m-Puffer.",
    "siehe": [
     "hitzewellenlage",
     "komposit",
@@ -216,10 +216,11 @@
    "lang": "Aus einer Zeitreihe einzelner Satellitenszenen pixelweise abgeleitetes, zusammengesetztes Rasterbild. Für die Hitzeanalyse werden die Tagesschichten zu zwei Kompositen verdichtet: dem 90. Perzentil (Hitzewellenlage) als Hauptgröße und dem Median als Sensitivitätsvariante."
   },
   "beschattung_tcd": {
-   "titel": "Baumkronendeckung und Versiegelung",
-   "kurz": "Anteil der Baumkronen (Tree Cover Density) und der versiegelten Fläche (Imperviousness) im Kantenpuffer aus den Copernicus High Resolution Layers. Wenig Schatten und viel Versiegelung bedeuten höhere Oberflächentemperaturen.",
+   "titel": "Baumbedeckung und Versiegelung",
+   "kurz": "Anteil der Baumbedeckung (Tree Cover Density) und der Versiegelung (Imperviousness) im Straßenumfeld aus den Copernicus High Resolution Layers. Sie sind die stärksten Erklärungsfaktoren der Temperaturunterschiede: Vegetation kühlt, Versiegelung wärmt.",
    "siehe": [
-    "lst"
+    "lst",
+    "materielle_anfaelligkeit"
    ]
   },
   "compound_index": {
@@ -264,7 +265,7 @@
   "gefahr": {
    "titel": "Gefahr (Hazard)",
    "glossar": "Gefahr (Hazard)",
-   "kurz": "Das auslösende Ereignis oder der physikalische Zustand, hier Starkregen, Flusshochwasser und Hitze. In der Karte als Gefahrengröße je Kante: Stufe, Wassertiefe oder Temperatur.",
+   "kurz": "Das auslösende Ereignis oder der physikalische Zustand, hier Starkregen, Flusshochwasser und Hitze. In der Karte als Gefahrengröße je Kante: Gefährdungsstufe, Überflutungstiefe oder Hitzewellenlage.",
    "siehe": [
     "exposition",
     "verwundbarkeit"
@@ -308,6 +309,15 @@
     "hqextrem",
     "uesg"
    ]
+  },
+  "materielle_anfaelligkeit": {
+   "titel": "Materielle Anfälligkeit",
+   "kurz": "Bei Hitze kommt zur Netzbedeutung eine materielle Anfälligkeit hinzu, die an Belag, Beton und Brücke hängt. Der Fahrbahnbelag stammt aus OpenStreetMap; Kanten ohne Angabe sind als asphaltiert approximiert und markiert. Betonbeläge und Brücken werden nicht bewertet. Die Beschattung geht nicht als eigener Faktor in den Index ein, weil ihr Kühleffekt schon in der Oberflächentemperatur steckt.",
+   "siehe": [
+    "beschattung_tcd",
+    "robustheit",
+    "lst"
+   ]
   }
  },
  "gruppen": {
@@ -340,11 +350,12 @@
    ]
   },
   "heat": {
-   "kurz": "Hitzebelastung der Fahrbahn: Landoberflächentemperatur aus Satellitendaten, thermischer Verschneidungsindex und die Umstände, die Aufheizung begünstigen (Belag, Schatten, Versiegelung).",
+   "kurz": "Thermische Gefahr: Hitzewellenlage der Landoberflächentemperatur aus Satellitendaten, thermische Exposition und thermischer Verschneidungsindex, dazu die Indikatoren der materiellen Anfälligkeit (Belag, Beton, Beschattung).",
    "begriffe": [
     "lst",
     "hitzewellenlage",
     "verschneidungsindex",
+    "materielle_anfaelligkeit",
     "beschattung_tcd",
     "robustheit"
    ]
@@ -366,7 +377,7 @@
    ]
   },
   "kontext": {
-   "kurz": "Eigenschaften der Kante selbst, unabhängig von den Gefahren: Straßentyp, Baulastträger, Gemeinde und Länge. Nützlich zum Gruppieren und Filtern.",
+   "kurz": "Eigenschaften der Kante selbst, unabhängig von den Gefahren: Straßentyp, Baulastebene, Gemeinde und Länge. Nützlich zum Gruppieren und Filtern.",
    "begriffe": [
     "kante",
     "baulastebene"
@@ -422,14 +433,14 @@
    ]
   },
   "hazard_klasse": {
-   "kurz": "Starkregen-Gefährdungsstufe der Kante von H1 (niedrigste) bis H6 (höchste), aus Wassertiefe mal Fließgeschwindigkeit. Brücken und Tunnel bilden eine eigene Klasse; Kanten ohne Stufe liegen außerhalb des abgetasteten Gebiets.",
+   "kurz": "Starkregen-Gefährdungsstufe der Kante von H1 (niedrigste) bis H6 (höchste), nach dem H-Schema aus Überflutungstiefe mal Fließgeschwindigkeit. Brücken und Tunnel bilden eine eigene Klasse; Kanten ohne Stufe liegen außerhalb der Abtastung.",
    "begriffe": [
     "gefaehrdungsstufe",
     "querbauwerk"
    ]
   },
   "vi_pct": {
-   "kurz": "Zeigt, wo hohe Starkregengefahr auf hohe Netzbedeutung trifft: Produkt der beiden Perzentilränge, 0 bis 1, gebildet über die 3.455 vom Starkregen betroffenen aktiven Kanten. Werte nahe 1 bilden die Spitzengruppe.",
+   "kurz": "Zeigt, wo hohe Starkregengefahr auf hohe Netzbedeutung trifft: Produkt der beiden Perzentilränge, 0 bis 1, gebildet über die 3.455 pluvial betroffenen und aktiven Kanten. Werte nahe 1 bilden die Spitzengruppe.",
    "begriffe": [
     "verschneidungsindex",
     "bezugsmenge",
@@ -461,7 +472,7 @@
    ]
   },
   "d_at": {
-   "kurz": "Wassertiefe an der Stelle der Kante, an der das Produkt aus Tiefe und Geschwindigkeit am größten ist.",
+   "kurz": "Überflutungstiefe an der Stelle der Kante, an der das Produkt aus Tiefe und Geschwindigkeit am größten ist.",
    "begriffe": [
     "ortsgekoppelt"
    ]
@@ -488,25 +499,6 @@
   "loch_anteil": {
    "kurz": "Anteil der Stützpunkte der Kante, für die das Starkregen-Raster keinen Wert liefert."
   },
-  "befund": {
-   "kurz": "Befund aus der Einzelprüfung der 128 kritischen Starkregen-Kanten."
-  },
-  "dv_stufe": {
-   "begriffe": [
-    "gefaehrdungsstufe"
-   ]
-  },
-  "mechanismus_klar": {
-   "begriffe": [
-    "gefaehrdungsstufe"
-   ]
-  },
-  "robustheit": {
-   "begriffe": [
-    "robustheit",
-    "top25"
-   ]
-  },
   "h_klasse_fl": {
    "begriffe": [
     "gefaehrdungsstufe",
@@ -514,7 +506,7 @@
    ]
   },
   "h_num_fl": {
-   "kurz": "HQextrem-Gefahrenstufe als Zahl. Geht in den fluvialen Rohindex ein.",
+   "kurz": "Fluviale Gefährdungsstufe als Zahl. Geht in die unnormierte Fassung des fluvialen Index ein.",
    "begriffe": [
     "gefaehrdungsstufe"
    ]
@@ -593,7 +585,7 @@
    ]
   },
   "lst_p90_mean": {
-   "kurz": "Oberflächentemperatur der Kante in heißen Lagen (90. Perzentil aus Landsat 8/9), gemittelt im 30-m-Puffer. Liegt für fast alle Kanten vor, nicht nur für die aktiven.",
+   "kurz": "Hitzewellenlage der Kante: 90. Perzentil der Landoberflächentemperatur aus Landsat 8 und 9, als Zonenstatistik im 50-m-Puffer. Liegt für fast alle Kanten vor, nicht nur für die aktiven.",
    "begriffe": [
     "lst",
     "hitzewellenlage",
@@ -618,19 +610,21 @@
   "vi_pct_heat_v2": {
    "begriffe": [
     "robustheit",
+    "materielle_anfaelligkeit",
     "verschneidungsindex"
    ]
   },
   "vi_pct_heat_v3": {
    "begriffe": [
     "robustheit",
-    "verschneidungsindex",
-    "beschattung_tcd"
+    "materielle_anfaelligkeit",
+    "verschneidungsindex"
    ]
   },
   "vi_pct_heat_v4": {
    "begriffe": [
     "robustheit",
+    "materielle_anfaelligkeit",
     "verschneidungsindex"
    ]
   },
@@ -641,24 +635,29 @@
    ]
   },
   "tcd_mean": {
-   "kurz": "Anteil der Fläche im Kantenpuffer, der von Baumkronen überdeckt ist. Viel Baumkrone bedeutet Schatten und niedrigere Oberflächentemperaturen.",
+   "kurz": "Anteil der Baumbedeckung im Straßenumfeld der Kante. Hohe Baumbedeckung geht mit niedrigeren Oberflächentemperaturen einher.",
    "begriffe": [
     "beschattung_tcd"
    ]
   },
   "imd_mean": {
-   "kurz": "Anteil der versiegelten Fläche im Kantenpuffer. Hohe Versiegelung geht mit höheren Oberflächentemperaturen einher.",
+   "kurz": "Anteil der Versiegelung im Straßenumfeld der Kante. Hohe Versiegelung geht mit höheren Oberflächentemperaturen einher.",
    "begriffe": [
     "beschattung_tcd"
    ]
   },
   "beschattung": {
+   "kurz": "Beschattungsklasse aus der Baumbedeckung im Straßenumfeld. Zwei Bewertungsvarianten gewichten sie zusätzlich als Anfälligkeitsfaktor.",
    "begriffe": [
-    "beschattung_tcd"
+    "beschattung_tcd",
+    "materielle_anfaelligkeit"
    ]
   },
   "concrete_flag": {
-   "kurz": "Fahrbahn aus Beton laut OpenStreetMap."
+   "kurz": "Betonbelag laut OpenStreetMap. Betonbeläge werden beim Hitze-Index nicht bewertet.",
+   "begriffe": [
+    "materielle_anfaelligkeit"
+   ]
   },
   "vi_pct_compound": {
    "kurz": "Zusammentreffen von Starkregen und Flusshochwasser auf derselben Kante: Produkt der beiden Perzentilränge, 0 bis 1. 119 Kanten sind von beiden Gefahren betroffen.",
@@ -794,6 +793,18 @@
   },
   "v": {
    "kurz": "OpenStreetMap-Knoten am Ende der Kante."
+  },
+  "surface_class": {
+   "kurz": "Fahrbahnbelag aus OpenStreetMap. Kanten ohne Angabe sind als asphaltiert approximiert.",
+   "begriffe": [
+    "materielle_anfaelligkeit"
+   ]
+  },
+  "pruefbedarf": {
+   "kurz": "Prüffall: Die Kante liegt nur in einem Gebiet, das die Ausdehnung ohne Tiefe ausweist, und geht deshalb nicht in den fluvialen Index ein.",
+   "begriffe": [
+    "uesg"
+   ]
   }
  },
  "bedienung": {
@@ -859,7 +870,7 @@
   },
   "abs-filter": {
    "titel": "Filter",
-   "kurz": "Blendet Kanten aus, ohne Werte zu ändern: nach Wertebereich, Top N, oberstem Dezil, Mehrfachbelastung, Baulastträger, Straßentyp oder Gemeinde. Rangliste, Verteilung und Datenexport folgen dem Filter."
+   "kurz": "Blendet Kanten aus, ohne Werte zu ändern: nach Wertebereich, Top N, oberstem Dezil, Mehrfachbelastung, Baulastebene, Straßentyp oder Gemeinde. Rangliste, Verteilung und Datenexport folgen dem Filter."
   },
   "filter_bereich": {
    "titel": "Wertebereich",
@@ -941,7 +952,7 @@
   },
   "erweiterte_werte": {
    "titel": "Kernwerte und erweiterte Werte",
-   "kurz": "Kernwerte sind die zwei bis drei Größen je Gruppe, die für das Verständnis genügen: etwa Link Importance in Sekunden und ihr Rang, Gefährdungsstufe, Wassertiefe und Verschneidungsindex, Oberflächentemperatur und thermischer Index. Fehlt einer Kante ein Kernwert, rückt ein Ersatzwert nach. Erweiterte Werte zeigt alle Zwischengrößen, Rohindizes und Varianten. Die gerade in der Karte gezeigte Variable ist immer dabei. Die Einstellung gilt auch für den Vergleich angepinnter Kanten und bleibt im Browser gespeichert.",
+   "kurz": "Kernwerte sind die zwei bis drei Größen je Gruppe, die für das Verständnis genügen: etwa Link Importance in Sekunden und ihr Rang, Gefährdungsstufe, Überflutungstiefe und Verschneidungsindex, Hitzewellenlage und thermischer Verschneidungsindex. Fehlt einer Kante ein Kernwert, rückt ein Ersatzwert nach. Erweiterte Werte zeigt alle Zwischengrößen, Rohindizes und Varianten. Die gerade in der Karte gezeigte Variable ist immer dabei. Die Einstellung gilt auch für den Vergleich angepinnter Kanten und bleibt im Browser gespeichert.",
    "begriffe": [
     "verschneidungsindex",
     "link_importance",
@@ -955,6 +966,64 @@
     "oberstes_dezil",
     "perzentilnormierung",
     "bezugsmenge"
+   ]
+  }
+ },
+ "tipps": {
+  "pluvial": {
+   "titel": "Tipp: die Starkregenkarte dazu einblenden",
+   "text": "Die Kennwerte fassen jede Kante zusammen. Wo das Wasser an einer Stelle wie tief steht und wie schnell es fließt, zeigt die Hinweiskarte Starkregengefahren des BKG für das Ereignis der Arbeit (100 mm in 1 h). Ist sie eingeblendet, fragt ein Klick in die Karte Tiefe und Geschwindigkeit am Punkt ab.",
+   "aktionen": [
+    {
+     "label": "Überflutungstiefe einblenden",
+     "ebene": "wms_sr_tiefe_ext"
+    },
+    {
+     "label": "Fließgeschwindigkeit einblenden",
+     "ebene": "wms_sr_geschw_ext"
+    }
+   ]
+  },
+  "fluvial": {
+   "titel": "Tipp: die Überflutungsflächen dazu einblenden",
+   "text": "Die Kanten zeigen nur, welche Straßen betroffen sind. Die Überflutungsflächen selbst gibt es als HQextrem-Flächen der Arbeit nach Tiefenklasse und als amtliche Wassertiefen des NLWKN für HQextrem, HQ100 und HQhäufig. Die Überschwemmungsgebiete ohne Tiefenangabe erklären die Prüffälle.",
+   "aktionen": [
+    {
+     "label": "HQextrem-Flächen einblenden",
+     "ebene": "hqextrem"
+    },
+    {
+     "label": "Wassertiefen HQextrem (NLWKN)",
+     "ebene": "wms_hw_extrem"
+    },
+    {
+     "label": "Überschwemmungsgebiete",
+     "ebene": "wms_uesg"
+    }
+   ]
+  },
+  "heat": {
+   "titel": "Tipp: das Temperaturraster dazu einblenden",
+   "text": "Die Kantenwerte stammen aus der Hitzewellenlage, dem 90. Perzentil der Landoberflächentemperatur. Das Raster dahinter zeigt, wie Ortslagen, Wald und Offenland die Temperatur im Straßenumfeld prägen.",
+   "aktionen": [
+    {
+     "label": "Temperaturraster einblenden",
+     "ebene": "lst_p90"
+    }
+   ]
+  },
+  "compound": {
+   "titel": "Tipp: beide Wassergefahren dazu einblenden",
+   "text": "Der Compound-Index der Wassergefahren zeigt, wo Starkregen und Flusshochwasser auf derselben Kante zusammentreffen. Beide Gefahrenkarten lassen sich darunterlegen.",
+   "aktionen": [
+    {
+     "label": "Überflutungstiefe Starkregen",
+     "ebene": "wms_sr_tiefe_ext"
+    },
+    {
+     "label": "Wassertiefen HQextrem (NLWKN)",
+     "ebene": "wms_hw_extrem"
+    }
    ]
   }
  }

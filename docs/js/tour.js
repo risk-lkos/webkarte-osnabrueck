@@ -54,6 +54,7 @@ WK.tour = (() => {
   function start() {
     if (S.aktiv) return;
     if (WK.glossar) WK.glossar.schliessen();
+    if (WK.tipps) WK.tipps.schliessen();
     if (WK.ui && WK.ui.dialogSchliessen) WK.ui.dialogSchliessen();
     if (WK.rangliste && WK.rangliste.offen) WK.rangliste.schliessen();
     const app = el('app');
