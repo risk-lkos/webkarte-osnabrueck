@@ -895,7 +895,7 @@
   },
   "panel": {
    "titel": "Kantendetails",
-   "kurz": "Die Kennwerte der angeklickten Kante, nach Gruppen geordnet. Zuerst erscheinen nur die Kernwerte, zwei bis drei je Gruppe, damit sich Kanten schnell vergleichen lassen; Balken hinter Rang- und Indexwerten zeigen den Anteil am Maximum. Der Knopf Erweiterte Werte unter der Detailkarte zeigt alle berechneten Werte. Von hier aus: Favorit, Zoom, Nachbarn, Straßenzug mit Max und Min, Melden, Anpinnen, Kopieren und Link zur Kante."
+   "kurz": "Die Kennwerte der angeklickten Kante, nach Gruppen geordnet. Zuerst erscheinen nur die Kernwerte, zwei bis drei je Gruppe, damit sich Kanten schnell vergleichen lassen; Balken hinter Rang- und Indexwerten zeigen den Anteil am Maximum. Der Knopf Erweiterte Werte unter der Detailkarte zeigt alle berechneten Werte. Die Abzeichen sind anklickbar: Rang öffnet die Rangliste an der Stelle der Kante, Perzentil und Dezil die Dezilstaffelung. Von hier aus: Favorit, Zoom, Nachbarn, Straßenzug mit Max und Min, Melden, Anpinnen, Kopieren und Link zur Kante."
   },
   "detailkarte": {
    "titel": "Detailkarte",
@@ -911,7 +911,7 @@
   },
   "rangliste": {
    "titel": "Rangliste",
-   "kurz": "Tabelle aller Kanten der gezeigten Variable anstelle des Menüs: scrollen, sortieren, anklicken und hinspringen. Exportiert die gefilterten Kanten als CSV oder GeoJSON."
+   "kurz": "Tabelle aller Kanten der gezeigten Variable anstelle des Menüs: scrollen, sortieren, anklicken und hinspringen. Die zweite Ansicht Dezile zeigt die Dezilstaffelung. Ein Klick auf das Rang-Abzeichen in den Kantendetails öffnet die Liste genau an der Stelle der Kante. Exportiert die gefilterten Kanten als CSV oder GeoJSON."
   },
   "export": {
    "titel": "Export",
@@ -946,6 +946,15 @@
     "verschneidungsindex",
     "link_importance",
     "rohindex"
+   ]
+  },
+  "dezile": {
+   "titel": "Dezile (Dezilstaffelung)",
+   "kurz": "Teilt die Kanten mit Wert nach ihrem Rang in zehn gleich große Gruppen und nennt je Dezil Wertebereich, Mittelwert und Kantenzahl. Das oberste Dezil, also alles ab dem 90. Perzentil, gilt in der Arbeit je Gefahr als Spitzengruppe. Die Zeile der gewählten Kante ist markiert. Ein Klick auf ein Dezil setzt dessen Wertebereich als Filter und zeigt die zugehörigen Kanten in Karte und Rangliste.",
+   "begriffe": [
+    "oberstes_dezil",
+    "perzentilnormierung",
+    "bezugsmenge"
    ]
   }
  }

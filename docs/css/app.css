@@ -97,9 +97,20 @@ h3 { font-size: 13px; margin: 0; text-transform: uppercase; letter-spacing: .04e
 .rang-titel strong { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .rang-knoepfe { display: flex; gap: 4px; flex: none; }
 .rang-knoepfe button { font-size: 12px; padding: 3px 8px; }
+.rang-tabs { display: flex; align-items: center; gap: 4px; margin: 6px 0 2px; }
+.rang-tabs button { font-size: 12.5px; padding: 3px 12px; }
+.rang-scroll tr.rang-frueher td { padding: 4px 6px; text-align: center; background: var(--bg2); }
+.rang-scroll tr.rang-frueher button { font-size: 12px; padding: 2px 10px; }
+.dezil-tabelle td { white-space: nowrap; }
+.dezil-tabelle .dezil-farbe { display: inline-block; width: 26px; height: 10px; border-radius: 2px; border: 1px solid rgba(0,0,0,.15); margin-right: 6px; vertical-align: -1px; }
+.dezil-tabelle .badge { display: inline-block; padding: 0 6px; border-radius: 10px; font-size: 10.5px; background: var(--bg3); margin-left: 5px; font-family: var(--schrift); }
+.dezil-tabelle .badge.top { background: var(--akzent); color: #fff; }
+.dezil-tabelle tr.gefiltert td:first-child { box-shadow: inset 3px 0 0 var(--akzent2); }
+.dezil-fuss { padding: 8px 10px 20px; font-size: 12.5px; }
+.dezil-fuss p { margin: 6px 0; }
 .rang-kopf .zeile label { flex: none; }
 .rang-kopf .zeile select { flex: none; }
-.rang-scroll { flex: 1; min-height: 0; overflow: auto; background: var(--bg); outline: none; }
+.rang-scroll { flex: 1; min-height: 0; overflow: auto; background: var(--bg); outline: none; overflow-anchor: none; /* Blickposition beim Nachladen davor haelt rangliste.js selbst */ }
 .rang-scroll table { border-collapse: collapse; width: 100%; font-size: 12.5px; }
 .rang-scroll th { position: sticky; top: 0; z-index: 1; background: var(--bg2); cursor: pointer; user-select: none; text-align: left; padding: 5px 6px; border-bottom: 1px solid var(--rand); white-space: nowrap; font-weight: 600; }
 .rang-scroll td { padding: 3px 6px; border-bottom: 1px solid var(--bg3); white-space: nowrap; }
@@ -232,6 +243,9 @@ tr:hover .hilfe-knopf.dezent, .hilfe-knopf.dezent:focus, .hilfe-knopf.dezent.akt
 .kante-info tr.hervor td { background: rgba(217,95,2,.12); }
 .kante-info .badge { display: inline-block; padding: 1px 6px; border-radius: 10px; font-size: 11px; background: var(--bg3); margin-left: 4px; }
 .kante-info .badge.top { background: var(--akzent); color: #fff; }
+.kante-info button.badge { border: none; cursor: pointer; font: inherit; font-size: 11px; line-height: 1.5; }
+.kante-info button.badge:hover { box-shadow: 0 0 0 2px var(--akzent2); }
+.kante-info button.badge::after { content: " ›"; opacity: .6; }
 .kante-info .kopfzeile { font-size: 13px; margin-bottom: 4px; }
 .kante-info .kopfzeile .klein { display: block; }
 .kante-info .aktionen { display: flex; gap: 6px; margin: 8px 0; flex-wrap: wrap; }

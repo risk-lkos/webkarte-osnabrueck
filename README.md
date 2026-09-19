@@ -64,7 +64,11 @@ Die Variablengruppen im Menü sind einklappbar und starten eingeklappt; ein Punk
 Gruppe die gezeigte Variable liegt. Die Rangliste (R) ersetzt das Menü durch eine scrollbare,
 sortierbare Attributtabelle der aktuellen Variable: Klick auf eine Zeile springt zur Kante,
 Pfeiltasten blättern, „⇔ Spalten" zeigt weitere Kennwerte, „✕ Schließen" (oben fixiert) holt das
-Menü zurück; CSV und GeoJSON exportieren die gefilterten Kanten. „Straßenzug <Nr.>" im Panel zoomt
+Menü zurück; CSV und GeoJSON exportieren die gefilterten Kanten. Die zweite Ansicht „Dezile" zeigt
+die Dezilstaffelung (Wertebereich, Mittel, Kantenzahl je Dezil, berechnet mit derselben
+Perzentilformel wie das Rang-Abzeichen; Klick filtert auf das Dezil). Die Abzeichen der
+Kantendetails sind Knöpfe: „Rang x von y" öffnet die Rangliste in einem Fenster um die Kante (auch
+bei Rang 40.000 ohne alle Zeilen davor zu laden), „Perzentil" und „Dezil" öffnen die Dezile. „Straßenzug <Nr.>" im Panel zoomt
 auf alle Kanten derselben Nummer und öffnet eine Auswertung mit Max, Min und Median der aktuellen
 Variable als Sprungziele.
 

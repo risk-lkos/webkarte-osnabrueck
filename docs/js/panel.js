@@ -121,9 +121,11 @@ WK.panel = (() => {
       if (typeof p[v] === 'number') {
         const rg = WK.daten.rang(v, id, m && m.gt0);
         if (rg) {
-          badges.appendChild(U.el('span', { class: 'badge' + (rg.perzentil >= 0.9 ? ' top' : '') }, `Rang ${U.formatZahl(rg.rang, 0)} von ${U.formatZahl(rg.n, 0)}`));
-          badges.appendChild(U.el('span', { class: 'badge' }, `Perzentil ${U.formatZahl(rg.perzentil * 100, 1)} %`));
-          if (rg.perzentil >= 0.9) badges.appendChild(U.el('span', { class: 'badge top' }, 'oberstes Dezil'));
+          // Abzeichen sind Knoepfe: Rang oeffnet die Rangliste an der Stelle der Kante, Perzentil und Dezil die Dezilstaffelung
+          const R = WK.rangliste, d = R && R.dezilVon ? R.dezilVon(rg.perzentil) : (rg.perzentil >= 0.9 ? 10 : null);
+          badges.appendChild(U.el('button', { class: 'badge' + (rg.perzentil >= 0.9 ? ' top' : ''), title: 'Rangliste öffnen und diese Kante darin zeigen', onclick: () => R && R.oeffnen({ ansicht: 'liste', zuId: id }) }, `Rang ${U.formatZahl(rg.rang, 0)} von ${U.formatZahl(rg.n, 0)}`));
+          badges.appendChild(U.el('button', { class: 'badge', title: 'Dezilstaffelung der Variable öffnen', onclick: () => R && R.oeffnen({ ansicht: 'dezile' }) }, `Perzentil ${U.formatZahl(rg.perzentil * 100, 1)} %`));
+          if (d) badges.appendChild(U.el('button', { class: 'badge' + (d === 10 ? ' top' : ''), title: 'Dezilstaffelung der Variable öffnen: Wertebereich und Kantenzahl je Dezil', onclick: () => R && R.oeffnen({ ansicht: 'dezile' }) }, d === 10 ? 'oberstes Dezil' : `${d}. Dezil`));
         }
       }
       el.appendChild(badges);
